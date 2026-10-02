@@ -11,6 +11,8 @@ const UNMAPPED_PURCHASE_REASONS = new Set([
   'no_plan_match',
   'paypal_missing_custom_id',
   'paypal_unsupported_plan',
+  'stripe_no_matching_account',
+  'stripe_unsupported_plan',
 ]);
 
 function escapeHtml(value) {
@@ -54,6 +56,7 @@ function recordUnmappedPurchase(prisma, details = {}) {
       membershipId,
       eventType,
       paypalCaptureId,
+      stripeSessionId,
       amount,
       currency,
       reason,
@@ -87,6 +90,7 @@ function recordUnmappedPurchase(prisma, details = {}) {
         const displayUserId = userId || 'unknown';
         const displayEventType = eventType || 'unknown';
         const displayPayPalCaptureId = paypalCaptureId || 'unknown';
+        const displayStripeSessionId = stripeSessionId || 'unknown';
         const displayAmount = amount || 'unknown';
         const displayCurrency = currency || 'unknown';
         const displayReason = reason;
@@ -97,10 +101,15 @@ function recordUnmappedPurchase(prisma, details = {}) {
         const paypalHtml = paypalCaptureId
           ? `<br><strong>PayPal Capture ID:</strong> ${escapeHtml(displayPayPalCaptureId)}<br><strong>PayPal Amount:</strong> ${escapeHtml(displayAmount)} ${escapeHtml(displayCurrency)}`
           : '';
+        const stripeDetails = stripeSessionId ? [`Stripe Checkout Session ID: ${displayStripeSessionId}`] : [];
+        const stripeHtml = stripeSessionId
+          ? `<br><strong>Stripe Checkout Session ID:</strong> ${escapeHtml(displayStripeSessionId)}`
+          : '';
         const text = [
           'Avalisa paid purchase was not activated — manual grant needed.',
           `Reason: ${displayReason}`,
           ...paypalDetails,
+          ...stripeDetails,
           `Price: ${displayPriceInCents} cents (${formatDollars(displayPriceInCents)})`,
           `Plan Name: ${displayPlanName}`,
           `Plan ID: ${displayPlanId}`,
@@ -110,7 +119,7 @@ function recordUnmappedPurchase(prisma, details = {}) {
           `Whop Event Type: ${displayEventType}`,
           `Timestamp (UTC): ${timestamp}`,
         ].join('\n');
-        const html = `<p><strong>Avalisa paid purchase was not activated — manual grant needed.</strong></p><p><strong>Reason:</strong> ${escapeHtml(displayReason)}${paypalHtml}<br><strong>Price:</strong> ${displayPriceInCents} cents (${formatDollars(displayPriceInCents)})<br><strong>Plan Name:</strong> ${escapeHtml(displayPlanName)}<br><strong>Plan ID:</strong> ${escapeHtml(displayPlanId)}<br><strong>Membership ID:</strong> ${escapeHtml(displayMembershipId)}<br><strong>Customer Email:</strong> ${escapeHtml(displayCustomerEmail)}<br><strong>User ID:</strong> ${escapeHtml(displayUserId)}<br><strong>Whop Event Type:</strong> ${escapeHtml(displayEventType)}<br><strong>Timestamp (UTC):</strong> ${timestamp}</p>`;
+        const html = `<p><strong>Avalisa paid purchase was not activated — manual grant needed.</strong></p><p><strong>Reason:</strong> ${escapeHtml(displayReason)}${paypalHtml}${stripeHtml}<br><strong>Price:</strong> ${displayPriceInCents} cents (${formatDollars(displayPriceInCents)})<br><strong>Plan Name:</strong> ${escapeHtml(displayPlanName)}<br><strong>Plan ID:</strong> ${escapeHtml(displayPlanId)}<br><strong>Membership ID:</strong> ${escapeHtml(displayMembershipId)}<br><strong>Customer Email:</strong> ${escapeHtml(displayCustomerEmail)}<br><strong>User ID:</strong> ${escapeHtml(displayUserId)}<br><strong>Whop Event Type:</strong> ${escapeHtml(displayEventType)}<br><strong>Timestamp (UTC):</strong> ${timestamp}</p>`;
 
         Promise.resolve()
           .then(() => sendEmail({

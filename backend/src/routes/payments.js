@@ -9,8 +9,38 @@ const {
   normalizeCheckoutPlan,
   paypalConfigured,
 } = require('../lib/paypal');
+const { CHECKOUT_PLANS, createCheckoutParams, getCheckoutConflict, getStripe, isStripeEnabled } = require('../lib/stripe');
+const prisma = require('../lib/prisma');
 
 const router = express.Router();
+
+router.get('/stripe/status', async (req, res) => {
+  res.json({ enabled: await isStripeEnabled() });
+});
+
+router.post('/stripe/checkout', authMiddleware, async (req, res) => {
+  const planKey = req.body?.plan;
+  if (!Object.prototype.hasOwnProperty.call(CHECKOUT_PLANS, planKey)) {
+    return res.status(400).json({ error: 'Unsupported Stripe plan' });
+  }
+  if (!await isStripeEnabled()) {
+    return res.status(503).json({ error: 'Stripe checkout is not available' });
+  }
+
+  try {
+    const license = await prisma.license.findUnique({ where: { userId: req.user.id } });
+    const conflict = getCheckoutConflict(license, planKey);
+    if (conflict) return res.status(409).json({ error: conflict });
+
+    const stripe = getStripe();
+    const session = await stripe.checkout.sessions.create(createCheckoutParams({ user: req.user, planKey }));
+    if (!session?.url) throw new Error('Stripe did not return a checkout URL');
+    return res.json({ url: session.url });
+  } catch (_) {
+    console.error('[Stripe] Failed to create checkout session.');
+    return res.status(500).json({ error: 'Failed to start Stripe checkout' });
+  }
+});
 
 router.get('/paypal/status', (req, res) => {
   res.json({ enabled: paypalConfigured() });
