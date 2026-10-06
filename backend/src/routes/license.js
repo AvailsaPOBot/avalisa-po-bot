@@ -307,7 +307,7 @@ router.post('/claim', authMiddleware, async (req, res) => {
     });
 
     notifyBoardOfClaim(prisma, { userId: req.userId, email: user?.email, poUid: uid });
-    res.json({ message: 'Claim submitted. We will review and notify you within 24 hours.' });
+    res.json({ status: 'pending', message: 'Claim submitted. Pro unlocks automatically once Pocket Option confirms your registration came through our link, and we email you when it does.' });
   } catch (err) {
     console.error('Claim error:', err);
     res.status(500).json({ error: 'Failed to submit claim' });

@@ -135,7 +135,7 @@ test('claim submission response remains unchanged when email transport rejects',
   try {
     const res = await post(route.router, '/claim', { poUid: '987654' });
     assert.equal(res.statusCode, 200);
-    assert.deepEqual(res.body, { message: 'Claim submitted. We will review and notify you within 24 hours.' });
+    assert.deepEqual(res.body, { status: 'pending', message: 'Claim submitted. Pro unlocks automatically once Pocket Option confirms your registration came through our link, and we email you when it does.' });
   } finally {
     route.restore();
     notify.restore();

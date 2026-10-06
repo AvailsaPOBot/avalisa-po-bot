@@ -611,7 +611,7 @@ export default function Dashboard() {
 
           {claimStatus === 'pending' ? (
             <div className="text-sm px-3 py-3 rounded-lg bg-yellow-900/30 border border-yellow-700/50 text-yellow-300">
-              ⏳ Your claim is under review. We'll notify you here within 24 hours.
+              ⏳ Waiting for Pocket Option to confirm your registration. Pro unlocks automatically and we email you when it does.
             </div>
           ) : claimStatus === 'rejected' ? (
             <div className="space-y-3">

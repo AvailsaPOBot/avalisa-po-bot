@@ -81,8 +81,16 @@ async function handleClaimSubmit() {
 async function submitClaim(poUid) {
   try {
     const data = await apiPost('/api/license/claim', { poUid });
-    if (data.message) {
-      setClaimStatus('✅ Claim submitted! We\'ll review within 24 hours.', '#34d399');
+    if (data.status === 'approved') {
+      // Instant approval (PocketPartners already confirmed this UID). Before 2.4.22
+      // this branch did not exist and an approved user was told to wait 24 hours.
+      setClaimStatus('✅ Pro unlocked! Your plan is updating now.', '#34d399');
+      document.getElementById('av-claim-uid-input').style.display = 'none';
+      if (typeof checkLicense === 'function') {
+        checkLicense().then(lic => { state.licenseInfo = lic; if (typeof updateUI === 'function') updateUI(); }).catch(() => {});
+      }
+    } else if (data.message) {
+      setClaimStatus('✅ Claim submitted. Pro unlocks automatically once Pocket Option confirms your registration, and we email you.', '#34d399');
       document.getElementById('av-claim-uid-input').style.display = 'none';
     } else if (data.error) {
       const err = data.error;
