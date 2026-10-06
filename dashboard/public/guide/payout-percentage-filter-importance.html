@@ -213,7 +213,7 @@
               <caption>Full losing-cycle cost, as a multiple of the base stake</caption>
               <thead>
                 <tr>
-                  <th scope="col">Steps</th>
+                  <th scope="col">Losing trades in a row</th>
                   <th scope="col">2x multiplier</th>
                   <th scope="col">3x multiplier</th>
                 </tr>
@@ -228,6 +228,7 @@
                 <tr><th scope="row">7</th><td>127&times; base</td><td>1,093&times; base</td></tr>
               </tbody>
             </table>
+          <p><strong>How this maps to the Avalisa panel:</strong> the <em>Martingale Steps</em> setting counts recovery steps after the first trade, so Steps&nbsp;=&nbsp;N allows N&nbsp;+&nbsp;1 trades in a losing cycle. At 2x: Steps&nbsp;3 = 4 trades (15&times;), Steps&nbsp;4 = 5 trades (31&times;), Steps&nbsp;5 = 6 trades (63&times;).</p>
           </div>
           <p>A cycle that costs 364&times; the base stake is a very different animal from one that costs 3&times;. Every percentage point of payout below your floor makes each of those multipliers harder to offset. This is not a theoretical concern: with a measured result distribution around 43&ndash;44% across recent samples, a low-payout pair plus an uncapped losing streak is the fastest route to a wiped balance.</p>
           <p>The practical consequence is two settings used together &mdash; the payout floor, and a hard limit on <strong>Martingale Steps</strong>. Limiting steps is the real way to cap a losing streak; there is no separate stop-loss or daily-loss-limit setting in the bot, and when the next stake would exceed the balance it pauses.</p>

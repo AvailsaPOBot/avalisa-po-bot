@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Bankroll Rules for Automated Binary-Options Trading</title>
-  <meta name="description" content="Stake sizing, loss budgets and hard step caps for running a Pocket Option bot — what a 7-step Martingale cycle really costs as a share of your bankroll.">
+  <meta name="description" content="Stake sizing, loss budgets and hard step caps for running a Pocket Option bot — what a 7-trade Martingale cycle really costs as a share of your bankroll.">
   <meta property="og:title" content="Bankroll Rules for Automated Binary-Options Trading">
-  <meta property="og:description" content="Stake sizing, loss budgets and hard step caps for running a Pocket Option bot — what a 7-step Martingale cycle really costs as a share of your bankroll.">
+  <meta property="og:description" content="Stake sizing, loss budgets and hard step caps for running a Pocket Option bot — what a 7-trade Martingale cycle really costs as a share of your bankroll.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://avalisabot.vercel.app/guide/bankroll-rules-automation.html">
   <link rel="canonical" href="https://avalisabot.vercel.app/guide/bankroll-rules-automation.html">
@@ -162,16 +162,17 @@
           <p>Set a number: &ldquo;one losing sequence may cost me at most X% of my bankroll.&rdquo; For example, with a 1% base stake and a capped strategy, your maximum sequence cost should fit inside that budget. When you reach it, stop, log what happened, and restart from the base stake.</p>
 
           <h3>3. Cap every losing-streak progression &mdash; no &ldquo;infinite&rdquo; on a live account</h3>
-          <p>If you use Martingale (increasing the stake after each loss), the total cost of a full N-step losing cycle grows quickly, as a multiple of your base stake:</p>
+          <p>If you use Martingale (increasing the stake after each loss), the total cost of N losing trades in a row grows quickly, as a multiple of your base stake:</p>
           <ul>
-            <li><strong>2x multiplier:</strong> 1 step costs 1&times;, 2 steps 3&times;, 3 steps 7&times;, 4 steps 15&times;, 5 steps 31&times;, 6 steps 63&times;, 7 steps 127&times; the base stake.</li>
-            <li><strong>3x multiplier:</strong> 1 step 1&times;, 2 steps 4&times;, 3 steps 13&times;, 4 steps 40&times;, 5 steps 121&times;, 6 steps 364&times;, 7 steps 1,093&times; the base stake.</li>
+            <li><strong>2x multiplier:</strong> 1 trade costs 1&times;, 2 trades 3&times;, 3 trades 7&times;, 4 trades 15&times;, 5 trades 31&times;, 6 trades 63&times;, 7 trades 127&times; the base stake.</li>
+            <li><strong>3x multiplier:</strong> 1 trade 1&times;, 2 trades 4&times;, 3 trades 13&times;, 4 trades 40&times;, 5 trades 121&times;, 6 trades 364&times;, 7 trades 1,093&times; the base stake.</li>
           </ul>
-          <p>Convert that into your own money the same way every time: <strong>cycle cost as a share of bankroll = the multiple above &times; your base stake as a share of bankroll</strong>. At a 1% base stake, a 7-step cycle at 2x costs 127 &times; 1% = <strong>127% of your bankroll</strong> in one streak &mdash; more than your entire account. The same 7 steps at 3x costs 1,093 &times; 1% = <strong>over 1,000% of your bankroll</strong>. Those are not typos: a &ldquo;small&rdquo; 1% base stake stops looking small once a cycle runs long enough.</p>
+          <p><strong>How this maps to the Avalisa panel:</strong> the <em>Martingale Steps</em> setting counts recovery steps after the first trade, so Steps&nbsp;=&nbsp;N allows N&nbsp;+&nbsp;1 trades in a losing cycle. At 2x: Steps&nbsp;3 = 4 trades (15&times;), Steps&nbsp;4 = 5 trades (31&times;), Steps&nbsp;5 = 6 trades (63&times;).</p>
+          <p>Convert that into your own money the same way every time: <strong>cycle cost as a share of bankroll = the multiple above &times; your base stake as a share of bankroll</strong>. At a 1% base stake, a 7-trade cycle at 2x (Martingale Steps 6) costs 127 &times; 1% = <strong>127% of your bankroll</strong> in one streak &mdash; more than your entire account. The same 7 trades at 3x costs 1,093 &times; 1% = <strong>over 1,000% of your bankroll</strong>. Those are not typos: a &ldquo;small&rdquo; 1% base stake stops looking small once a cycle runs long enough.</p>
           <p>If you allow unlimited steps, the math eventually exceeds your balance, which is how balances get wiped. <strong>Limiting the step count is the real way to cap a losing streak &mdash; there is no separate stop-loss or daily-loss-limit setting in the bot.</strong> With a step cap, when the next stake would exceed the balance, the bot pauses instead of trying to force the trade.</p>
 
           <h3>4. Choose lower multipliers unless you understand the table above</h3>
-          <p>At the same step count, a 3x cycle costs several times what a 2x cycle costs, and the gap widens with every step you allow: at 5 steps it is 121&times; versus 31&times; (about four times worse), at 6 steps 364&times; versus 63&times; (about six times worse), and at 7 steps 1,093&times; versus 127&times; (roughly nine times worse). Do not assume the multiplier options behave alike. If you run Martingale at all, run fewer steps rather than a higher multiplier.</p>
+          <p>At the same number of trades, a 3x cycle costs several times what a 2x cycle costs, and the gap widens with every extra trade you allow: at 5 trades it is 121&times; versus 31&times; (about four times worse), at 6 trades 364&times; versus 63&times; (about six times worse), and at 7 trades 1,093&times; versus 127&times; (roughly nine times worse). Do not assume the multiplier options behave alike. If you run Martingale at all, run fewer steps rather than a higher multiplier.</p>
 
           <h3>5. Match timeframe and payout to your account size</h3>
           <p>Small accounts should prefer shorter expiries with higher payouts so one trade costs a smaller absolute amount. In our support experience we prefer payouts above 90%, and we caution against under-1-minute live trades. Results vary by market, payout, pair, timeframe, and settings &mdash; another reason the break-even number above is the only honest anchor.</p>

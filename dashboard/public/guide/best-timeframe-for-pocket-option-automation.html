@@ -182,7 +182,7 @@
           <p>Noise is especially harmful to a bot for four reasons:</p>
           <ol>
             <li><strong>A bot repeats settings hundreds of times.</strong> Whatever edge (or lack of one) each individual trade has gets averaged over many trades. If most of each move is noise, the average converges on noise, not on skill.</li>
-            <li><strong>Martingale math is unforgiving.</strong> Avalisa PO Bot can martingale: double (or 2.2x to 3x) the stake after each loss, up to a step limit. A losing streak costs far more than a losing trade's face value &mdash; a full 6-step 3x cycle costs 364x the base stake. Shorter, noisier timeframes produce longer random losing streaks, and longer streaks reach deeper, more expensive martingale steps.</li>
+            <li><strong>Martingale math is unforgiving.</strong> Avalisa PO Bot can martingale: double (or 2.2x to 3x) the stake after each loss, up to a step limit. A losing streak costs far more than a losing trade's face value &mdash; six straight losses at 3x (Martingale Steps 5) cost 364x the base stake. Shorter, noisier timeframes produce longer random losing streaks, and longer streaks reach deeper, more expensive martingale steps.</li>
             <li><strong>The break-even bar depends on payout, not timeframe.</strong> The break-even threshold is exactly <strong>1 / (1 + p)</strong>, where <em>p</em> is the payout as a decimal (e.g. 0.92). Noise does not improve that math; it just makes your measured results swing further from it.</li>
             <li><strong>Detection limits.</strong> The bot runs inside your browser. If the Pocket Option tab is backgrounded or minimised, trade-result detection can be delayed. That delay is a noise source of its own &mdash; avoid it by keeping the tab visible.</li>
           </ol>
@@ -223,7 +223,7 @@
           <p>No. Binary options are high risk. Use the bot's demo account first, and only risk money you can afford to lose.</p>
 
           <h3>Why does noise hurt a bot more than a manual trader?</h3>
-          <p>A bot repeats settings at high frequency, so random variation dominates the average, and martingale converts random losing streaks into large stake escalation (a full 6-step 3x cycle is 364x the base stake).</p>
+          <p>A bot repeats settings at high frequency, so random variation dominates the average, and martingale converts random losing streaks into large stake escalation (six straight losses at 3x cost 364x the base stake).</p>
 
           <h3>Can I use martingale safely?</h3>
           <p>Limit the steps. Step limits are the mechanism that caps a losing streak; the bot also pauses when the next stake would exceed the balance. There is no separate daily-loss-limit setting.</p>
