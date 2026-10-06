@@ -28,8 +28,11 @@ function getOverlayHTML() {
              Cross-origin means the page cannot reach into the frame. -->
         <div id="av-login-form">
           <div id="av-auto-note" class="av-signin-note" style="display:none"></div>
-          <iframe id="av-login-frame" class="av-login-frame"
-                  src="${loginUrl}" title="Sign in to Avalisa"></iframe>
+          <!-- The sign-in iframe is created only while this form is showing
+               (ensureLoginFrame in content.js) and removed once signed in, so no
+               hidden extension frame sits in Pocket Option's page for a
+               signed-in user. -->
+          <div id="av-login-frame-slot" data-login-url="${loginUrl}"></div>
           <button id="av-register-free-btn" class="av-btn av-btn-outline">Affiliate Pro</button>
         </div>
         <div id="av-logged-in" style="display:none">

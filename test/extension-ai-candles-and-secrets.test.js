@@ -95,10 +95,18 @@ assert.ok(
 );
 // Sign-in is in the panel for visibility, but served from the extension origin
 // in an iframe so po.trade's scripts cannot reach the fields.
+// 2026-10-06: the iframe is created by content.js only while the sign-in form shows;
+// the template carries the extension-origin URL in a slot for it.
 assert.ok(
-  /id="av-login-frame"[\s\S]*?src="\$\{loginUrl\}"/.test(overlaySource),
-  'the panel must embed the login iframe from the extension origin',
+  /id="av-login-frame-slot"[^>]*data-login-url="\$\{loginUrl\}"/.test(overlaySource),
+  'the panel must provide the extension-origin login URL for the sign-in frame',
 );
+{
+  const contentSource = fs.readFileSync(path.join(__dirname, '../extension/content.js'), 'utf8');
+  const fn = contentSource.slice(contentSource.indexOf('function ensureLoginFrame'), contentSource.indexOf('function removeLoginFrame'));
+  assert.ok(/frame\.id = 'av-login-frame'/.test(fn) && /slot\.dataset\.loginUrl \|\| chrome\.runtime\.getURL\('login\.html'\)/.test(fn),
+    'the sign-in frame must load login.html from the extension origin');
+}
 assert.ok(
   /chrome\.runtime\.getURL\('login\.html'\)/.test(overlaySource),
   'the login frame src must come from chrome.runtime.getURL, not a page-relative path',

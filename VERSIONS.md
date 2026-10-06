@@ -41,6 +41,9 @@ Also in 2.4.22 (found in the 2026-10-06 live Demo test run):
   through the ids PO publishes on the favourites bar, falling back to the label rule.
 - Claim panel: an instantly approved claim now says "Pro unlocked" (it used to say "we'll
   review within 24 hours").
+- Panel sign-in frame is created only while the sign-in form shows and removed once signed
+  in (no hidden extension frame in PO's DOM); the last known plan badge paints instantly on
+  load instead of after the ~2 s live check.
 - **Minimum payout enforced on every trade** (Board-approved trading-logic change, 2026-10-06).
   The payout monitor ran only at martingale step 0, so mid-ladder the bot kept trading a pair
   whose payout had dropped below the user's floor (live: 88% vs 90%). It now runs before every

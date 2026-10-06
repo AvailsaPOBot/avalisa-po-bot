@@ -2032,6 +2032,26 @@ async function saveCurrentSettings() {
   }
 }
 
+// The sign-in form is an iframe on the extension origin (see overlayView.js). It only
+// needs to exist while the form is visible: a signed-in user gets no hidden extension
+// frame inside Pocket Option's DOM (2026-10-06 — it also blocked browser automation
+// used for pre-publish testing whenever it was present).
+function ensureLoginFrame() {
+  if (document.getElementById('av-login-frame')) return;
+  const slot = document.getElementById('av-login-frame-slot');
+  if (!slot) return;
+  const frame = document.createElement('iframe');
+  frame.id = 'av-login-frame';
+  frame.className = 'av-login-frame';
+  frame.title = 'Sign in to Avalisa';
+  frame.src = slot.dataset.loginUrl || chrome.runtime.getURL('login.html');
+  slot.appendChild(frame);
+}
+
+function removeLoginFrame() {
+  document.getElementById('av-login-frame')?.remove();
+}
+
 function updateUI() {
   const startBtn = document.getElementById('av-start-btn');
   const stopBtn = document.getElementById('av-stop-btn');
@@ -2073,6 +2093,7 @@ function updateUI() {
   // Auth UI
   if (state.jwt) {
     if (loginForm) loginForm.style.display = 'none';
+    removeLoginFrame();
     if (loggedIn) loggedIn.style.display = 'flex';
     chrome.storage.local.get('userEmail', data => {
       const emailEl = document.getElementById('av-user-email');
@@ -2091,6 +2112,7 @@ function updateUI() {
     }
   } else {
     if (loginForm) loginForm.style.display = 'block';
+    ensureLoginFrame();
     if (loggedIn) loggedIn.style.display = 'none';
   }
   const plan = state.licenseInfo?.plan;
@@ -2403,6 +2425,15 @@ window.addEventListener('message', (e) => {
 // ─── Init ─────────────────────────────────────────────────────────────────────
 async function init() {
   await loadFromStorage();
+  // Paint the last known plan immediately (mirrored to storage by checkLicense) so a
+  // signed-in user does not see an empty badge for the ~2 s the live check takes.
+  // The live check below replaces it; Start always re-checks before trading.
+  if (state.jwt) {
+    await new Promise(resolve => chrome.storage.local.get('licenseInfo', data => {
+      if (data?.licenseInfo?.plan && !state.licenseInfo) state.licenseInfo = { ...data.licenseInfo, _cached: true };
+      resolve();
+    }));
+  }
   await loadSettingsFromBackend();
   injectOverlay();
   loadAffiliateLink(); // fire-and-forget
