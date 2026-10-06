@@ -198,9 +198,29 @@ async function affiliateLiveness() {
   let value = AFFILIATE_LIVENESS_UNAVAILABLE;
   try {
     const referral = await prisma.affiliateReferral.findFirst({ select: { id: true } });
+    // Booleans only (never counts): is PocketPartners still delivering, and is it being
+    // rejected? A rejected postback means the Render secret and the postback token differ,
+    // which silently stops every affiliate auto-approval.
+    const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+    const recentReferral = await prisma.affiliateReferral.findFirst({
+      where: { createdAt: { gte: weekAgo } },
+      select: { id: true },
+    });
+    let rejectedLast7d = null;
+    try {
+      const rejected = await prisma.funnelEvent.findFirst({
+        where: { type: 'affiliate_postback_rejected', createdAt: { gte: weekAgo } },
+        select: { id: true },
+      });
+      rejectedLast7d = Boolean(rejected);
+    } catch (_) {
+      // Funnel table is optional; unknown stays null rather than a false "all clear".
+    }
     value = {
       postbackSecretSet: Boolean(process.env.POCKETPARTNERS_SECRET),
       everReferred: Boolean(referral),
+      referredLast7d: Boolean(recentReferral),
+      rejectedLast7d,
     };
   } catch (err) {
     // A missing referral table must never make Render treat this service as down.
@@ -262,6 +282,11 @@ async function startServer() {
 
   // Daily MarketCandle (30d) / TradeEvent (180d) retention; unref'd, never overlaps.
   startRetention(prisma);
+
+  // Approve free-Pro claims that were queued before PocketPartners confirmed the UID.
+  require('./lib/affiliateClaim').sweepPendingAffiliateClaims(prisma)
+    .then((r) => console.log(`[affiliateClaim] Startup sweep: ${r.checked} pending, ${r.approved} auto-approved`))
+    .catch((err) => console.error('[affiliateClaim] Startup sweep failed:', err.message));
 
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`✅ Avalisa PO Bot API running on port ${PORT}`);

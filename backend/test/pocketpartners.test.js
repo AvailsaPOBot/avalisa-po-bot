@@ -11,7 +11,7 @@ function loadPocketPartnersRouter({ recorder = () => {} } = {}) {
       },
     },
     user: { findUnique: async () => null },
-    license: { upsert: async () => ({}) },
+    license: { upsert: async () => ({}), findFirst: async () => null },
   };
   const prismaPath = require.resolve('../src/lib/prisma');
   const funnelLibPath = require.resolve('../src/lib/funnel');

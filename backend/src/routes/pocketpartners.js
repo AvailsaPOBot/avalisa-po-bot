@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const prisma = require('../lib/prisma');
 const { PLAN_IDS, getPlanEntitlements } = require('../lib/plans');
 const { recordFunnelEvent } = require('../lib/funnel');
+const { approvePendingClaimForUid } = require('../lib/affiliateClaim');
 
 const router = express.Router();
 
@@ -80,7 +81,10 @@ router.get('/', async (req, res) => {
         });
         console.log(`[pocketpartners] Pro access granted to userId=${user.id} poUid=${uid}`);
       } else {
-        console.log(`[pocketpartners] UID ${uid} stored — no matching user yet`);
+        // The user may have submitted this UID before PocketPartners confirmed it; their
+        // claim is waiting as `license.claimedPoUid`, not `user.poUserId`.
+        const approvedUserId = await approvePendingClaimForUid(prisma, uid);
+        if (!approvedUserId) console.log(`[pocketpartners] UID ${uid} stored — no matching user yet`);
       }
     }
 

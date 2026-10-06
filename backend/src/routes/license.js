@@ -11,6 +11,7 @@ const {
 } = require('../lib/claimGuidance');
 const { notifyBoardOfClaim } = require('../lib/claimNotify');
 
+const { approvePendingClaimForUid } = require('../lib/affiliateClaim');
 const router = express.Router();
 
 const FREE_TRADE_LIMIT = getPlanEntitlements(PLAN_IDS.DEMO).tradesLimit;
@@ -294,8 +295,15 @@ router.post('/claim', authMiddleware, async (req, res) => {
 // GET /api/license/claim/status — get current claim status
 router.get('/claim/status', authMiddleware, async (req, res) => {
   try {
-    const license = await prisma.license.findUnique({ where: { userId: req.userId } });
+    let license = await prisma.license.findUnique({ where: { userId: req.userId } });
     if (!license) return res.status(404).json({ error: 'No license found' });
+    // Self-heal: if PocketPartners confirmed this UID after the claim was queued, approve now.
+    if (license.claimStatus === 'pending' && license.claimedPoUid) {
+      const referral = await prisma.affiliateReferral.findUnique({ where: { poUid: license.claimedPoUid } });
+      if (referral && await approvePendingClaimForUid(prisma, license.claimedPoUid) === req.userId) {
+        license = await prisma.license.findUnique({ where: { userId: req.userId } });
+      }
+    }
     const isRejected = license.claimStatus === 'rejected';
     const claimReason = isRejected ? normalizeClaimRejectionReason(license.claimNote) : license.claimNote;
     const registerUrl = isRejected ? await getRegisterUrl(prisma) : undefined;
