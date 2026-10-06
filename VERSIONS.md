@@ -32,6 +32,16 @@ renew silently, or sign out with "Your session expired. Please sign in again."
 Backend change is backward compatible (extra fields only); the extension needs a Web Store
 publish to reach users.
 
+Also in 2.4.22 (found in the 2026-10-06 live Demo test run):
+- **Crypto/commodity/stock favourites were never tradeable in Avalisa Bot mode.** The
+  favourite label "Bitcoin OTC" normalised to `Bitcoin_otc`, but PO's candle feed (and the
+  favourite's own `data-id`) is `BTCUSD_otc`, so the buffer check failed forever ("data not
+  ready for Bitcoin_otc (buffer holds BTCUSD_otc)"), each scan loop lost ~10 s on it, and the
+  bot stalled when such a pair was the open chart. `normalizeAssetName` now resolves labels
+  through the ids PO publishes on the favourites bar, falling back to the label rule.
+- Claim panel: an instantly approved claim now says "Pro unlocked" (it used to say "we'll
+  review within 24 hours").
+
 ## 2.4.21 — 2026-09-12 — audit pass: nothing known left open
 
 Full bug hunt over everything shipped tonight (Codex audit + CEO review), each fix

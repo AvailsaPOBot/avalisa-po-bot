@@ -3,8 +3,47 @@
  * Loaded before content.js by manifest order.
  */
 
+// Pocket Option labels a favourite "Bitcoin OTC" but its candle feed calls the asset
+// "BTCUSD_otc" (the favourite element carries that as data-id). Deriving the id from the
+// label only works for currency pairs, so every crypto/commodity/stock favourite failed
+// the "buffer belongs to this pair" check and was skipped forever in Avalisa Bot mode,
+// and stalled the bot when it was the open chart (seen live 2026-10-06: "data not ready
+// for Bitcoin_otc (buffer holds BTCUSD_otc)"). Labels now resolve through the ids PO
+// itself publishes on the favourites bar; anything unknown falls back to the label rule.
+// var (not const/let): tolerate this file being evaluated twice in one world.
+var assetIdByLabel = (typeof assetIdByLabel !== 'undefined' && assetIdByLabel) || new Map();
+var assetIdMapRefreshedAt = 0;
+var ASSET_ID_REFRESH_MS = 2000;
+
+function labelKey(label) {
+  return String(label || '').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+function refreshAssetIdMap() {
+  assetIdMapRefreshedAt = Date.now();
+  if (typeof document === 'undefined' || !document.querySelectorAll) return;
+  const nodes = document.querySelectorAll('.assets-favorites-item[data-id], [class*="favorites"] [data-id]');
+  nodes.forEach(node => {
+    const id = (node.getAttribute('data-id') || '').trim();
+    const labelEl = node.querySelector('.assets-favorites-item__label, [class*="label"], [class*="name"]');
+    const label = labelKey(labelEl ? labelEl.textContent : '');
+    if (id && label) assetIdByLabel.set(label, id);
+  });
+}
+
+function lookupAssetIdForLabel(name) {
+  const key = labelKey(name);
+  if (!key) return null;
+  if (!assetIdByLabel.has(key) && Date.now() - assetIdMapRefreshedAt > ASSET_ID_REFRESH_MS) {
+    refreshAssetIdMap();
+  }
+  return assetIdByLabel.get(key) || null;
+}
+
 function normalizeAssetName(name) {
   if (!name) return name;
+  const known = lookupAssetIdForLabel(name);
+  if (known) return known;
   return name
     .replace(/\s+OTC$/i, '_otc')
     .replace(/\//g, '')
