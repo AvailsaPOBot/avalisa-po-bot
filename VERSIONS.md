@@ -41,6 +41,12 @@ Also in 2.4.22 (found in the 2026-10-06 live Demo test run):
   through the ids PO publishes on the favourites bar, falling back to the label rule.
 - Claim panel: an instantly approved claim now says "Pro unlocked" (it used to say "we'll
   review within 24 hours").
+- **Minimum payout enforced on every trade** (Board-approved trading-logic change, 2026-10-06).
+  The payout monitor ran only at martingale step 0, so mid-ladder the bot kept trading a pair
+  whose payout had dropped below the user's floor (live: 88% vs 90%). It now runs before every
+  trade; mid-ladder it may switch to a favourite at/above the floor and continue the ladder
+  there, otherwise it stops and preserves the ladder so Start resumes. The Avalisa Bot
+  current-pair scan also refuses a pair below the floor.
 
 ## 2.4.21 — 2026-09-12 — audit pass: nothing known left open
 

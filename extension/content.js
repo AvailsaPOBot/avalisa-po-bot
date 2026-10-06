@@ -671,9 +671,15 @@ async function chooseAvalisaOpportunity(intensity, generation) {
   const currentReady = await ensureAvalisaDataForCurrentPair(6000, requiredCandles);
   if (!isCycleActive(generation)) return { action: 'SKIP', reason: 'cancelled' };
   const currentPayout = getCurrentPayoutPercent();
-  const current = currentReady
-    ? evaluateAvalisaCurrentPair(intensity, currentPayout, 'current')
-    : { action: 'SKIP', reason: 'no_ready_favorite', source: 'current' };
+  const { action: payoutAction } = getPayoutSettings();
+  // The current pair must meet the payout floor like every favourite does (favourites
+  // are already filtered by minPct below). It used to pass at any payout.
+  const currentBelowFloor = payoutAction !== 'off' && Number.isFinite(currentPayout) && currentPayout < minPct;
+  const current = !currentReady
+    ? { action: 'SKIP', reason: 'no_ready_favorite', source: 'current' }
+    : currentBelowFloor
+      ? { action: 'SKIP', reason: `payout_${currentPayout}_below_${minPct}`, source: 'current', asset: state.activePair, payout: currentPayout }
+      : evaluateAvalisaCurrentPair(intensity, currentPayout, 'current');
   console.log(`[Avalisa] Avalisa scan current: action=${current.action} pair=${current.asset} payout=${current.payout ?? 'n/a'} confidence=${current.confidence || 0} tf=${current.timeframe || 'n/a'} reason=${current.reason}`);
   if (current.action !== 'SKIP') return current;
 
@@ -950,22 +956,28 @@ async function runTradeCycleUnsafe(generation) {
     return;
   }
 
-  // Payout monitor — only on fresh martingale sequence starts (never mid-sequence)
-  if (state.martingaleStep === 0) {
-    const pay = await checkPayoutBeforeTrade({
-      allowSwitch: !(state.settings.strategy === 'ai' && state.settings.aiPairMode === 'current'),
-    });
-    if (!isCycleActive(generation)) return;
-    if (!pay.proceed) {
-      if (pay.halt) {
-        if (typeof AvalisaTelemetry !== 'undefined') AvalisaTelemetry.event('pause', 'payout_halt');
-        console.warn('[Avalisa] Payout Monitor: halting bot —', pay.reason);
-        updateStatus('error', `Payout Monitor: ${pay.reason}`);
-        state.running = false;
-        state.stopRequested = true;
-        updateUI();
-        return;
-      }
+  // Payout monitor — before EVERY trade (Board, 2026-10-06). It used to run only at
+  // step 0 ("never mid-sequence"), so once a ladder started the bot kept trading the
+  // same pair even after its payout fell below the user's minimum: seen live at 88%
+  // against a 90% floor, and nothing stopped it at 44%, where a recovery win can no
+  // longer cover the cycle. Mid-ladder the monitor may switch to a favourite at or
+  // above the floor (the ladder continues there); if it cannot, the bot stops and the
+  // ladder is preserved so Start resumes the recovery.
+  const pay = await checkPayoutBeforeTrade({
+    allowSwitch: !(state.settings.strategy === 'ai' && state.settings.aiPairMode === 'current'),
+  });
+  if (!isCycleActive(generation)) return;
+  if (!pay.proceed) {
+    if (pay.halt) {
+      if (typeof AvalisaTelemetry !== 'undefined') AvalisaTelemetry.event('pause', 'payout_halt');
+      console.warn('[Avalisa] Payout Monitor: halting bot —', pay.reason);
+      await preservePausedLadder('payout_halt');
+      const midLadder = (state.martingaleStep || 0) > 0;
+      updateStatus('error', `Payout Monitor: ${pay.reason}${midLadder ? ' — ladder saved, press Start to resume' : ''}`);
+      state.running = false;
+      state.stopRequested = true;
+      updateUI();
+      return;
     }
   }
 

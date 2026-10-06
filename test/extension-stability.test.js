@@ -46,9 +46,18 @@ test('favorite scan does not evaluate an ignored pair switch',async()=>{
   const h=scanHarness({switched:'OLD'});await h.run();assert.equal(h.evaluations(),1);
 });
 test('favorite scan rechecks actual payout and cancels after waiting',async()=>{
-  for(const options of [{payout:70},{payout:null},{cancelAt:1}]){
+  for(const options of [{payout:null},{cancelAt:1}]){
     const h=scanHarness(options);await h.run();assert.equal(h.evaluations(),1);
   }
+  // Below the floor (2026-10-06): the current pair is not even evaluated any more, and the
+  // favourite at the same payout is rejected, so nothing is evaluated at all.
+  const low=scanHarness({payout:70});const r=await low.run();
+  assert.equal(low.evaluations(),0);assert.equal(r.action,'SKIP');
+});
+test('current pair below the payout floor is skipped, never traded',async()=>{
+  const h=scanHarness({payout:88});const r=await h.run();
+  assert.equal(r.action,'SKIP');
+  assert.equal(h.evaluations(),0);
 });
 test('ready matching favorite can produce a signal',async()=>{
   const h=scanHarness();assert.equal((await h.run()).action,'CALL');assert.equal(h.evaluations(),2);
