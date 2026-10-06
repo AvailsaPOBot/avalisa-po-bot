@@ -109,7 +109,8 @@ test('a valid PocketPartners postback upserts its referral without recording a r
       assert.equal(response.statusCode, 200);
       assert.deepEqual(response.body, { ok: true });
     });
-    assert.deepEqual(calls, []);
+    assert.deepEqual(calls.map((c) => c[1]), ['affiliate_postback_received']);
+    assert.deepEqual(calls[0][2], { meta: { event: 'Registration', hasTraderId: true } });
     assert.deepEqual(loaded.upserts, [{
       where: { poUid: 'po_123' },
       update: { event: 'Registration' },

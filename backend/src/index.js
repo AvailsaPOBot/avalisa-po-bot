@@ -207,12 +207,18 @@ async function affiliateLiveness() {
       select: { id: true },
     });
     let rejectedLast7d = null;
+    let postbackLast7d = null;
     try {
       const rejected = await prisma.funnelEvent.findFirst({
         where: { type: 'affiliate_postback_rejected', createdAt: { gte: weekAgo } },
         select: { id: true },
       });
       rejectedLast7d = Boolean(rejected);
+      const received = await prisma.funnelEvent.findFirst({
+        where: { type: 'affiliate_postback_received', createdAt: { gte: weekAgo } },
+        select: { id: true },
+      });
+      postbackLast7d = Boolean(received);
     } catch (_) {
       // Funnel table is optional; unknown stays null rather than a false "all clear".
     }
@@ -220,6 +226,7 @@ async function affiliateLiveness() {
       postbackSecretSet: Boolean(process.env.POCKETPARTNERS_SECRET),
       everReferred: Boolean(referral),
       referredLast7d: Boolean(recentReferral),
+      postbackLast7d,
       rejectedLast7d,
     };
   } catch (err) {

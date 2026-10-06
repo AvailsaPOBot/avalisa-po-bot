@@ -39,6 +39,16 @@ router.get('/', async (req, res) => {
     return res.status(200).json({ ok: true });
   }
 
+  // Record every authenticated postback, even ones we cannot use, so /health can tell
+  // "PocketPartners sent nothing" apart from "it sent a postback with no usable trader id".
+  try {
+    recordFunnelEvent(prisma, 'affiliate_postback_received', {
+      meta: { event: String(event || ''), hasTraderId: Boolean(trader_id && String(trader_id).trim()) },
+    });
+  } catch (err) {
+    // Analytics must never change this webhook's response.
+  }
+
   if (!trader_id || !String(trader_id).trim()) {
     return res.status(200).json({ ok: true });
   }

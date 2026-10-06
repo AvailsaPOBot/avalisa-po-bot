@@ -5,7 +5,7 @@ process.env.JWT_SECRET ||= 'test-jwt-secret';
 process.env.DATABASE_URL ||= 'postgresql://test:test@localhost:5432/test';
 process.env.WHOP_WEBHOOK_SECRET ||= 'test-whop-webhook-secret';
 
-function loadHealthHandler({ event = null, eventError = null, referral = null, referralError = null, postbackSecret, recentReferral = null, rejectedPostback = null } = {}) {
+function loadHealthHandler({ event = null, eventError = null, referral = null, referralError = null, postbackSecret, recentReferral = null, rejectedPostback = null, receivedPostback = null } = {}) {
   let eventQueries = 0;
   let referralQueries = 0;
   const originalPostbackSecret = process.env.POCKETPARTNERS_SECRET;
@@ -24,6 +24,10 @@ function loadHealthHandler({ event = null, eventError = null, referral = null, r
         if (args?.where?.type === 'affiliate_postback_rejected') {
           assert.ok(args.where.createdAt.gte instanceof Date);
           return rejectedPostback;
+        }
+        if (args?.where?.type === 'affiliate_postback_received') {
+          assert.ok(args.where.createdAt.gte instanceof Date);
+          return receivedPostback;
         }
         eventQueries += 1;
         assert.deepEqual(args, { select: { id: true } });
@@ -199,7 +203,7 @@ test('health affiliate response contains booleans only', async () => {
   const loaded = loadHealthHandler({ postbackSecret: 'test-postback-secret', referral: { id: 'ref_1' } });
   try {
     const { affiliate } = (await loaded.health()).body;
-    assert.deepEqual(Object.keys(affiliate).sort(), ['everReferred', 'postbackSecretSet', 'referredLast7d', 'rejectedLast7d']);
+    assert.deepEqual(Object.keys(affiliate).sort(), ['everReferred', 'postbackLast7d', 'postbackSecretSet', 'referredLast7d', 'rejectedLast7d']);
     for (const value of Object.values(affiliate)) {
       assert.equal(typeof value, 'boolean');
     }
@@ -242,10 +246,11 @@ test('public health omits operational counts, timestamps and raw affiliate event
 });
 
 test('health flags recent referrals and rejected postbacks as booleans', async () => {
-  const healthy = loadHealthHandler({ postbackSecret: 's', referral: { id: 'r1' }, recentReferral: { id: 'r2' } });
+  const healthy = loadHealthHandler({ postbackSecret: 's', referral: { id: 'r1' }, recentReferral: { id: 'r2' }, receivedPostback: { id: 'f2' } });
   try {
     const { affiliate } = (await healthy.health()).body;
     assert.equal(affiliate.referredLast7d, true);
+    assert.equal(affiliate.postbackLast7d, true);
     assert.equal(affiliate.rejectedLast7d, false);
   } finally {
     healthy.restore();
