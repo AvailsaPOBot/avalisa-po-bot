@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const express = require('express');
 const { authMiddleware, optionalAuthMiddleware } = require('../middleware/auth');
 const prisma = require('../lib/prisma');
@@ -18,7 +19,28 @@ const FREE_TRADE_LIMIT = getPlanEntitlements(PLAN_IDS.DEMO).tradesLimit;
 
 // POST /api/license/check
 // Called by extension before each trade session
+// Sessions are 30-day JWTs. A signed-in user whose token simply aged out used to be
+// served the anonymous free plan here, while the extension still showed them as signed
+// in, so a Pro customer saw "DEMO" and a claim/upgrade prompt (Board, 2026-10-06).
+// Two fixes ride on every license response: `sessionExpired` when the client sent a
+// token we could not accept, and `refreshedToken` (sliding renewal) once a valid token
+// is a week old, so anyone who opens the bot at least monthly never expires.
+const TOKEN_REFRESH_AFTER_SEC = 7 * 24 * 60 * 60;
+function withSessionHints(req, res) {
+  const extra = {};
+  if (req.authInvalid) extra.sessionExpired = true;
+  if (req.userId && req.tokenIssuedAt && Date.now() / 1000 - req.tokenIssuedAt > TOKEN_REFRESH_AFTER_SEC) {
+    extra.refreshedToken = jwt.sign({ userId: req.userId }, process.env.JWT_SECRET, { expiresIn: '30d' });
+  }
+  if (!Object.keys(extra).length) return;
+  const json = res.json.bind(res);
+  res.json = (body) => json(body && typeof body === 'object' && !Array.isArray(body) && res.statusCode < 400
+    ? { ...body, ...extra }
+    : body);
+}
+
 router.post('/check', optionalAuthMiddleware, async (req, res) => {
+  withSessionHints(req, res);
   // userId comes from the verified JWT (optionalAuthMiddleware), NOT the body —
   // otherwise anyone could read another user's license by passing their id.
   const userId = req.userId || null;

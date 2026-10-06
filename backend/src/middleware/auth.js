@@ -48,9 +48,15 @@ async function optionalAuthMiddleware(req, res, next) {
       if (user) {
         req.user = user;
         req.userId = user.id;
+        req.tokenIssuedAt = decoded.iat || null;
+      } else {
+        req.authInvalid = true;
       }
     } catch (_) {
-      // Invalid/expired token → treat as anonymous, don't reject.
+      // Invalid/expired token → treat as anonymous, don't reject. But remember the
+      // client THINKS it is signed in: endpoints that can say so (license check)
+      // tell it, so an expired session is never shown as "you're on the free plan".
+      req.authInvalid = true;
     }
   }
   next();

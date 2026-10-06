@@ -480,6 +480,7 @@ async function checkLicense() {
       deviceFingerprint: getDeviceFingerprint(),
     }));
     state.licenseInfo = data;
+    applySessionHints(data, { onExpired: handleSessionExpired });
     // v2.3.2: mirror to chrome.storage.local so popup.js renders correct plan/trades.
     try { chrome.storage.local.set({ licenseInfo: data }); } catch (_) {}
     return data;
@@ -1503,6 +1504,13 @@ function handleLogout() {
   state.userId = null;
   chrome.storage.local.remove(['jwt', 'userId', 'userEmail']);
   updateUI();
+}
+
+// The saved session can no longer be accepted (expired or revoked). Sign out so the
+// panel asks the user to sign in again, instead of presenting their account as Demo.
+function handleSessionExpired() {
+  handleLogout();
+  updateStatus('error', 'Your session expired. Please sign in again.');
 }
 
 function diagnosePOInterface() {

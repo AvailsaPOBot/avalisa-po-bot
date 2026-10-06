@@ -10,7 +10,7 @@
 |---|---|---|---|
 | Extension (CWS **public shelf**) | **2.4.12** | Users' Chrome via Web Store | CWS listing `mkcpdbnlofljijfjiglkodddicpgdapa` |
 | Extension (CWS **package**, in review) | **2.4.19** | uploaded 12 Sep, awaiting Google | CWS API `crxVersion` (`projection=DRAFT`) |
-| Extension (repo / local dev) | **2.4.21** | Mr. Oil's Chrome (unpacked from this repo `extension/`) | `extension/manifest.json` |
+| Extension (repo / local dev) | **2.4.22** | Mr. Oil's Chrome (unpacked from this repo `extension/`) | `extension/manifest.json` |
 | Backend | main @ `f2c1dc4` | Render (auto-deploy from GitHub `main`) | `/health` `commit` field |
 | Dashboard/site | main @ `dcc17c8` | Vercel (auto-deploy from GitHub `main`) | bundle `REACT_APP_VERCEL_GIT_COMMIT_SHA` |
 | Webapp Bot (mobile proof) | v1.5-expiry-confirmed | Mac WKWebView shell / mobile webview | `mobile-proof/` |
@@ -18,6 +18,19 @@
 ⚠️ **The repo `extension/` folder is LIVE** — Mr. Oil's Chrome loads it unpacked.
 Never leave it broken or mid-refactor. Smoke test (`node test/extension-settings-smoke.test.js`)
 must pass before any commit that touches it. The AGE dispatcher enforces this (fail-closed revert).
+
+## 2.4.22 — 2026-10-06 — expired sign-in no longer shows a Pro user as "DEMO"
+
+Board: "my acc is pro by default but bot ask me to pay for pro". Cause: sessions are
+30-day JWTs; once one aged out, `optionalAuthMiddleware` silently treated the caller as
+anonymous, `/api/license/check` served the device-fingerprint free plan (10 trades, then
+"limit reached / upgrade"), and the panel still showed the user signed in with a DEMO
+badge and the claim box. Backend (`/api/license/check`) now returns `sessionExpired: true`
+when a sent token can't be accepted, and `refreshedToken` (sliding renewal) once a valid
+token is a week old. Extension 2.4.22 applies both (`applySessionHints` in apiClient.js):
+renew silently, or sign out with "Your session expired. Please sign in again."
+Backend change is backward compatible (extra fields only); the extension needs a Web Store
+publish to reach users.
 
 ## 2.4.21 — 2026-09-12 — audit pass: nothing known left open
 
