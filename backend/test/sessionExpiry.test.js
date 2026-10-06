@@ -67,3 +67,14 @@ test('a valid token older than a week is renewed with a fresh 30-day token', asy
   assert.equal(renewed.userId, 'u_pro');
   assert.ok(renewed.exp - renewed.iat === 30 * 86400);
 });
+
+test('a database error during the user lookup does not flag the session as expired', async () => {
+  const original = prisma.user.findUnique;
+  prisma.user.findUnique = async () => { throw new Error('connection reset'); };
+  try {
+    const res = await check(sign({ userId: 'u_pro' }, { expiresIn: '30d' }));
+    assert.equal(res.body.sessionExpired, undefined);
+  } finally {
+    prisma.user.findUnique = original;
+  }
+});

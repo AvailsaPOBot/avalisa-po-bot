@@ -52,11 +52,14 @@ async function optionalAuthMiddleware(req, res, next) {
       } else {
         req.authInvalid = true;
       }
-    } catch (_) {
+    } catch (err) {
       // Invalid/expired token → treat as anonymous, don't reject. But remember the
       // client THINKS it is signed in: endpoints that can say so (license check)
       // tell it, so an expired session is never shown as "you're on the free plan".
-      req.authInvalid = true;
+      // Only a token the server genuinely rejects counts — a database hiccup during
+      // the user lookup must never sign a customer out.
+      const tokenRejected = ['TokenExpiredError', 'JsonWebTokenError', 'NotBeforeError'].includes(err && err.name);
+      if (tokenRejected) req.authInvalid = true;
     }
   }
   next();
