@@ -1,30 +1,167 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-:root {
-  --bg-base: #0a0a0f;
-  --bg-surface: #14141d;
-  --bg-elevated: #1c1c28;
-  --text-primary: #ededed;
-  --text-muted: #8a8a93;
-  --accent-gold: #d4a256;
-  --accent-gold-soft: #a37f3e;
-  --accent-jade: #4a9b7e;
-  --accent-crimson: #c44545;
-  --accent-lifetime: #a78bfa;
-  --font-display: 'Fraunces', Georgia, serif;
-  --font-sans: 'Geist', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: 'Geist Mono', 'SFMono-Regular', Consolas, monospace;
+/* Plan badges are picked at runtime (`badge-${plan}`), so the scanner can't see them. */
+@source inline("badge-{free,basic,lifetime}");
+
+@theme {
+  --color-brand-50: #fff8eb;
+  --color-brand-100: #f7e6c4;
+  --color-brand-400: #d4a256;
+  --color-brand-500: #c49145;
+  --color-brand-600: #a97832;
+  --color-brand-700: #8b6129;
+  --color-brand-900: #332413;
+
+  --color-dark-600: #343442;
+  --color-dark-700: #1c1c28;
+  --color-dark-800: #14141d;
+  --color-dark-900: #0a0a0f;
+
+  --color-bg-base: #0a0a0f;
+  --color-bg-surface: #14141d;
+  --color-bg-elevated: #1c1c28;
+  --color-text-primary: #ededed;
+  --color-text-muted: #8a8a93;
+  --color-accent-gold: #d4a256;
+  --color-accent-gold-soft: #a37f3e;
+  --color-accent-jade: #4a9b7e;
+  --color-accent-crimson: #c44545;
+  --color-accent-lifetime: #a78bfa;
+
+  --font-display: Fraunces, serif;
+  --font-sans: Geist, sans-serif;
+  --font-mono: Geist Mono, monospace;
 }
 
-html {
-  background: var(--bg-base);
-  scroll-behavior: smooth;
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+
+  /* Tailwind v4 dims placeholders to 50% of the text color and drops the
+     pointer cursor on buttons; keep the v3 look and feel. */
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-gray-400);
+  }
+
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
 }
 
-* {
-  box-sizing: border-box;
+@utility btn-primary {
+  @apply text-black font-semibold px-4 py-2 rounded-lg transition-colors;
+  border: 1px solid rgba(255, 231, 178, 0.26);
+  background: linear-gradient(180deg, #ffd07a 0%, #d99a34 100%);
+  box-shadow: 0 14px 34px rgba(216, 162, 74, 0.18);
+}
+
+@utility btn-outline {
+  @apply font-semibold px-4 py-2 rounded-lg transition-colors;
+  border: 1px solid rgba(216, 162, 74, 0.45);
+  color: var(--accent-gold);
+  background: rgba(10, 10, 15, 0.62);
+}
+
+@utility card {
+  @apply rounded-xl p-6;
+  border: 1px solid rgba(216, 162, 74, 0.22);
+  background:
+    radial-gradient(
+      circle at 78% 0%,
+      rgba(216, 162, 74, 0.09),
+      transparent 15rem
+    ),
+    linear-gradient(180deg, rgba(20, 20, 29, 0.94), rgba(8, 10, 12, 0.96));
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.32);
+}
+
+@utility input {
+  @apply text-gray-100 rounded-lg px-3 py-2 w-full
+           focus:outline-hidden focus:ring-2 focus:ring-brand-600 placeholder-gray-500;
+  border: 1px solid rgba(216, 162, 74, 0.22);
+  background: rgba(3, 4, 6, 0.72);
+}
+
+@utility select {
+  @apply text-gray-100 rounded-lg px-3 py-2
+           focus:outline-hidden focus:ring-2 focus:ring-brand-600;
+  border: 1px solid rgba(216, 162, 74, 0.22);
+  background: rgba(3, 4, 6, 0.72);
+}
+
+@utility badge-free {
+  @apply text-xs font-bold px-2 py-0.5 rounded-full uppercase;
+  border: 1px solid rgba(216, 162, 74, 0.24);
+  background: rgba(216, 162, 74, 0.1);
+  color: #f0c06a;
+}
+
+@utility badge-basic {
+  @apply text-xs font-bold px-2 py-0.5 rounded-full uppercase;
+  border: 1px solid rgba(216, 162, 74, 0.24);
+  background: rgba(216, 162, 74, 0.1);
+  color: #f0c06a;
+  border-color: rgba(74, 155, 126, 0.34);
+  background: rgba(74, 155, 126, 0.13);
+  color: #58d68d;
+}
+
+@utility badge-lifetime {
+  @apply text-xs font-bold px-2 py-0.5 rounded-full uppercase;
+  border: 1px solid rgba(216, 162, 74, 0.24);
+  background: rgba(216, 162, 74, 0.1);
+  color: #f0c06a;
+  border-color: rgba(216, 162, 74, 0.4);
+  background: linear-gradient(
+    180deg,
+    rgba(216, 162, 74, 0.2),
+    rgba(216, 162, 74, 0.08)
+  );
+  color: #ffd07a;
+}
+
+@layer utilities {
+  :root {
+    --bg-base: #0a0a0f;
+    --bg-surface: #14141d;
+    --bg-elevated: #1c1c28;
+    --text-primary: #ededed;
+    --text-muted: #8a8a93;
+    --accent-gold: #d4a256;
+    --accent-gold-soft: #a37f3e;
+    --accent-jade: #4a9b7e;
+    --accent-crimson: #c44545;
+    --accent-lifetime: #a78bfa;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-sans:
+      'Geist', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+      sans-serif;
+    --font-mono: 'Geist Mono', 'SFMono-Regular', Consolas, monospace;
+  }
+
+  html {
+    background: var(--bg-base);
+    scroll-behavior: smooth;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
 }
 
 @layer base {
@@ -50,59 +187,6 @@ html {
   img {
     display: block;
     max-width: 100%;
-  }
-}
-
-@layer components {
-  .btn-primary {
-    @apply text-black font-semibold px-4 py-2 rounded-lg transition-colors;
-    border: 1px solid rgba(255, 231, 178, 0.26);
-    background: linear-gradient(180deg, #ffd07a 0%, #d99a34 100%);
-    box-shadow: 0 14px 34px rgba(216, 162, 74, 0.18);
-  }
-  .btn-outline {
-    @apply font-semibold px-4 py-2 rounded-lg transition-colors;
-    border: 1px solid rgba(216, 162, 74, 0.45);
-    color: var(--accent-gold);
-    background: rgba(10, 10, 15, 0.62);
-  }
-  .card {
-    @apply rounded-xl p-6;
-    border: 1px solid rgba(216, 162, 74, 0.22);
-    background:
-      radial-gradient(circle at 78% 0%, rgba(216, 162, 74, 0.09), transparent 15rem),
-      linear-gradient(180deg, rgba(20, 20, 29, 0.94), rgba(8, 10, 12, 0.96));
-    box-shadow: 0 22px 70px rgba(0, 0, 0, 0.32);
-  }
-  .input {
-    @apply text-gray-100 rounded-lg px-3 py-2 w-full
-           focus:outline-none focus:ring-2 focus:ring-brand-600 placeholder-gray-500;
-    border: 1px solid rgba(216, 162, 74, 0.22);
-    background: rgba(3, 4, 6, 0.72);
-  }
-  .select {
-    @apply text-gray-100 rounded-lg px-3 py-2
-           focus:outline-none focus:ring-2 focus:ring-brand-600;
-    border: 1px solid rgba(216, 162, 74, 0.22);
-    background: rgba(3, 4, 6, 0.72);
-  }
-  .badge-free,
-  .badge-basic,
-  .badge-lifetime {
-    @apply text-xs font-bold px-2 py-0.5 rounded-full uppercase;
-    border: 1px solid rgba(216, 162, 74, 0.24);
-    background: rgba(216, 162, 74, 0.1);
-    color: #f0c06a;
-  }
-  .badge-basic {
-    border-color: rgba(74, 155, 126, 0.34);
-    background: rgba(74, 155, 126, 0.13);
-    color: #58d68d;
-  }
-  .badge-lifetime {
-    border-color: rgba(216, 162, 74, 0.4);
-    background: linear-gradient(180deg, rgba(216, 162, 74, 0.2), rgba(216, 162, 74, 0.08));
-    color: #ffd07a;
   }
 }
 

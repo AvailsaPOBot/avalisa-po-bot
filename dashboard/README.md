@@ -1,6 +1,6 @@
 # Avalisa dashboard (avalisabot.vercel.app)
 
-React 19 site built with [Vite](https://vite.dev) and tested with [Vitest](https://vitest.dev).
+React 19 site built with [Vite](https://vite.dev), styled with Tailwind CSS 4 (theme lives in `src/index.css`), and tested with [Vitest](https://vitest.dev).
 Migrated from Create React App on 2026-10-09.
 
 ## Scripts

@@ -456,7 +456,7 @@ export default function Dashboard() {
               <h2 id="review-ask-heading" className="text-lg font-semibold text-white mb-1">Share your experience with Avalisa</h2>
               <p className="text-gray-400 text-sm">Reviews help other traders find the bot. If something is not working, our support team can help.</p>
             </div>
-            <div className="flex flex-col gap-2 sm:flex-row sm:min-w-[25rem]">
+            <div className="flex flex-col gap-2 sm:flex-row sm:min-w-100">
               <a
                 href={CHROME_WEB_STORE_REVIEW_URL}
                 target="_blank"
@@ -567,7 +567,7 @@ export default function Dashboard() {
                 </select>
               </div>
 
-              <button onClick={saveSettings} disabled={saving} className="btn-primary w-full mt-4 py-2.5">
+              <button onClick={saveSettings} disabled={saving} className="btn-primary w-full py-2.5">
                 {saving ? 'Saving...' : 'Save Settings'}
               </button>
             </div>
@@ -749,14 +749,14 @@ export default function Dashboard() {
             <div className="flex items-start justify-between">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="bg-brand-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded tracking-wider">AI</span>
+                  <span className="bg-brand-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-sm tracking-wider">AI</span>
                   <h2 className="text-lg font-semibold text-white">Mean Reversion v1</h2>
                 </div>
                 <p className="text-xs text-gray-400 mt-1">
                   Local rule engine — RSI + Bollinger Bands mean-reversion signals. Zero API calls.
                 </p>
               </div>
-              <span className="text-xs font-semibold text-green-400 bg-green-900/30 border border-green-800 px-2 py-1 rounded">
+              <span className="text-xs font-semibold text-green-400 bg-green-900/30 border border-green-800 px-2 py-1 rounded-sm">
                 ● Active
               </span>
             </div>
@@ -1048,7 +1048,7 @@ export default function Dashboard() {
             <button
               onClick={resetTokens}
               disabled={tokenResetting}
-              className="text-xs text-red-400 border border-red-800 rounded px-3 py-1 hover:bg-red-900/30 transition"
+              className="text-xs text-red-400 border border-red-800 rounded-sm px-3 py-1 hover:bg-red-900/30 transition"
             >
               {tokenResetting ? 'Resetting…' : 'Reset All Tokens'}
             </button>
