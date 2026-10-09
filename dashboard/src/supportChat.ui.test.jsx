@@ -3,8 +3,8 @@ import FloatingChat from './components/FloatingChat';
 import api from './lib/api';
 import Support from './pages/Support';
 
-jest.mock('./lib/api', () => ({
-  post: jest.fn(),
+vi.mock('./lib/api', () => ({
+  default: { post: vi.fn() },
 }));
 
 const escalationResponse = {
@@ -16,7 +16,7 @@ const escalationResponse = {
 };
 
 beforeAll(() => {
-  window.HTMLElement.prototype.scrollIntoView = jest.fn();
+  window.HTMLElement.prototype.scrollIntoView = vi.fn();
 });
 
 beforeEach(() => {

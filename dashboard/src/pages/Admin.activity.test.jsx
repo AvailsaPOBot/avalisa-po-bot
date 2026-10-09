@@ -2,9 +2,9 @@ import { render, screen } from '@testing-library/react';
 import Admin from './Admin';
 import api from '../lib/api';
 
-jest.mock('../lib/api', () => ({
+vi.mock('../lib/api', () => ({
   __esModule: true,
-  default: { get: jest.fn(), put: jest.fn(), post: jest.fn(), patch: jest.fn(), delete: jest.fn() },
+  default: { get: vi.fn(), put: vi.fn(), post: vi.fn(), patch: vi.fn(), delete: vi.fn() },
 }));
 
 function mockAdminRequests() {

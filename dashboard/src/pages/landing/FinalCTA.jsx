@@ -7,7 +7,7 @@ export default function FinalCTA() {
         className="landing-final-cta__background"
         aria-hidden="true"
         style={{
-          backgroundImage: `linear-gradient(180deg, rgba(10, 10, 15, 0.45), rgba(10, 10, 15, 0.9)), url(${process.env.PUBLIC_URL}/images/landing/cta-bg.jpg)`,
+          backgroundImage: `linear-gradient(180deg, rgba(10, 10, 15, 0.45), rgba(10, 10, 15, 0.9)), url(/images/landing/cta-bg.jpg)`,
         }}
       />
       <div className="landing-shell landing-final-cta__content landing-reveal">

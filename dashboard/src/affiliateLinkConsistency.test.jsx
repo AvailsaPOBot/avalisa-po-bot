@@ -11,24 +11,24 @@ import api from './lib/api';
 
 let mockUser = null;
 
-jest.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', () => ({
   Link: ({ children, to, ...props }) => <a href={to} {...props}>{children}</a>,
   useLocation: () => ({ pathname: '/pricing', hash: '', search: '' }),
-  useNavigate: () => jest.fn(),
+  useNavigate: () => vi.fn(),
   useSearchParams: () => [new URLSearchParams()],
-}), { virtual: true });
-
-jest.mock('./hooks/useAuth', () => ({
-  useAuth: () => ({ user: mockUser, logout: jest.fn(), register: jest.fn() }),
 }));
 
-jest.mock('./lib/api', () => ({
+vi.mock('./hooks/useAuth', () => ({
+  useAuth: () => ({ user: mockUser, logout: vi.fn(), register: vi.fn() }),
+}));
+
+vi.mock('./lib/api', () => ({
   __esModule: true,
   API_BASE: 'https://test-api.example',
-  default: { get: jest.fn(), put: jest.fn(), post: jest.fn(), patch: jest.fn(), delete: jest.fn() },
+  default: { get: vi.fn(), put: vi.fn(), post: vi.fn(), patch: vi.fn(), delete: vi.fn() },
 }));
 
-jest.mock('./lib/useLenis', () => ({ useLenis: jest.fn() }));
+vi.mock('./lib/useLenis', () => ({ useLenis: vi.fn() }));
 
 function sourceFiles(directory) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -44,7 +44,7 @@ function expectAffiliateHref(link) {
 beforeEach(() => {
   mockUser = null;
   api.get.mockReset();
-  global.fetch = jest.fn().mockResolvedValue({ json: async () => ({}) });
+  global.fetch = vi.fn().mockResolvedValue({ json: async () => ({}) });
 });
 
 test('affiliate URL literal appears exactly once across dashboard source', () => {

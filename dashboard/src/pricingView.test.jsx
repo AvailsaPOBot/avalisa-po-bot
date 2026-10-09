@@ -3,23 +3,23 @@ import Pricing from './pages/Pricing';
 
 let mockLocation = { pathname: '/pricing', hash: '', search: '' };
 
-jest.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', () => ({
   Link: ({ children, to, ...props }) => <a href={to} {...props}>{children}</a>,
   useLocation: () => mockLocation,
-  useNavigate: () => jest.fn(),
-}), { virtual: true });
-
-jest.mock('./lib/api', () => ({
-  __esModule: true,
-  default: { get: jest.fn(), post: jest.fn() },
+  useNavigate: () => vi.fn(),
 }));
 
-jest.mock('./hooks/useAuth', () => ({
+vi.mock('./lib/api', () => ({
+  __esModule: true,
+  default: { get: vi.fn(), post: vi.fn() },
+}));
+
+vi.mock('./hooks/useAuth', () => ({
   useAuth: () => ({ user: null }),
 }));
 
 function mockInitialRequests() {
-  global.fetch = jest.fn().mockResolvedValue({ json: () => Promise.resolve({}) });
+  global.fetch = vi.fn().mockResolvedValue({ json: () => Promise.resolve({}) });
 }
 
 describe('pricing view analytics', () => {
@@ -42,7 +42,7 @@ describe('pricing view analytics', () => {
   });
 
   test('mounting Pricing fires the pricing-view beacon exactly once', () => {
-    const beacon = jest.fn(() => true);
+    const beacon = vi.fn(() => true);
     Object.defineProperty(navigator, 'sendBeacon', { configurable: true, value: beacon });
 
     render(<Pricing />);
@@ -53,7 +53,7 @@ describe('pricing view analytics', () => {
   });
 
   test('mounting Pricing again in the same session sends nothing', () => {
-    const beacon = jest.fn(() => true);
+    const beacon = vi.fn(() => true);
     Object.defineProperty(navigator, 'sendBeacon', { configurable: true, value: beacon });
 
     const firstMount = render(<Pricing />);
@@ -67,11 +67,11 @@ describe('pricing view analytics', () => {
     Object.defineProperty(window, 'sessionStorage', {
       configurable: true,
       value: {
-        getItem: jest.fn(() => { throw new Error('storage blocked'); }),
-        setItem: jest.fn(() => { throw new Error('storage blocked'); }),
+        getItem: vi.fn(() => { throw new Error('storage blocked'); }),
+        setItem: vi.fn(() => { throw new Error('storage blocked'); }),
       },
     });
-    Object.defineProperty(navigator, 'sendBeacon', { configurable: true, value: jest.fn(() => true) });
+    Object.defineProperty(navigator, 'sendBeacon', { configurable: true, value: vi.fn(() => true) });
 
     expect(() => render(<Pricing />)).not.toThrow();
     expect(screen.getByRole('heading', { name: 'Simple, transparent pricing.' })).toBeInTheDocument();

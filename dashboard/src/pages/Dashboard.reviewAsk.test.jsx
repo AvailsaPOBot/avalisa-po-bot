@@ -2,17 +2,17 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import Dashboard from './Dashboard';
 import api from '../lib/api';
 
-jest.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', () => ({
   Link: ({ children, to, ...props }) => <a href={to} {...props}>{children}</a>,
   useSearchParams: () => [new URLSearchParams()],
-}), { virtual: true });
-
-jest.mock('../lib/api', () => ({
-  __esModule: true,
-  default: { get: jest.fn(), put: jest.fn(), post: jest.fn(), patch: jest.fn(), delete: jest.fn() },
 }));
 
-jest.mock('../hooks/useAuth', () => ({
+vi.mock('../lib/api', () => ({
+  __esModule: true,
+  default: { get: vi.fn(), put: vi.fn(), post: vi.fn(), patch: vi.fn(), delete: vi.fn() },
+}));
+
+vi.mock('../hooks/useAuth', () => ({
   useAuth: () => ({ user: { email: 'trader@example.com', license: { plan: 'basic' } } }),
 }));
 
@@ -82,9 +82,9 @@ test('continues to render when localStorage throws on read and write', async () 
   Object.defineProperty(window, 'localStorage', {
     configurable: true,
     value: {
-      getItem: jest.fn(() => { throw new Error('storage unavailable'); }),
-      setItem: jest.fn(() => { throw new Error('storage unavailable'); }),
-      clear: jest.fn(() => { throw new Error('storage unavailable'); }),
+      getItem: vi.fn(() => { throw new Error('storage unavailable'); }),
+      setItem: vi.fn(() => { throw new Error('storage unavailable'); }),
+      clear: vi.fn(() => { throw new Error('storage unavailable'); }),
     },
   });
 

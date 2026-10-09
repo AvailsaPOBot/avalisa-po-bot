@@ -3,23 +3,23 @@ import Pricing from './pages/Pricing';
 
 let mockLocation = { pathname: '/pricing', hash: '', search: '' };
 
-jest.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', () => ({
   Link: ({ children, to, ...props }) => <a href={to} {...props}>{children}</a>,
   useLocation: () => mockLocation,
-  useNavigate: () => jest.fn(),
-}), { virtual: true });
-
-jest.mock('./lib/api', () => ({
-  __esModule: true,
-  default: { get: jest.fn(), post: jest.fn() },
+  useNavigate: () => vi.fn(),
 }));
 
-jest.mock('./hooks/useAuth', () => ({
+vi.mock('./lib/api', () => ({
+  __esModule: true,
+  default: { get: vi.fn(), post: vi.fn() },
+}));
+
+vi.mock('./hooks/useAuth', () => ({
   useAuth: () => ({ user: null }),
 }));
 
 function mockInitialRequests() {
-  global.fetch = jest.fn().mockResolvedValue({ json: () => Promise.resolve({}) });
+  global.fetch = vi.fn().mockResolvedValue({ json: () => Promise.resolve({}) });
 }
 
 async function openBasicWhopCheckout() {
@@ -52,7 +52,7 @@ describe('checkout intent analytics', () => {
   });
 
   test('clicking Basic Whop checkout sends exactly one basic checkout signal', async () => {
-    const beacon = jest.fn(() => true);
+    const beacon = vi.fn(() => true);
     Object.defineProperty(navigator, 'sendBeacon', { configurable: true, value: beacon });
     const checkout = await openBasicWhopCheckout();
 
@@ -68,7 +68,7 @@ describe('checkout intent analytics', () => {
   test('a throwing beacon leaves the checkout click unblocked', async () => {
     Object.defineProperty(navigator, 'sendBeacon', {
       configurable: true,
-      value: jest.fn(() => { throw new Error('beacon unavailable'); }),
+      value: vi.fn(() => { throw new Error('beacon unavailable'); }),
     });
     const checkout = await openBasicWhopCheckout();
 

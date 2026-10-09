@@ -18,7 +18,7 @@ import { useLenis } from '../lib/useLenis';
 import { AFFILIATE_LINK } from '../lib/affiliate';
 import '../styles/luxury.css';
 
-const CHROME_EXTENSION_URL = process.env.REACT_APP_CHROME_STORE_URL || 'https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa';
+const CHROME_EXTENSION_URL = import.meta.env.REACT_APP_CHROME_STORE_URL || 'https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa';
 
 // The free demo leads. Measured 2026-08-30: every rival on the Web Store shelf leads with
 // "free" - the top result on all four queries tested is literally named "Free Pocket Option

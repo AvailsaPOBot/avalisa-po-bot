@@ -7,20 +7,17 @@
  * his purchase was gone and nearly sold him a second copy.
  */
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import Guide from './pages/Guide';
 
-// react-router-dom 7 is ESM-only and CRA's jest cannot resolve it, so Link is
-// stubbed. The stub is deliberately dumb: this suite is about the entitlement
+// Link is stubbed. The stub is deliberately dumb: this suite is about the entitlement
 // branches, not about routing.
-jest.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', () => ({
   Link: ({ children }) => children,
-}), { virtual: true });
+}));
 
-// axios is ESM and CRA's jest cannot parse it; every other suite here mocks
-// this module for the same reason. API_BASE is the only export Guide uses.
-jest.mock('./lib/api', () => ({ API_BASE: 'https://backend.test' }));
-
-// eslint-disable-next-line import/first
-const Guide = require('./pages/Guide').default;
+// The API module is mocked so no real network client loads. API_BASE is the
+// only export Guide uses.
+vi.mock('./lib/api', () => ({ API_BASE: 'https://backend.test' }));
 
 const renderGuide = () => render(<Guide />);
 
@@ -32,7 +29,7 @@ const submit = (uid) => {
 afterEach(() => { delete global.fetch; });
 
 const mockOnce = (body, ok = true) => {
-  global.fetch = jest.fn().mockResolvedValue({ ok, json: async () => body });
+  global.fetch = vi.fn().mockResolvedValue({ ok, json: async () => body });
 };
 
 test('the entitlement lookup is reachable from the guide and calls the real route', async () => {
@@ -75,7 +72,7 @@ test('an unlinked id is told to email us before paying twice', async () => {
 });
 
 test('a failed lookup is NEVER rendered as "no licence"', async () => {
-  global.fetch = jest.fn().mockRejectedValue(new Error('network down'));
+  global.fetch = vi.fn().mockRejectedValue(new Error('network down'));
   renderGuide();
   submit('5131350');
 
@@ -85,7 +82,7 @@ test('a failed lookup is NEVER rendered as "no licence"', async () => {
 });
 
 test('a non-numeric id is rejected client-side without calling the server', async () => {
-  global.fetch = jest.fn();
+  global.fetch = vi.fn();
   renderGuide();
   submit('someone@example.com');
 

@@ -13,7 +13,7 @@ import {
 } from '../lib/checkout';
 import { AFFILIATE_LINK } from '../lib/affiliate';
 
-const API_BASE = process.env.REACT_APP_API_URL || 'https://avalisa-backend.onrender.com';
+const API_BASE = import.meta.env.REACT_APP_API_URL || 'https://avalisa-backend.onrender.com';
 const PRICING_VIEW_SESSION_KEY = 'avalisa-pricing-view-sent';
 
 export function trackCheckoutClick(plan) {

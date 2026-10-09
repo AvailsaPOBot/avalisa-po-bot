@@ -4,22 +4,22 @@ import Pricing from './pages/Pricing';
 
 let mockLocation = { pathname: '/pricing', hash: '' };
 
-jest.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', () => ({
   Link: ({ children, to, ...props }) => <a href={to} {...props}>{children}</a>,
   useLocation: () => mockLocation,
-  useNavigate: () => jest.fn(),
-}), { virtual: true });
+  useNavigate: () => vi.fn(),
+}));
 
-jest.mock('./lib/api', () => ({
+vi.mock('./lib/api', () => ({
   __esModule: true,
   default: {
-    get: jest.fn(),
-    post: jest.fn(),
+    get: vi.fn(),
+    post: vi.fn(),
   },
   API_BASE: 'https://test-api.example',
 }));
 
-jest.mock('./hooks/useAuth', () => ({
+vi.mock('./hooks/useAuth', () => ({
   useAuth: () => ({
     user: {
       email: 'customer@example.com',
@@ -29,22 +29,22 @@ jest.mock('./hooks/useAuth', () => ({
 }));
 
 beforeAll(() => {
-  window.HTMLElement.prototype.scrollIntoView = jest.fn();
+  window.HTMLElement.prototype.scrollIntoView = vi.fn();
   window.requestAnimationFrame = (callback) => callback();
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
     value: (query) => ({
       matches: false,
       media: query,
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
     }),
   });
 });
 
 beforeEach(() => {
   window.HTMLElement.prototype.scrollIntoView.mockClear();
-  global.fetch = jest.fn().mockResolvedValue({
+  global.fetch = vi.fn().mockResolvedValue({
     json: () => Promise.resolve({}),
   });
 });

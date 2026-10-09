@@ -14,26 +14,24 @@ const LIVE_PRO_CHECKOUT_URL = 'https://whop.com/avalisabot/products/pro-9d-c997/
 
 let mockLocation = { pathname: '/pricing', hash: '' };
 
-jest.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', () => ({
   Link: ({ children, to, ...props }) => <a href={to} {...props}>{children}</a>,
   useLocation: () => mockLocation,
-  useNavigate: () => jest.fn(),
-}), { virtual: true });
+  useNavigate: () => vi.fn(),
+}));
 
-jest.mock('./lib/api', () => ({
+vi.mock('./lib/api', () => ({
   __esModule: true,
-  default: { get: jest.fn().mockResolvedValue({ data: { enabled: false } }), post: jest.fn() },
+  default: { get: vi.fn().mockResolvedValue({ data: { enabled: false } }), post: vi.fn() },
   API_BASE: 'https://test-api.example',
 }));
 
-jest.mock('./hooks/useAuth', () => ({
+vi.mock('./hooks/useAuth', () => ({
   useAuth: () => ({ user: null }),
 }));
 
 describe('checkout availability', () => {
-  const OLD_ENV = process.env;
-  beforeEach(() => { process.env = { ...OLD_ENV }; });
-  afterAll(() => { process.env = OLD_ENV; });
+  afterEach(() => { vi.unstubAllEnvs(); });
 
   async function openWhopCheckout(planIndex) {
     const chooser = await screen.findAllByRole('button', { name: /choose payment method/i });
@@ -61,7 +59,7 @@ describe('checkout availability', () => {
   });
 
   test('a bogus Basic Whop environment value cannot override the rendered checkout', async () => {
-    process.env.REACT_APP_WHOP_BASIC_URL = 'https://whop.com/avalisabot/basic-plan-7d-48b3/';
+    vi.stubEnv('REACT_APP_WHOP_BASIC_URL', 'https://whop.com/avalisabot/basic-plan-7d-48b3/');
     render(<Pricing />);
     expect(await openWhopCheckout(0)).toHaveAttribute('href', LIVE_BASIC_CHECKOUT_URL);
   });

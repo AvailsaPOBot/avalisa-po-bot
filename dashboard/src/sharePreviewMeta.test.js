@@ -3,7 +3,8 @@ const path = require('path');
 const crypto = require('crypto');
 
 const publicDirectory = path.resolve(__dirname, '..', 'public');
-const indexHtml = fs.readFileSync(path.join(publicDirectory, 'index.html'), 'utf8');
+const indexHtmlPath = path.resolve(__dirname, '..', 'index.html');
+const indexHtml = fs.readFileSync(indexHtmlPath, 'utf8');
 
 function metaContent(attribute, value) {
   const tag = indexHtml

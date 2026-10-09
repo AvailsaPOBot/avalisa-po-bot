@@ -5,7 +5,7 @@ import { useAuth } from '../hooks/useAuth';
 import '../styles/luxury.css';
 
 const CHROME_EXTENSION_URL =
-  process.env.REACT_APP_CHROME_STORE_URL ||
+  import.meta.env.REACT_APP_CHROME_STORE_URL ||
   'https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa';
 
 // Avalisa runs *inside* the Pocket Option page — that is the only way it can read the
