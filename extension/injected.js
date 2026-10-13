@@ -22,7 +22,10 @@
 
   // ── WebSocket interceptor ──────────────────────────────────────────────────
   const _WS = window.WebSocket;
-  let _latestWs = null;
+  // PO can hold several market sockets at once (seen on Real 2026-10-13: the
+  // bot's last-created socket was no longer OPEN while api-msk.po.market was
+  // live), so keep them all and send history requests to the live one.
+  const _poSockets = new Set();
 
   function AvalisaWS(url, proto) {
     const ws = proto ? new _WS(url, proto) : new _WS(url);
@@ -32,10 +35,13 @@
 
     // Track the latest PO websocket for history requests
     if (url && (url.includes('po.market') || url.includes('pocketoption') || url.includes('po.cash') || url.includes('po.trade'))) {
-      _latestWs = ws;
+      ws._avalisaLastMsg = 0;
+      _poSockets.add(ws);
+      ws.addEventListener('close', () => _poSockets.delete(ws));
     }
 
     ws.addEventListener('message', function (e) {
+      if (_poSockets.has(ws)) ws._avalisaLastMsg = Date.now();
       if (typeof e.data === 'string') {
         // Check for Socket.IO binary event placeholder containing history data
         if (/^45\d/.test(e.data) && (e.data.includes('updateHistoryNewFast') || e.data.includes('updateCharts'))) {
@@ -130,13 +136,24 @@
   // period, which is what we need: PO always returns a fixed ~1300-1400 raw
   // ticks (~11 minutes), so the candle count we get is span/period —
   // ~22 candles at 30s, but only ~10 at 60s.
+  // The live market socket is the open one that streamed most recently.
+  function pickMarketWs() {
+    let best = null;
+    for (const ws of _poSockets) {
+      if (ws.readyState !== 1) continue;
+      if (!best || ws._avalisaLastMsg >= best._avalisaLastMsg) best = ws;
+    }
+    return best;
+  }
+
   window.avalisaRequestHistory = function (asset, periodSec) {
-    if (!_latestWs || _latestWs.readyState !== 1) {
-      debugWarn('[Avalisa] avalisaRequestHistory: no ready WS (state:', _latestWs?.readyState, ')');
+    const ws = pickMarketWs();
+    if (!ws) {
+      debugWarn('[Avalisa] avalisaRequestHistory: no ready WS (sockets:', _poSockets.size, ')');
       return false;
     }
     const msg = '42["changeSymbol",' + JSON.stringify({ asset, period: periodSec }) + ']';
-    _latestWs.send(msg);
+    ws.send(msg);
     debugLog('[Avalisa] History request sent:', msg);
     return true;
   };

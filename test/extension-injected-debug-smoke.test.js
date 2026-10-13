@@ -124,6 +124,30 @@ function createHarness({ debug = false } = {}) {
   b.dispatchMessage(tick);
   await Promise.resolve(); await Promise.resolve();
   assert.ok(concurrent.posted.some(m => m.type === 'AVALISA_WS_TICK' && m.data === 'tick-payload'));
+
+  // Real account: a later PO socket closes while the market socket stays live.
+  // History must go to the live socket, not the last one created.
+  const multi = createHarness();
+  const live = new multi.window.WebSocket('wss://api-msk.po.market/socket.io/');
+  live.send = data => multi.sent.push(['live', data]);
+  const stale = new multi.window.WebSocket('wss://api-eu.po.market/socket.io/');
+  stale.send = data => multi.sent.push(['stale', data]);
+  live.dispatchMessage('42["updateStream",{}]');
+  stale.readyState = 3;
+  stale.listeners.close?.();
+  assert.equal(multi.window.avalisaRequestHistory('AUDCAD_otc', 30), true);
+  assert.deepEqual(multi.sent.pop(), ['live', '42["changeSymbol",{"asset":"AUDCAD_otc","period":30}]']);
+  // An open but silent socket must not win over the streaming one.
+  const silent = new multi.window.WebSocket('wss://api-fr.po.market/socket.io/');
+  silent.send = data => multi.sent.push(['silent', data]);
+  live.dispatchMessage('42["updateStream",{}]');
+  assert.equal(multi.window.avalisaRequestHistory('EURUSD_otc', 30), true);
+  assert.equal(multi.sent.pop()[0], 'live');
+  live.readyState = 3;
+  live.listeners.close?.();
+  silent.readyState = 3;
+  assert.equal(multi.window.avalisaRequestHistory('EURUSD_otc', 30), false);
+
   console.log('Extension injected debug and concurrent socket smoke passed.');
 })().catch(err => {
   console.error(err);

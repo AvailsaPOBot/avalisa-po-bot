@@ -10,7 +10,7 @@
 |---|---|---|---|
 | Extension (CWS **public shelf**) | **2.4.12** | Users' Chrome via Web Store | CWS listing `mkcpdbnlofljijfjiglkodddicpgdapa` |
 | Extension (CWS **package**, in review) | **2.4.19** | uploaded 12 Sep, awaiting Google | CWS API `crxVersion` (`projection=DRAFT`) |
-| Extension (repo / local dev) | **2.4.22** | Mr. Oil's Chrome (unpacked from this repo `extension/`) | `extension/manifest.json` |
+| Extension (repo / local dev) | **2.4.23** | Mr. Oil's Chrome (unpacked from this repo `extension/`) | `extension/manifest.json` |
 | Backend | main @ `f2c1dc4` | Render (auto-deploy from GitHub `main`) | `/health` `commit` field |
 | Dashboard/site | main @ `dcc17c8` | Vercel (auto-deploy from GitHub `main`) | bundle `REACT_APP_VERCEL_GIT_COMMIT_SHA` |
 | Webapp Bot (mobile proof) | v1.5-expiry-confirmed | Mac WKWebView shell / mobile webview | `mobile-proof/` |
@@ -18,6 +18,17 @@
 ⚠️ **The repo `extension/` folder is LIVE** — Mr. Oil's Chrome loads it unpacked.
 Never leave it broken or mid-refactor. Smoke test (`node test/extension-settings-smoke.test.js`)
 must pass before any commit that touches it. The AGE dispatcher enforces this (fail-closed revert).
+
+## 2.4.23 — 2026-10-13 — Real account: bot no longer stuck scanning
+
+Customer (PO ID 141514294, Pro): "works in demo, on real it only scans, even at low
+intensity." Cause: `injected.js` sent the `changeSymbol` history request only to the
+last-created PO socket. On Real that socket was no longer OPEN while
+`api-msk.po.market` streamed, so `avalisaRequestHistory()` returned false, favorites never
+got seeded candles, and the scanner cycled `Loading 11/12` → `SKIP (no_ready_favorite)`.
+Now every PO market socket is tracked (dropped on close) and the request goes to the open
+one that streamed most recently. Live-tested 2026-10-13: Real reached `Trade #1` in ~20 s
+($0 balance, order refused by PO); Demo unchanged. PR #10.
 
 ## 2.4.22 — 2026-10-06 — expired sign-in no longer shows a Pro user as "DEMO"
 
