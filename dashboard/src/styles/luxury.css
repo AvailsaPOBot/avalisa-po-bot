@@ -4858,3 +4858,11 @@
   color: var(--lux-gold-2);
   opacity: 0.9;
 }
+
+/* Phone Webapp Bot setup on /webapp */
+.lux-webapp-card.is-phone { border-color: rgba(216, 162, 74, 0.4); }
+.lux-webapp-actions { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+.lux-webapp-actions .avalisa-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 44px; cursor: pointer; }
+.lux-webapp-steps--phone { margin-top: 1.25rem; }
+.lux-webapp-phone-hint { margin: 1rem 0 0; font-size: 0.9rem; }
+@media (max-width: 680px) { .lux-webapp-actions .avalisa-button { width: 100%; } }

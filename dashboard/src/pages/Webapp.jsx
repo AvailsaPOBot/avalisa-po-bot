@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Check, Laptop, Monitor, Puzzle, Smartphone } from 'lucide-react';
+import { ArrowRight, Check, Copy, Laptop, Monitor, Puzzle, Smartphone } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import '../styles/luxury.css';
 
@@ -25,6 +25,74 @@ function detectPlatform() {
   return isChromium ? 'desktop-chromium' : 'desktop-other';
 }
 
+// Pocket Option's mobile site, opened on the demo account. The bot itself refuses to
+// trade until it can read Demo or Real from the page.
+const PO_MOBILE_URL = 'https://m.po.trade/en/cabinet/demo-quick-high-low/';
+
+// The bookmark the phone runs. It only adds our loader to the page that is open; the
+// loader refuses to do anything off Pocket Option.
+export function bookmarkCode(origin) {
+  return (
+    "javascript:(function(){var s=document.createElement('script');" +
+    `s.src='${origin}/webapp-bot/loader.js?t='+Date.now();` +
+    'document.body.appendChild(s);})();void 0'
+  );
+}
+
+const PHONE_STEPS = {
+  ios: [
+    ['Save the Avalisa bookmark', 'Tap Copy bookmark code above. In Safari tap the Share button, then Add Bookmark, name it Avalisa and save. Open Bookmarks, tap Edit, open the Avalisa bookmark, clear the address and paste the code.'],
+    ['Open Pocket Option', 'Use the Open Pocket Option button, sign in to Pocket Option and stay on the Demo account for your first run.'],
+    ['Tap the bookmark', 'On the Pocket Option page, open Bookmarks and tap Avalisa. The Avalisa panel opens at the bottom of the screen — sign in there with your Avalisa account and press Start. If Pocket Option reloads, tap the bookmark again; the bot picks up where it was.'],
+  ],
+  android: [
+    ['Save the Avalisa bookmark', 'Tap Copy bookmark code above. In Chrome tap ⋮ then the star to bookmark this page, tap Edit, name it Avalisa, clear the URL and paste the code.'],
+    ['Open Pocket Option', 'Use the Open Pocket Option button, sign in to Pocket Option and stay on the Demo account for your first run.'],
+    ['Type Avalisa in the address bar', 'On the Pocket Option page, tap the address bar, type Avalisa and tap the bookmark in the suggestions (Chrome only runs it from there). The Avalisa panel opens at the bottom — sign in with your Avalisa account and press Start. If Pocket Option reloads, run the bookmark again; the bot picks up where it was.'],
+  ],
+};
+
+function PhoneSetup({ platform }) {
+  const [copied, setCopied] = useState(false);
+  const code = bookmarkCode(typeof window === 'undefined' ? 'https://avalisabot.vercel.app' : window.location.origin);
+  const steps = PHONE_STEPS[platform === 'android' ? 'android' : 'ios'];
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+    } catch (_) {
+      // Clipboard can be refused (older iOS, private tabs); the code is shown below to copy by hand.
+      setCopied(false);
+      window.prompt('Copy this bookmark code:', code);
+    }
+  }
+
+  return (
+    <>
+      <div className="lux-webapp-actions">
+        <button type="button" className="avalisa-button avalisa-button--gold" onClick={copy}>
+          {copied ? 'Copied' : 'Copy bookmark code'} {copied ? <Check size={17} /> : <Copy size={17} />}
+        </button>
+        <a className="avalisa-button avalisa-button--dark" href={PO_MOBILE_URL} target="_blank" rel="noreferrer">
+          Open Pocket Option <ArrowRight size={17} />
+        </a>
+      </div>
+      <ol className="lux-webapp-steps lux-webapp-steps--phone">
+        {steps.map(([title, text], i) => (
+          <li key={title}>
+            <span className="lux-webapp-steps__mark">{i + 1}</span>
+            <div>
+              <strong>{title}</strong>
+              <p>{text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </>
+  );
+}
+
 const COPY = {
   'desktop-chromium': {
     icon: Monitor,
@@ -43,23 +111,23 @@ const COPY = {
   ios: {
     icon: Smartphone,
     label: 'iPhone',
-    status: 'in-development',
-    headline: 'Mobile access is in development.',
-    body: 'Pocket Option on mobile is a web page, so Avalisa needs an app that loads that page and runs the bot inside it. A browser tab cannot do this — a page on one site is not allowed to control another site. That app is being built. Until it ships, desktop Chrome is the working path.',
+    status: 'phone',
+    headline: 'Run Avalisa in Safari.',
+    body: 'Avalisa has to run inside the Pocket Option page, so on a phone it comes in through a bookmark: open Pocket Option in Safari, tap the Avalisa bookmark, and the bot panel opens at the bottom of the trading page. Nothing to install.',
   },
   ipados: {
     icon: Smartphone,
     label: 'iPad',
-    status: 'in-development',
-    headline: 'Mobile access is in development.',
-    body: 'Pocket Option on tablet is a web page, so Avalisa needs an app that loads that page and runs the bot inside it. That app is being built. Until it ships, desktop Chrome is the working path.',
+    status: 'phone',
+    headline: 'Run Avalisa in Safari.',
+    body: 'Avalisa has to run inside the Pocket Option page, so on a tablet it comes in through a bookmark: open Pocket Option in Safari, tap the Avalisa bookmark, and the bot panel opens on the trading page. Nothing to install.',
   },
   android: {
     icon: Smartphone,
     label: 'Android',
-    status: 'in-development',
-    headline: 'Mobile access is in development.',
-    body: 'Pocket Option on mobile is a web page, so Avalisa needs an app that loads that page and runs the bot inside it. That app is being built. Until it ships, desktop Chrome is the working path.',
+    status: 'phone',
+    headline: 'Run Avalisa in Chrome.',
+    body: 'Avalisa has to run inside the Pocket Option page, so on a phone it comes in through a bookmark: open Pocket Option in Chrome, tap the Avalisa bookmark, and the bot panel opens at the bottom of the trading page. Nothing to install.',
   },
   unknown: {
     icon: Laptop,
@@ -97,7 +165,9 @@ export default function Webapp() {
           </header>
           <p>{info.body}</p>
 
-          {ready ? (
+          {info.status === 'phone' ? (
+            <PhoneSetup platform={platform} />
+          ) : ready ? (
             <a
               className="avalisa-button avalisa-button--gold"
               href={CHROME_EXTENSION_URL}
@@ -117,6 +187,13 @@ export default function Webapp() {
             </a>
           )}
         </article>
+
+        {info.status !== 'phone' && (
+          <p className="lux-webapp-intro lux-webapp-phone-hint">
+            On a phone? Open <strong>avalisabot.vercel.app/webapp</strong> in your phone&apos;s
+            browser to set up the phone version.
+          </p>
+        )}
 
         {/* Two separate sign-ins, and people conflate them: the Avalisa account gates
             the bot's licence, the Pocket Option account is the broker the bot trades on.

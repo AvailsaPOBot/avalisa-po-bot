@@ -2030,31 +2030,24 @@
     return statusPayload();
   }
 
-  try {
-    const NativeWS = window.WebSocket;
-    function AvalisaProofWebSocket(url, protocols) {
-      const ws = protocols ? new NativeWS(url, protocols) : new NativeWS(url);
-      ws.addEventListener('message', event => {
-        if (typeof event.data === 'string') {
-          parseSocketMessage(event.data);
-          post();
-        } else if (event.data instanceof Blob) {
-          event.data.text().then(text => {
-            try {
-              const parsed = JSON.parse(text);
-              if (Array.isArray(parsed)) {
-                parsed.forEach(tick => Array.isArray(tick) && tick.length >= 3 && ingestTick(tick[0], tick[1], tick[2]));
-                state.tickSeen = true;
-              } else {
-                seedHistory(parsed);
-              }
-              post();
-            } catch (_) {}
-          });
-        } else if (event.data instanceof ArrayBuffer) {
+  // Two ways in. The app shells inject this file at document start, so wrapping the
+  // WebSocket constructor catches PO's socket as it is created. The website's phone
+  // loader runs it after PO has loaded — the socket already exists, and PO's socket
+  // library holds its own reference to the native constructor — so a late start adopts
+  // the live socket the next time PO sends on it (its heartbeat does within seconds).
+  const lateStart = document.readyState !== 'loading';
+
+  function attachSocket(ws) {
+    if (!ws || ws.__avalisaAttached) return ws;
+    ws.__avalisaAttached = true;
+    ws.addEventListener('message', event => {
+      if (typeof event.data === 'string') {
+        parseSocketMessage(event.data);
+        post();
+      } else if (event.data instanceof Blob) {
+        event.data.text().then(text => {
           try {
-            const textData = new TextDecoder().decode(event.data);
-            const parsed = JSON.parse(textData);
+            const parsed = JSON.parse(text);
             if (Array.isArray(parsed)) {
               parsed.forEach(tick => Array.isArray(tick) && tick.length >= 3 && ingestTick(tick[0], tick[1], tick[2]));
               state.tickSeen = true;
@@ -2063,13 +2056,44 @@
             }
             post();
           } catch (_) {}
-        }
-      });
-      const nativeSend = ws.send.bind(ws);
-      ws.send = function (data) {
-        captureOutgoingSend(data, ws);
-        return nativeSend(data);
+        });
+      } else if (event.data instanceof ArrayBuffer) {
+        try {
+          const textData = new TextDecoder().decode(event.data);
+          const parsed = JSON.parse(textData);
+          if (Array.isArray(parsed)) {
+            parsed.forEach(tick => Array.isArray(tick) && tick.length >= 3 && ingestTick(tick[0], tick[1], tick[2]));
+            state.tickSeen = true;
+          } else {
+            seedHistory(parsed);
+          }
+          post();
+        } catch (_) {}
+      }
+    });
+    return ws;
+  }
+
+  try {
+    const NativeWS = window.WebSocket;
+    if (lateStart) {
+      const nativeProtoSend = NativeWS.prototype.send;
+      NativeWS.prototype.send = function (data) {
+        attachSocket(this);
+        captureOutgoingSend(data, this);
+        return nativeProtoSend.call(this, data);
       };
+    }
+    function AvalisaProofWebSocket(url, protocols) {
+      const ws = protocols ? new NativeWS(url, protocols) : new NativeWS(url);
+      attachSocket(ws);
+      if (!lateStart) {
+        const nativeSend = ws.send.bind(ws);
+        ws.send = function (data) {
+          captureOutgoingSend(data, ws);
+          return nativeSend(data);
+        };
+      }
       return ws;
     }
     AvalisaProofWebSocket.prototype = NativeWS.prototype;

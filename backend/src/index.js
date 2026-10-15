@@ -56,6 +56,7 @@ const allowedOrigins = [
   process.env.FRONTEND_URL,
   'https://avalisabot.vercel.app',
   'https://pocketoption.com',
+  'https://m.pocketoption.com', // phones are redirected here; the Webapp Bot calls us from it
   'https://po.trade',
   'https://m.po.trade',
   'https://po.cash',
