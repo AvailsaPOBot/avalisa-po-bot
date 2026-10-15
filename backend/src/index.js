@@ -51,7 +51,7 @@ app.set('trust proxy', 1);
 // Security headers (helmet defaults; safe for a JSON API). No-op if helmet isn't installed yet.
 if (helmet) app.use(helmet());
 
-// CORS — allow dashboard + extension
+// CORS — allow dashboard, extension, and the phone Webapp Bot on Pocket Option's mobile sites
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   'https://avalisabot.vercel.app',
