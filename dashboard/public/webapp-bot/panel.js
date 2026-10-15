@@ -374,7 +374,7 @@
     else message = s.lastBotError || (blockers.length ? plainBlocker(blockers[0])
       : (!s.lastTradeStatus || /^settings updated|^setting:/i.test(s.lastTradeStatus) ? 'Ready — press Start' : s.lastTradeStatus));
     status.textContent = 'Status: ' + message;
-    var problem = !s.botRunning && (offline || s.lastBotError || blockers.length || s.pageState === 'login');
+    var problem = !s.botRunning && !checking && (offline || s.lastBotError || s.pageState === 'login');
     status.className = 'av-status status' + (s.botRunning ? ' running' : problem ? ' error' : '');
     $('.plan-line').textContent = checking ? 'Plan: checking…'
       : s.authStatus === 'error' ? 'Plan: not checked yet'
