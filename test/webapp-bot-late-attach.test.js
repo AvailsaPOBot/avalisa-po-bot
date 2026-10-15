@@ -47,3 +47,29 @@ test('late start adopts a socket that was opened before the runtime loaded', asy
     win.close(); // stops the runtime's scan interval so the test process can exit
   }
 });
+
+test('adoptSession signs the panel in with a token from the Avalisa site', async () => {
+  const dom = new JSDOM('<!doctype html><html><head></head><body><div>QT Demo USD 100.00</div></body></html>', {
+    url: 'https://m.po.trade/en/cabinet/demo-quick-high-low/',
+    runScripts: 'outside-only',
+  });
+  const win = dom.window;
+  const seen = [];
+  win.fetch = async (url, options = {}) => {
+    seen.push([new URL(String(url)).pathname, options.headers && options.headers.Authorization]);
+    return new Response(JSON.stringify({ allowed: true, plan: 'pro', tradesRemaining: null }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+  };
+  win.TextDecoder = TextDecoder;
+  win.AbortController = AbortController;
+  try {
+    win.eval(`${runtime}\n//# sourceURL=ProofRuntime.js`);
+    const result = await win.AvalisaProof.adoptSession('jwt-from-site', { id: 'u1', email: 'a@b.c' });
+    assert.equal(result.authStatus, 'logged_in');
+    assert.equal(result.licensePlan, 'pro');
+    assert.equal(result.userEmail, 'a@b.c');
+    assert.ok(seen.some(([p, auth]) => p === '/api/license/check' && auth === 'Bearer jwt-from-site'), 'licence checked with the adopted token');
+    assert.match(win.localStorage.getItem('avalisa.webappBot.auth.v1'), /jwt-from-site/);
+  } finally {
+    win.close();
+  }
+});

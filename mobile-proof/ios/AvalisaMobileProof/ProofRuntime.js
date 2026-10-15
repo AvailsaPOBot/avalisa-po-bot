@@ -377,6 +377,22 @@
     }
   }
 
+  // The website's phone panel never asks for a password on Pocket Option's page (iOS
+  // offers the saved po.trade password there). The user signs in on the Avalisa site
+  // instead, and that page hands back the same token /api/auth/login issues.
+  async function adoptSession(token, user) {
+    if (!token || typeof token !== 'string') return statusPayload();
+    state.jwt = token;
+    state.userId = user?.id || null;
+    state.userEmail = user?.email || null;
+    state.authStatus = 'logged_in';
+    persistAuth();
+    await checkLicense();
+    if (state.authStatus !== 'error') state.lastTradeStatus = `logged in as ${state.userEmail || 'Avalisa account'}`;
+    post();
+    return statusPayload();
+  }
+
   async function logout() {
     clearAuth();
     await checkLicense();
@@ -482,7 +498,10 @@
         viewport.name = 'viewport';
         document.head?.appendChild(viewport);
       }
-      viewport.content = 'width=device-width, initial-scale=1, viewport-fit=cover';
+      // maximum-scale stops iOS Safari's auto-zoom when the bot fills PO's amount box
+      // (seen on a real iPhone: every trade zoomed the page and pushed Stop off-screen).
+      // iOS still lets the user pinch-zoom; it ignores maximum-scale for that.
+      viewport.content = 'width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover';
     } catch (_) {}
   }
 
@@ -2125,6 +2144,7 @@
     startDemoMartingale,
     startBot: startDemoMartingale,
     login,
+    adoptSession,
     logout,
     checkLicense,
     stopBot,

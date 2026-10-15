@@ -7,7 +7,7 @@
 (function () {
   var script = document.currentScript;
   var base = script && script.src ? script.src.replace(/[^/]*$/, '') : 'https://avalisabot.vercel.app/webapp-bot/';
-  var version = '1';
+  var version = '7';
 
   if (!/(^|\.)(po\.trade|po\.cash|pocketoption\.com)$/i.test(location.hostname)) {
     if (window.confirm('Avalisa runs on the Pocket Option page. Open Pocket Option now, then tap the Avalisa bookmark again.')) {
@@ -16,6 +16,8 @@
     return;
   }
   if (window.AvalisaWebappPanel) { window.AvalisaWebappPanel.open(); return; }
+  // The panel sends sign-in to this same site and only accepts the session back from it.
+  window.__AVALISA_WEBAPP_ORIGIN = base.replace(/^(https?:\/\/[^/]+).*$/, '$1');
 
   function add(name, next) {
     var el = document.createElement('script');

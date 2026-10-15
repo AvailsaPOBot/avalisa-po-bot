@@ -40,10 +40,14 @@ export function bookmarkCode(origin) {
 }
 
 const PHONE_STEPS = {
+  // Walked on a real iPhone (Safari, Oct 2026): Share has no Add Bookmark, the address
+  // can only be edited from the Bookmarks list, and Safari never suggests a javascript:
+  // bookmark when you type its name — so iPhone users run it from the Bookmarks tab.
   ios: [
-    ['Save the Avalisa bookmark', 'Tap Copy bookmark code above. In Safari tap the Share button, then Add Bookmark, name it Avalisa and save. Open Bookmarks, tap Edit, open the Avalisa bookmark, clear the address and paste the code.'],
+    ['Save a bookmark', 'Tap Copy bookmark code above. Then tap ≡ at the left of Safari\'s address bar, choose Add Bookmark to…, name it Avalisa and tap Save.'],
+    ['Put the code in it', 'Tap the address bar, then the book icon (Bookmarks). Press and hold Avalisa, tap Edit, clear the address, paste the code and tap Save.'],
     ['Open Pocket Option', 'Use the Open Pocket Option button, sign in to Pocket Option and stay on the Demo account for your first run.'],
-    ['Tap the bookmark', 'On the Pocket Option page, open Bookmarks and tap Avalisa. The Avalisa panel opens at the bottom of the screen — sign in there with your Avalisa account and press Start. If Pocket Option reloads, tap the bookmark again; the bot picks up where it was.'],
+    ['Tap Avalisa on the trading page', 'On the Pocket Option trading page, tap the address bar, then the book icon, then Avalisa. The Avalisa panel opens at the bottom of the screen — sign in there with your Avalisa account and press Start. If Pocket Option reloads, tap it again; the bot picks up where it was.'],
   ],
   android: [
     ['Save the Avalisa bookmark', 'Tap Copy bookmark code above. In Chrome tap ⋮ then the star to bookmark this page, tap Edit, name it Avalisa, clear the URL and paste the code.'],

@@ -20,6 +20,7 @@ import Privacy from './pages/Privacy';
 import Guide from './pages/Guide';
 import NotFound from './pages/NotFound';
 import Webapp from './pages/Webapp';
+import WebappBotConnect from './pages/WebappBotConnect';
 import Admin from './pages/Admin';
 
 function AppShell() {
@@ -77,6 +78,7 @@ function AppShell() {
           <AdminRoute><Admin /></AdminRoute>
         } />
         <Route path="/webapp" element={<Webapp />} />
+        <Route path="/webapp-bot/connect" element={<WebappBotConnect />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       {isLanding && <FloatingChat deferUntilScroll />}

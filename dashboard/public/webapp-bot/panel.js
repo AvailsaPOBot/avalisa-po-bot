@@ -10,7 +10,7 @@
   var proof = window.AvalisaProof;
   if (!proof) return;
 
-  var SITE = 'https://avalisabot.vercel.app';
+  var SITE = window.__AVALISA_WEBAPP_ORIGIN || 'https://avalisabot.vercel.app';
   var SETTINGS_KEY = 'avalisa.webappBot.panelSettings.v1';
   var OPEN_KEY = 'avalisa.webappBot.panelOpen.v1';
 
@@ -61,7 +61,7 @@
     '.pill{pointer-events:auto;position:fixed;right:12px;bottom:calc(46vh + env(safe-area-inset-bottom));display:flex;align-items:center;gap:8px;height:44px;padding:0 16px;border-radius:22px;border:1px solid #2D2D5B;background:#1A1A2E;color:#E2E8F0;font-size:14px;font-weight:600;box-shadow:0 6px 24px rgba(0,0,0,.45)}',
     '.dot{width:9px;height:9px;border-radius:50%;background:#94A3B8}',
     '.dot.on{background:#10B981;box-shadow:0 0 0 3px rgba(16,185,129,.25)}',
-    '.sheet{pointer-events:auto;position:fixed;left:0;right:0;bottom:0;max-height:78vh;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#1A1A2E;color:#E2E8F0;border-top:1px solid #2D2D5B;border-radius:18px 18px 0 0;padding:14px 16px calc(16px + env(safe-area-inset-bottom));box-shadow:0 -10px 40px rgba(0,0,0,.5);font-size:14px}',
+    '.sheet{pointer-events:auto;position:fixed;left:0;right:0;bottom:0;max-height:78vh;overflow-y:auto;transform:translateZ(0);will-change:transform;background:#1A1A2E;color:#E2E8F0;border-top:1px solid #2D2D5B;border-radius:18px 18px 0 0;padding:14px 16px calc(84px + env(safe-area-inset-bottom));overscroll-behavior:contain;touch-action:pan-y;box-shadow:0 -10px 40px rgba(0,0,0,.5);font-size:14px}',
     '.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}',
     '.brand{font-weight:700;font-size:16px;color:#fff}.brand small{color:#94A3B8;font-weight:500;font-size:11px;margin-left:6px}',
     '.icon{width:44px;height:44px;border:0;background:transparent;color:#94A3B8;font-size:22px}',
@@ -79,27 +79,27 @@
     '.status.warn{color:#FBBF24}',
     '.grid{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12px}.grid span:nth-child(odd){color:#94A3B8}.grid span:nth-child(even){font-family:ui-monospace,Menlo,monospace;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
     'details summary{cursor:pointer;color:#A78BFA;font-size:13px;min-height:44px;display:flex;align-items:center}',
+    'details.card{padding:0 12px}details.card[open]{padding-bottom:12px}',
     '.check{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;color:#E2E8F0}.check input{width:22px;height:22px;margin:0}',
     '.risk{font-size:11px;color:#94A3B8;margin-top:8px;line-height:1.4}',
     '</style>',
     '<button class="pill" part="pill"><span class="dot"></span><span class="pill-text">Avalisa</span></button>',
     '<section class="sheet" hidden>',
     '  <div class="top"><div class="brand">Avalisa<small class="ver"></small></div><button class="icon close" aria-label="Minimise">⌄</button></div>',
-    '  <div class="card auth-out" hidden>',
-    '    <strong>Sign in to Avalisa</strong>',
-    '    <p class="muted">Your Avalisa account, not your Pocket Option login.</p>',
-    '    <p class="muted free-note" hidden></p>',
-    '    <label>Email<input class="email" type="email" autocomplete="username" inputmode="email"></label>',
-    '    <label>Password<input class="password" type="password" autocomplete="current-password"></label>',
-    '    <div class="row" style="margin-top:10px"><button class="b go login">Sign in</button><button class="b signup">Create account</button></div>',
-    '    <p class="muted" style="margin-top:8px"><a class="forgot" target="_blank" rel="noreferrer">Forgot password?</a></p>',
+    '  <div class="status"></div>',
+    '  <div class="row"><button class="b go start">▶ Start</button><button class="b stop">■ Stop</button></div>',
+    // Folded by default so status and Start/Stop fit on a phone without scrolling the sheet.
+    // No password box on this page: iOS offers the saved Pocket Option password for any
+    // login-looking field here (tested on a real iPhone, masked text fields included).
+    // Sign-in happens on the Avalisa site, which hands the session back to this tab.
+    '  <div class="card auth-out" hidden style="margin-top:10px">',
+    '    <p class="muted free-note" style="margin:0 0 8px"></p>',
+    '    <div class="row"><button class="b go login">Sign in to Avalisa</button><button class="b signup">Create account</button></div>',
     '  </div>',
-    '  <div class="card auth-in" hidden>',
+    '  <div class="card auth-in" hidden style="margin-top:10px">',
     '    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div><span class="badge plan"></span> <span class="muted who"></span></div><button class="b logout" style="width:auto;padding:0 14px;height:36px;font-size:13px">Sign out</button></div>',
     '    <p class="muted allowance" style="margin-top:6px"></p>',
     '  </div>',
-    '  <div class="status"></div>',
-    '  <div class="row"><button class="b go start">▶ Start</button><button class="b stop">■ Stop</button></div>',
     '  <details class="settings" style="margin-top:8px"><summary>Bot settings</summary>',
     '    <label>Strategy<select data-k="strategy"><option value="martingale">Martingale</option><option value="ai">Avalisa Bot</option></select></label>',
     '    <div class="row"><label>Direction<select data-k="direction"><option value="alternating">Alternating</option><option value="call">Always Buy</option><option value="put">Always Sell</option></select></label>',
@@ -118,12 +118,17 @@
     '  <p class="risk">Trading carries risk. Run it on your Demo account first; the bot never trades until it can read whether Pocket Option is on Demo or Real.</p>',
     '</section>',
   ].join('');
+  // Trading pages commonly cancel touchmove at the document to stop the chart page from
+  // rubber-banding, which also kills scrolling inside this sheet on a real iPhone. Keep the
+  // panel's touches to itself (registered on the host, before they bubble to PO's handlers).
+  ['touchstart', 'touchmove', 'touchend', 'wheel'].forEach(function (type) {
+    host.addEventListener(type, function (event) { event.stopPropagation(); }, { passive: true });
+  });
   document.documentElement.appendChild(host);
 
   var $ = function (sel) { return root.querySelector(sel); };
   var pill = $('.pill'), sheet = $('.sheet');
   $('.ver').textContent = 'Webapp Bot ' + (proof.version || '');
-  $('.forgot').href = SITE + '/forgot-password';
 
   function setOpen(next) {
     open = next; save(OPEN_KEY, open);
@@ -143,8 +148,13 @@
   });
 
   $('.login').addEventListener('click', function () {
-    var email = $('.email').value.trim(), password = $('.password').value;
-    Promise.resolve(proof.login(email, password)).then(function () { $('.password').value = ''; render(); });
+    // Not noopener: the connect page posts the session back through window.opener.
+    window.open(SITE + '/webapp-bot/connect', '_blank');
+  });
+  window.addEventListener('message', function (event) {
+    var data = event.data;
+    if (event.origin !== SITE || !data || data.type !== 'avalisa-webapp-session') return;
+    Promise.resolve(proof.adoptSession(data.token, data.user)).then(render);
   });
   $('.signup').addEventListener('click', function () { window.open(SITE + '/register', '_blank', 'noopener'); });
   $('.logout').addEventListener('click', function () { proof.logout(); render(); });
@@ -156,6 +166,13 @@
   $('.stop').addEventListener('click', function () { proof.stopBot('stopped by user'); render(); });
 
   var lastStatus = {};
+  // Runtime readiness reasons are written for engineers; say them the way a trader would.
+  function plainBlocker(text) {
+    if (/WebSocket|tick stream/i.test(text)) return 'Connecting to Pocket Option prices — usually under 30 seconds.';
+    if (/account mode not confirmed/i.test(text)) return 'Waiting to read whether Pocket Option is on Demo or Real.';
+    return text;
+  }
+
   function accountLabel(mode) { return mode === 'confirmed' ? 'Demo' : mode === 'real' ? 'Real' : 'Not read yet'; }
 
   function render() {
@@ -170,8 +187,9 @@
       : 'Trades left: ' + s.tradesRemaining + (s.tradesLimit ? ' of ' + s.tradesLimit : '');
     $('.auth-out').hidden = signedIn;
     $('.auth-in').hidden = !signedIn;
-    $('.free-note').hidden = s.authStatus !== 'free_tier';
-    $('.free-note').textContent = 'Not signed in — free demo allowance. ' + allowance + '.';
+    $('.free-note').textContent = s.authStatus === 'free_tier'
+      ? 'Free demo · ' + allowance + '. Sign in to use your plan.'
+      : 'Sign in to use your Avalisa plan.';
     if (signedIn) {
       $('.plan').textContent = s.licensePlan || 'plan';
       $('.who').textContent = s.userEmail || '';
@@ -181,9 +199,12 @@
     var status = $('.status');
     var message = s.botRunning
       ? 'Running · ' + accountLabel(s.demoMode) + ' · ' + (s.lastTradeStatus || '')
-      : (s.lastBotError || (blockers.length ? 'Not ready: ' + blockers[0] : (s.lastTradeStatus || 'Ready')));
+      : s.pageState === 'login'
+        // Signing in reloads the page, which removes this panel — say so up front.
+        ? 'Sign in to Pocket Option first. When the trading page opens, tap the Avalisa bookmark again.'
+        : (s.lastBotError || (blockers.length ? plainBlocker(blockers[0]) : (s.lastTradeStatus || 'Ready')));
     status.textContent = message;
-    status.className = 'status' + (!s.botRunning && (blockers.length || s.lastBotError) ? ' warn' : '');
+    status.className = 'status' + (!s.botRunning && (blockers.length || s.lastBotError || s.pageState === 'login') ? ' warn' : '');
     $('.start').disabled = s.botRunning || !s.licenseAllowed || !(s.demoMode === 'confirmed' || s.demoMode === 'real');
     $('.stop').disabled = !s.botRunning;
     root.querySelectorAll('.settings [data-k]').forEach(function (el) { el.disabled = !!s.botRunning; });
