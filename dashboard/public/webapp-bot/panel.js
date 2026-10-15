@@ -91,13 +91,14 @@
     '*{box-sizing:border-box;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}',
     // Colours are the extension's (overlayView.js): panel #1a1a2e, border #2d2d5b, fields #0f0f23.
     '.dock{pointer-events:auto;position:fixed;left:0;right:0;bottom:0;max-height:80vh;display:flex;flex-direction:column;background:linear-gradient(180deg,#20203a 0,#1a1a2e 64px);animation:rise .42s cubic-bezier(.2,.8,.2,1) both;color:#e2e8f0;border-top:1px solid #2d2d5b;border-radius:16px 16px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.55)}',
-    // iOS 26 Safari draws its floating address bar over the bottom of the page, so leave room
-    // under the last row; overscroll stays inside the panel instead of moving PO's page.
+    // Overscroll stays inside the panel instead of moving PO's page.
     '.wrap{display:grid;grid-template-rows:1fr;transition:grid-template-rows .34s cubic-bezier(.2,.8,.2,1);min-height:0}',
     '.dock.closed .wrap{grid-template-rows:0fr}',
-    '.body{min-height:0;max-height:calc(80vh - 64px);overflow-y:auto;transition:opacity .25s;overscroll-behavior:contain;touch-action:pan-y;transform:translateZ(0);will-change:transform;padding:0 12px calc(84px + env(safe-area-inset-bottom))}',
+    '.body{min-height:0;max-height:calc(80vh - 64px);overflow-y:auto;transition:opacity .25s;overscroll-behavior:contain;touch-action:pan-y;transform:translateZ(0);will-change:transform;padding:0 12px calc(24px + env(safe-area-inset-bottom))}',
     '.dock.closed .body{opacity:0;padding-bottom:0}',
-    '.dock.closed{padding-bottom:calc(64px + env(safe-area-inset-bottom))}',
+    // On a real iPhone the page ends above Safari's toolbar, so the bar sits at bottom:0 —
+    // any extra lift put it over PO's BUY/SELL row. It may cover PO's Trades/Signals strip.
+    '.dock.closed{padding-bottom:env(safe-area-inset-bottom)}',
     '.head{display:flex;align-items:center;gap:12px;padding:10px 12px}',
     '.logo{width:84px;height:40px;object-fit:contain;flex-shrink:0}',
     '.title{flex:1;min-width:0}',
