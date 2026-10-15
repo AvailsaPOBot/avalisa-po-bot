@@ -323,7 +323,8 @@
     if (s.botRunning) message = 'Running · ' + accountLabel(s.demoMode) + ' · ' + (s.lastTradeStatus || '');
     else if (s.pageState === 'login') message = 'Sign in to Pocket Option first. When the trading page opens, tap the Avalisa bookmark again.';
     else if (offline || isNetworkError(s.lastBotError || s.lastTradeStatus)) message = 'Could not reach the Avalisa server, so the bot stopped before trading. Check your connection and tap Retry.';
-    else message = s.lastBotError || (blockers.length ? plainBlocker(blockers[0]) : (s.lastTradeStatus || 'Stopped'));
+    else message = s.lastBotError || (blockers.length ? plainBlocker(blockers[0])
+      : (!s.lastTradeStatus || /^settings updated|^setting:/i.test(s.lastTradeStatus) ? 'Ready — press Start' : s.lastTradeStatus));
     status.textContent = 'Status: ' + message;
     var problem = !s.botRunning && (offline || s.lastBotError || blockers.length || s.pageState === 'login');
     status.className = 'av-status status' + (s.botRunning ? ' running' : problem ? ' error' : '');

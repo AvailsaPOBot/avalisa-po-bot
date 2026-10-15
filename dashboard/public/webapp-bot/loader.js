@@ -7,7 +7,7 @@
 (function () {
   var script = document.currentScript;
   var base = script && script.src ? script.src.replace(/[^/]*$/, '') : 'https://avalisabot.vercel.app/webapp-bot/';
-  var version = '10';
+  var version = '11';
 
   if (!/(^|\.)(po\.trade|po\.cash|pocketoption\.com)$/i.test(location.hostname)) {
     if (window.confirm('Avalisa runs on the Pocket Option page. Open Pocket Option now, then tap the Avalisa bookmark again.')) {
