@@ -168,6 +168,7 @@
     '@keyframes pop{0%{transform:scale(.6);opacity:0}100%{transform:none;opacity:1}}',
     '@media (prefers-reduced-motion:reduce){*,*:before{animation:none!important;transition:none!important}}',
     '</style>',
+    '<div class="safe-probe" style="position:fixed;bottom:0;height:0;padding-bottom:env(safe-area-inset-bottom);visibility:hidden"></div>',
     '<section class="dock">',
     '  <div class="head">',
     '    <img class="logo" alt="Avalisa">',
@@ -226,6 +227,27 @@
   $('.site').href = SITE; $('.site').textContent = SITE.replace(/^https?:\/\//, 'https://');
   $('.site2').href = SITE; $('.plans').href = SITE + '/pricing';
   $('.forgot').href = SITE + '/forgot-password';
+
+  // Pocket Option's phone layout fills the screen and pins its own menu (Trades, Signals…)
+  // to the bottom, under this bar. Shrink PO's main area and lift its menu by the bar's
+  // height so both menus are visible — the way the Webapp Bot app gives PO's web view only
+  // the space above its bar. The open panel still slides over PO, as a sheet.
+  var reserveStyle = document.createElement('style');
+  reserveStyle.id = 'avalisa-webapp-bot-reserve';
+  reserveStyle.textContent = '.js-m-main-wrap{height:calc(100% - var(--avalisa-dock,0px))!important;min-height:0!important}'
+    + '.mobile-bottom-nav{bottom:var(--avalisa-dock,0px)!important}';
+  (document.head || document.documentElement).appendChild(reserveStyle);
+  var reserved = -1;
+  function reserveBar() {
+    var safe = $('.safe-probe').getBoundingClientRect().height || 0;
+    var bar = Math.ceil($('.head').getBoundingClientRect().height + 1 + safe);
+    if (bar === reserved || bar < 20) return;
+    reserved = bar;
+    document.documentElement.style.setProperty('--avalisa-dock', bar + 'px');
+    // PO sizes its chart on resize; nudge it so the candles fit the new height.
+    try { window.dispatchEvent(new Event('resize')); } catch (_) {}
+  }
+  window.addEventListener('resize', function () { window.requestAnimationFrame(reserveBar); });
 
   function setOpen(next) {
     open = next; save(OPEN_KEY, open);
@@ -358,6 +380,8 @@
   try { if (!JSON.parse(proof.snapshot()).botRunning) proof.setSettings({ settings: runtimeSettings() }); } catch (_) {}
   setOpen(open);
   render();
+  reserveBar();
+  window.setTimeout(reserveBar, 500); // after the logo image has laid out
   window.setInterval(render, 1000);
   window.AvalisaWebappPanel = { open: function () { setOpen(true); }, render: render };
 })();
