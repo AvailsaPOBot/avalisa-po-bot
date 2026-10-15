@@ -1164,3 +1164,79 @@
     height: 8rem;
   }
 }
+
+/* ---- Signed-in header: Dashboard · profile menu · Trade (AccountMenu.jsx) ---- */
+.account-menu { display: flex; align-items: center; gap: 0.9rem; }
+.account-menu .account-menu__link { color: rgba(243, 238, 230, 0.82); font-size: 0.8rem; font-weight: 700; text-decoration: none; }
+.account-menu .account-menu__link:hover { color: #f1c878; }
+.account-menu__profile { position: relative; }
+.site-nav__actions .account-menu span,
+.account-menu span { border: 0; padding: 0; text-transform: none; }
+.account-menu .account-menu__avatar {
+  display: inline-flex; align-items: center; gap: 0.25rem; height: 2.3rem; padding: 0 0.45rem 0 0.2rem;
+  border: 1px solid rgba(241, 200, 120, 0.45); border-radius: 999px; background: rgba(255, 255, 255, 0.04);
+  color: #f1c878; cursor: pointer; transition: border-color 160ms ease, background 160ms ease;
+}
+.account-menu .account-menu__avatar:hover { border-color: #f1c878; background: rgba(241, 200, 120, 0.08); }
+.account-menu__avatar > span,
+.account-menu__badge-avatar {
+  display: grid; place-items: center; width: 1.85rem; height: 1.85rem; border-radius: 50%;
+  background: linear-gradient(180deg, #f5d486, #d89d3c); color: #11120d; font-size: 0.85rem; font-weight: 800;
+}
+.account-menu__dropdown {
+  position: absolute; right: 0; top: calc(100% + 0.55rem); z-index: 50; min-width: 15.5rem; padding: 0.45rem;
+  border: 1px solid rgba(241, 200, 120, 0.28); border-radius: 0.8rem; background: rgba(6, 10, 18, 0.98);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.55); transform-origin: top right;
+  animation: account-menu-in 160ms cubic-bezier(.2, .8, .2, 1) both;
+}
+@keyframes account-menu-in { from { opacity: 0; transform: translateY(-4px) scale(.97); } to { opacity: 1; transform: none; } }
+.account-menu__who { display: flex; gap: 0.65rem; align-items: center; padding: 0.55rem 0.55rem 0.75rem; margin-bottom: 0.3rem; border-bottom: 1px solid rgba(255, 255, 255, 0.07); }
+.account-menu__who strong { display: block; max-width: 11rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #fff8ee; font-size: 0.82rem; }
+.account-menu .account-menu__plan {
+  display: inline-block; margin-top: 0.2rem; padding: 0.12rem 0.5rem; border-radius: 999px;
+  font-size: 0.66rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase;
+  background: rgba(59, 130, 246, 0.18); color: #93c5fd;
+}
+.account-menu .account-menu__plan.is-pro { background: #f4c95d; color: #15120a; }
+.account-menu .account-menu__plan.is-basic { background: #059669; color: #fff; }
+.account-menu__dropdown a,
+.account-menu__dropdown button {
+  display: flex; width: 100%; align-items: center; gap: 0.6rem; padding: 0.6rem 0.6rem; border: 0; border-radius: 0.5rem;
+  background: transparent; color: rgba(243, 238, 230, 0.86); font-size: 0.82rem; font-weight: 700; text-align: left; text-decoration: none; cursor: pointer;
+}
+.account-menu__dropdown a:hover,
+.account-menu__dropdown button:hover { background: rgba(241, 200, 120, 0.08); color: #f1c878; }
+.account-trade {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; text-decoration: none; white-space: nowrap;
+}
+.account-menu .account-trade,
+.mascot-mobile-nav__trade {
+  height: 2.5rem; padding: 0 1.05rem; border: 1px solid rgba(255, 218, 154, 0.75); border-radius: 0.5rem;
+  background: linear-gradient(180deg, #f5d486, #d89d3c); color: #11120d !important; font-size: 0.85rem; font-weight: 800;
+  box-shadow: 0 10px 28px rgba(216, 162, 74, 0.25); transition: transform 160ms ease, box-shadow 160ms ease;
+}
+.account-menu .account-trade:hover,
+.mascot-mobile-nav__trade:hover { transform: translateY(-1px); box-shadow: 0 14px 34px rgba(216, 162, 74, 0.34); }
+
+/* Home page hero: Log in / Register are painted into the art; cover them for signed-in visitors. */
+.mascot-hero__account {
+  position: absolute; z-index: 5; left: 69%; top: 2.2%; width: 29.4%; height: 8%;
+  display: flex; align-items: center; justify-content: flex-end; padding-right: 0.4%;
+  background: #04060a; border-radius: 0.6rem;
+}
+.mascot-hero__cta-cover {
+  position: absolute; z-index: 5; left: 3.2%; top: 53.4%; width: 24.4%; height: 8.8%;
+  display: flex; align-items: center; background: #01050d; border-radius: 0.6rem;
+}
+.mascot-hero__cta-cover .avalisa-button { width: 100%; height: 100%; max-height: 4.2rem; }
+.mascot-mobile-nav__trade { margin-left: auto; margin-right: 0.6rem; }
+.mascot-mobile-menu button {
+  padding: 0.85rem 1rem; border: 0; border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  background: transparent; color: #fff8ee; font: inherit; text-align: left;
+}
+/* In the hero the cluster scales with the art, like the painted menu it replaces. */
+.mascot-hero__account .account-menu { gap: clamp(0.9rem, 1.3vw, 1.6rem); }
+.mascot-hero__account .account-menu__link { font-size: clamp(0.85rem, 1vw, 1.08rem); }
+.mascot-hero__account .account-menu__avatar { height: clamp(2.3rem, 2.9vw, 2.9rem); }
+.mascot-hero__account .account-menu__avatar > span { width: clamp(1.85rem, 2.3vw, 2.35rem); height: clamp(1.85rem, 2.3vw, 2.35rem); }
+.mascot-hero__account .account-trade { height: clamp(2.5rem, 3.3vw, 3.3rem); padding: 0 clamp(1.1rem, 2.1vw, 2.2rem); font-size: clamp(0.85rem, 1.05vw, 1.1rem); }

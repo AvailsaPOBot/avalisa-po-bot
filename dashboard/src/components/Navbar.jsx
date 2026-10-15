@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { AFFILIATE_LINK } from '../lib/affiliate';
+import AccountMenu, { TradeButton } from './AccountMenu';
 
 const navItems = [
   { label: 'Webapp Bot', href: '/webapp' },
@@ -53,12 +54,7 @@ export default function Navbar() {
 
         <div className="site-nav__actions">
           {user ? (
-            <>
-              <Link to="/dashboard">Dashboard</Link>
-              {user.isAdmin && <Link to="/admin">Admin</Link>}
-              <span>{planLabel}</span>
-              <button type="button" onClick={handleLogout}>Logout</button>
-            </>
+            <AccountMenu />
           ) : (
             <>
               <Link to="/login">Login</Link>
@@ -85,7 +81,8 @@ export default function Navbar() {
           ))}
           {user ? (
             <>
-              <Link to="/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</Link>
+              <TradeButton className="site-nav__cta" onNavigate={() => setMenuOpen(false)} />
+              <Link to="/dashboard" onClick={() => setMenuOpen(false)}>Dashboard ({planLabel})</Link>
               {user.isAdmin && <Link to="/admin" onClick={() => setMenuOpen(false)}>Admin</Link>}
               <button type="button" onClick={handleLogout}>Logout</button>
             </>

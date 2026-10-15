@@ -16,6 +16,8 @@ import {
 } from 'lucide-react';
 import { useLenis } from '../lib/useLenis';
 import { AFFILIATE_LINK } from '../lib/affiliate';
+import { useAuth } from '../hooks/useAuth';
+import AccountMenu, { TradeButton } from '../components/AccountMenu';
 import '../styles/luxury.css';
 
 const CHROME_EXTENSION_URL = import.meta.env.REACT_APP_CHROME_STORE_URL || 'https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa';
@@ -111,6 +113,7 @@ function PocketOptionMark() {
 function MascotHero() {
   const [productOpen, setProductOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   return (
     <section className="mascot-hero" id="top" aria-label="Meet Avalisa PO Bot, AI Trading Bot for Pocket Option">
@@ -155,9 +158,22 @@ function MascotHero() {
 
         <Link className="mascot-hero__hotspot mascot-hero__hotspot--pricing" to="/pricing" aria-label="Pricing" />
         <Link className="mascot-hero__hotspot mascot-hero__hotspot--support" to="/support" aria-label="Support" />
-        <Link className="mascot-hero__hotspot mascot-hero__hotspot--login" to="/login" aria-label="Log in" />
-        <Link className="mascot-hero__hotspot mascot-hero__hotspot--register-nav" to="/register" aria-label="Register for Free Access" />
-        <Link className="mascot-hero__hotspot mascot-hero__hotspot--register-hero" to="/register" aria-label="Register for Free Access" />
+        {user ? (
+          // "Log in" and "Register" are painted into the hero art, so a signed-in visitor
+          // still saw them and thought they were signed out. Cover them with the real thing.
+          <>
+            <div className="mascot-hero__account"><AccountMenu /></div>
+            <div className="mascot-hero__cta-cover">
+              <TradeButton className="avalisa-button avalisa-button--gold" label="Open the bot" />
+            </div>
+          </>
+        ) : (
+          <>
+            <Link className="mascot-hero__hotspot mascot-hero__hotspot--login" to="/login" aria-label="Log in" />
+            <Link className="mascot-hero__hotspot mascot-hero__hotspot--register-nav" to="/register" aria-label="Register for Free Access" />
+            <Link className="mascot-hero__hotspot mascot-hero__hotspot--register-hero" to="/register" aria-label="Register for Free Access" />
+          </>
+        )}
         <Link className="mascot-hero__hotspot mascot-hero__hotspot--learn" to="/pricing" aria-label="Learn more about affiliate-confirmed Pro access" />
       </div>
 
@@ -166,6 +182,7 @@ function MascotHero() {
           <Link to="/" aria-label="Avalisa PO Bot home">
             <img src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot" />
           </Link>
+          {user && <TradeButton className="mascot-mobile-nav__trade" />}
           <button
             type="button"
             aria-label="Toggle navigation"
@@ -183,7 +200,14 @@ function MascotHero() {
             <a href="#ai" onClick={() => setMobileNavOpen(false)}>Avalisa Bot</a>
             <Link to="/pricing" onClick={() => setMobileNavOpen(false)}>Pricing</Link>
             <Link to="/support" onClick={() => setMobileNavOpen(false)}>Support</Link>
-            <Link to="/login" onClick={() => setMobileNavOpen(false)}>Log in</Link>
+            {user ? (
+              <>
+                <Link to="/dashboard" onClick={() => setMobileNavOpen(false)}>Dashboard · {user.email}</Link>
+                <button type="button" onClick={() => { logout(); setMobileNavOpen(false); }}>Log out</button>
+              </>
+            ) : (
+              <Link to="/login" onClick={() => setMobileNavOpen(false)}>Log in</Link>
+            )}
           </nav>
         )}
 
@@ -197,9 +221,13 @@ function MascotHero() {
             Run Pocket Option strategies on desktop or mobile—with visible settings,
             account-mode checks, and controls before execution.
           </p>
-          <Link to="/register" className="avalisa-button avalisa-button--gold">
-            Register for Free Access <ArrowRight size={17} />
-          </Link>
+          {user ? (
+            <TradeButton className="avalisa-button avalisa-button--gold" label="Open the bot" />
+          ) : (
+            <Link to="/register" className="avalisa-button avalisa-button--gold">
+              Register for Free Access <ArrowRight size={17} />
+            </Link>
+          )}
           <small>Start in Demo. Trading involves risk. Profits are never guaranteed.</small>
           <p className="mascot-mobile-copy__affiliate">
             Affiliate-confirmed Pocket Option registration can unlock Pro.{' '}
