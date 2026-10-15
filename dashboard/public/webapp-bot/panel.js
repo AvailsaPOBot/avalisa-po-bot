@@ -284,7 +284,15 @@
   });
   $('.signup').addEventListener('click', function () { window.open(SITE + '/register', '_blank', 'noopener'); });
   $('.logout').addEventListener('click', function () { proof.logout(); render(); });
+  // When the plan check could not reach the server, the button re-checks the plan only —
+  // it must never start the bot as a side effect of "Retry".
+  function recheckPlan() {
+    retryAt = Date.now() + RETRY_MS;
+    Promise.resolve(proof.checkLicense()).then(render, render);
+    render();
+  }
   $('.start').addEventListener('click', function () {
+    if (lastOffline && !lastStatus.botRunning) { recheckPlan(); return; }
     proof.setSettings({ settings: runtimeSettings() });
     proof.startBot();
     render();
@@ -293,6 +301,12 @@
 
   var lastStatus = {};
   var lastResultKey = null;
+  var lastOffline = false;
+  // The backend sleeps when idle and can take longer than the runtime's 15 s request budget
+  // to wake (seen on a real iPhone the morning after). Keep re-checking quietly instead of
+  // leaving the user on an error: every 10 s, up to 12 times.
+  var RETRY_MS = 10000, autoRetries = 0, retryAt = 0;
+  function isChecking(st) { return /^(checking_license|checking_free_tier|restoring|logging_in)$/.test(String(st.authStatus)); }
   function isNetworkError(text) {
     return /abort|failed to fetch|network|timed? ?out|load failed/i.test(String(text || ''));
   }
@@ -312,6 +326,14 @@
     // sign-out), so a signed-in user must not be shown the sign-in card during one.
     var signedIn = s.authStatus === 'logged_in' || (!!s.userEmail && s.authStatus !== 'logged_out');
     var offline = s.authStatus === 'error' && isNetworkError(s.licenseReason || s.lastBotError || s.lastTradeStatus);
+    var checking = isChecking(s);
+    lastOffline = offline;
+    if (offline && !s.botRunning && autoRetries < 12 && Date.now() >= retryAt) {
+      if (retryAt) autoRetries += 1;
+      retryAt = Date.now() + RETRY_MS;
+      if (autoRetries > 0) Promise.resolve(proof.checkLicense()).then(render, render);
+    }
+    if (s.authStatus === 'logged_in' || s.authStatus === 'free_tier') { autoRetries = 0; retryAt = 0; }
     var plan = String(s.licensePlan || 'free').toLowerCase();
     var allowance = s.tradesRemaining == null
       ? 'unlimited trades'
@@ -324,8 +346,9 @@
     if (signedIn) {
       $('.who').textContent = s.userEmail || 'Avalisa account';
       var badge = $('.plan');
-      badge.textContent = plan;
-      badge.className = 'av-plan-badge plan plan-' + plan;
+      // Until the plan is known, show nothing rather than a guess like FREE.
+      badge.textContent = checking || offline ? '…' : plan;
+      badge.className = 'av-plan-badge plan plan-' + (checking || offline ? 'free' : plan);
     }
 
     dock.classList.toggle('running', !!s.botRunning);
@@ -344,19 +367,22 @@
     var message;
     if (s.botRunning) message = 'Running · ' + accountLabel(s.demoMode) + ' · ' + (s.lastTradeStatus || '');
     else if (s.pageState === 'login') message = 'Sign in to Pocket Option first. When the trading page opens, tap the Avalisa bookmark again.';
-    else if (offline || isNetworkError(s.lastBotError || s.lastTradeStatus)) message = 'Could not reach the Avalisa server, so the bot stopped before trading. Check your connection and tap Retry.';
+    else if (checking) message = 'Checking your Avalisa plan…';
+    else if (offline && isNetworkError(s.lastBotError)) message = 'Could not reach the Avalisa server, so the bot stopped before trading. Retrying automatically — or tap Retry.';
+    else if (offline) message = 'Could not reach the Avalisa server to check your plan. Retrying automatically — or tap Retry.';
+    else if (isNetworkError(s.lastBotError)) message = 'The Avalisa server did not answer, so the bot stopped. Press Start to try again.';
     else message = s.lastBotError || (blockers.length ? plainBlocker(blockers[0])
       : (!s.lastTradeStatus || /^settings updated|^setting:/i.test(s.lastTradeStatus) ? 'Ready — press Start' : s.lastTradeStatus));
     status.textContent = 'Status: ' + message;
     var problem = !s.botRunning && (offline || s.lastBotError || blockers.length || s.pageState === 'login');
     status.className = 'av-status status' + (s.botRunning ? ' running' : problem ? ' error' : '');
-    $('.plan-line').textContent = s.authStatus === 'error'
-      ? 'Plan: not checked yet'
+    $('.plan-line').textContent = checking ? 'Plan: checking…'
+      : s.authStatus === 'error' ? 'Plan: not checked yet'
       : 'Plan: ' + plan.toUpperCase() + ' · ' + allowance;
     $('.trades').textContent = 'Trades this session: ' + (s.tradesCount || 0);
 
-    // Start re-checks the licence itself, so after a network failure it doubles as Retry.
-    $('.start').disabled = s.botRunning || !(s.licenseAllowed || offline) || !(s.demoMode === 'confirmed' || s.demoMode === 'real');
+    // After a network failure the button becomes Retry, which re-checks the plan only.
+    $('.start').disabled = s.botRunning || checking || (offline ? false : !s.licenseAllowed || !(s.demoMode === 'confirmed' || s.demoMode === 'real'));
     $('.start').textContent = !s.botRunning && offline ? '↻ Retry' : '▶ Start';
     $('.stop').disabled = !s.botRunning;
     root.querySelectorAll('.settings [data-k]').forEach(function (el) { el.disabled = !!s.botRunning; });

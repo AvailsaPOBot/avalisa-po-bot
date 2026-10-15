@@ -39,6 +39,17 @@ test('a network failure keeps the signed-in view and offers Retry', async () => 
     assert.equal(shadow.querySelector('.start').disabled, false, 'Retry is tappable');
     assert.match(shadow.querySelector('.start').textContent, /Retry/);
     assert.match(shadow.querySelector('.status').textContent, /Could not reach the Avalisa server/);
+
+    // Retry must only re-check the plan — never start the bot (seen on the Board's iPhone:
+    // the check timed out while the backend woke up, and Retry was wired to Start).
+    let started = 0, checked = 0;
+    win.AvalisaProof.startBot = () => { started += 1; };
+    win.AvalisaProof.checkLicense = async () => { checked += 1; };
+    shadow.querySelector('.start').click();
+    await new Promise(r => setTimeout(r, 20));
+    assert.equal(started, 0, 'Retry did not start the bot');
+    assert.equal(checked, 1, 'Retry re-checked the plan');
+    assert.equal(shadow.querySelector('.plan').textContent, '…', 'no guessed plan badge while unknown');
   } finally {
     win.close();
   }
