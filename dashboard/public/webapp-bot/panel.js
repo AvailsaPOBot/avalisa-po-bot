@@ -167,6 +167,10 @@
 
   var lastStatus = {};
   // Runtime readiness reasons are written for engineers; say them the way a trader would.
+  function isNetworkError(text) {
+    return /abort|failed to fetch|network|timed? ?out|load failed/i.test(String(text || ''));
+  }
+
   function plainBlocker(text) {
     if (/WebSocket|tick stream/i.test(text)) return 'Connecting to Pocket Option prices — usually under 30 seconds.';
     if (/account mode not confirmed/i.test(text)) return 'Waiting to read whether Pocket Option is on Demo or Real.';
@@ -181,7 +185,10 @@
     lastStatus = s;
     // free_tier = not signed in; the backend still grants the free demo allowance to
     // this device, so the bot can run, but the sign-in form stays on screen.
-    var signedIn = s.authStatus === 'logged_in';
+    // A failed or in-flight licence check keeps the saved session (runtime only clears it on
+    // sign-out), so a signed-in user must not be shown the sign-in card during one.
+    var signedIn = s.authStatus === 'logged_in' || (!!s.userEmail && s.authStatus !== 'logged_out');
+    var offline = s.authStatus === 'error' && isNetworkError(s.licenseReason || s.lastBotError || s.lastTradeStatus);
     var allowance = s.tradesRemaining == null
       ? 'Trade allowance: unlimited'
       : 'Trades left: ' + s.tradesRemaining + (s.tradesLimit ? ' of ' + s.tradesLimit : '');
@@ -202,10 +209,14 @@
       : s.pageState === 'login'
         // Signing in reloads the page, which removes this panel — say so up front.
         ? 'Sign in to Pocket Option first. When the trading page opens, tap the Avalisa bookmark again.'
-        : (s.lastBotError || (blockers.length ? plainBlocker(blockers[0]) : (s.lastTradeStatus || 'Ready')));
+        : offline || isNetworkError(s.lastBotError || s.lastTradeStatus)
+          ? 'Could not reach the Avalisa server, so the bot stopped before trading. Check your connection and tap Retry.'
+          : (s.lastBotError || (blockers.length ? plainBlocker(blockers[0]) : (s.lastTradeStatus || 'Ready')));
     status.textContent = message;
     status.className = 'status' + (!s.botRunning && (blockers.length || s.lastBotError || s.pageState === 'login') ? ' warn' : '');
-    $('.start').disabled = s.botRunning || !s.licenseAllowed || !(s.demoMode === 'confirmed' || s.demoMode === 'real');
+    // Start re-checks the licence itself, so after a network failure it doubles as Retry.
+    $('.start').disabled = s.botRunning || !(s.licenseAllowed || offline) || !(s.demoMode === 'confirmed' || s.demoMode === 'real');
+    $('.start').textContent = !s.botRunning && offline ? '↻ Retry' : '▶ Start';
     $('.stop').disabled = !s.botRunning;
     root.querySelectorAll('.settings [data-k]').forEach(function (el) { el.disabled = !!s.botRunning; });
     $('.dot').className = 'dot' + (s.botRunning ? ' on' : '');
