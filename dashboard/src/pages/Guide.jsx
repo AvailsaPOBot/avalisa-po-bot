@@ -307,6 +307,12 @@ export default function Guide() {
             </a>.
           </p>
           <p>
+            Worried it might be a scam? Read{' '}
+            <a href="/guide/is-a-pocket-option-bot-safe-or-scam.html">
+              eight things to check before you install any Pocket Option bot
+            </a>.
+          </p>
+          <p>
             Not ready to use real money? Read{' '}
             <a href="/guide/test-a-trading-bot-on-demo.html">
               how to test a trading bot on a demo account
