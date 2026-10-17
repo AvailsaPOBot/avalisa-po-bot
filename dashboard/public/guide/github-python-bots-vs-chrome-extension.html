@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pocket Option Bots on GitHub and Python Scripts vs a Chrome Extension</title>
+  <meta name="description" content="What running a Pocket Option bot from GitHub or a Python script involves, compared with a ready-made Chrome extension: setup, upkeep, account handling and risk.">
+  <meta property="og:title" content="Pocket Option Bots on GitHub and Python Scripts vs a Chrome Extension">
+  <meta property="og:description" content="What running a Pocket Option bot from GitHub or a Python script involves, compared with a ready-made Chrome extension: setup, upkeep, account handling and risk.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://avalisabot.vercel.app/guide/github-python-bots-vs-chrome-extension.html">
+  <link rel="canonical" href="https://avalisabot.vercel.app/guide/github-python-bots-vs-chrome-extension.html">
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root {
+      --bg: #060606;
+      --surface: #0e1216;
+      --surface-deep: #07090b;
+      --text: #f3eee6;
+      --muted: rgba(243, 238, 230, 0.7);
+      --gold: #d8a24a;
+      --gold-light: #f1c878;
+      --line: rgba(216, 162, 74, 0.24);
+      --jade: #4a9b7e;
+      --display: Georgia, 'Times New Roman', serif;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 78% 3%, rgba(216, 162, 74, 0.18), transparent 26rem),
+        radial-gradient(circle at 5% 22%, rgba(74, 155, 126, 0.12), transparent 30rem),
+        linear-gradient(180deg, var(--bg), #090c0e 48%, #040404);
+      color: var(--text);
+      font: 16px/1.7 var(--sans);
+    }
+    a { color: var(--gold-light); text-underline-offset: 0.2em; }
+    a:hover { color: #ffe1a8; }
+    a:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 4px; }
+    .shell { width: min(calc(100% - 2rem), 860px); margin: 0 auto; }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: rgba(6, 6, 6, 0.88);
+    }
+    nav {
+      display: flex;
+      min-height: 4.35rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand img { display: block; width: auto; height: 3.1rem; }
+    .nav-link { color: var(--muted); font-size: 0.86rem; font-weight: 700; text-decoration: none; }
+    .hero { padding: clamp(3.5rem, 8vw, 6.5rem) 0 clamp(2rem, 5vw, 4rem); }
+    .kicker {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    h1, h2 { font-family: var(--display); font-weight: 500; line-height: 1.08; }
+    h1 { max-width: 820px; margin: 0.75rem 0 1.25rem; font-size: clamp(2.5rem, 7vw, 5rem); }
+    h2 { margin: 0 0 1rem; font-size: clamp(1.8rem, 4vw, 2.55rem); }
+    h3 { margin: 1.75rem 0 0.35rem; color: var(--gold-light); font-size: 1.05rem; }
+    p, li { color: var(--muted); }
+    .lede { max-width: 740px; margin: 0; font-size: clamp(1.05rem, 2.5vw, 1.24rem); }
+    .quick-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.6rem; }
+    .button {
+      display: inline-flex;
+      min-height: 2.8rem;
+      align-items: center;
+      border: 1px solid rgba(241, 200, 120, 0.55);
+      border-radius: 0.48rem;
+      padding: 0.7rem 1rem;
+      background: linear-gradient(180deg, #f1c878, #d0933c 52%, #9c6423);
+      color: #130d05;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .button.secondary { background: rgba(10, 10, 15, 0.6); color: var(--gold-light); }
+    .toc, article section, .risk, .final-cta {
+      border: 1px solid var(--line);
+      border-radius: 0.7rem;
+      background:
+        radial-gradient(circle at 92% 0%, rgba(216, 162, 74, 0.08), transparent 15rem),
+        linear-gradient(180deg, rgba(14, 18, 22, 0.92), rgba(7, 9, 11, 0.94));
+    }
+    .toc { margin-bottom: 1rem; padding: 1.35rem clamp(1.1rem, 3vw, 1.8rem); }
+    .toc strong { font-family: var(--display); font-size: 1.2rem; }
+    .toc ol { columns: 2; margin-bottom: 0; padding-left: 1.25rem; }
+    .toc li { break-inside: avoid; margin: 0.25rem 0; }
+    article { display: grid; gap: 1rem; padding-bottom: 4rem; }
+    article section { padding: clamp(1.3rem, 4vw, 2.2rem); scroll-margin-top: 1rem; }
+    article section > :last-child { margin-bottom: 0; }
+    ol, ul { padding-left: 1.45rem; }
+    li + li { margin-top: 0.5rem; }
+    strong { color: var(--text); }
+    .risk { border-color: rgba(241, 200, 120, 0.42); }
+    .risk h2 { color: var(--gold-light); }
+    .final-cta { text-align: left; }
+    footer { border-top: 1px solid var(--line); padding: 2rem 0; color: var(--muted); font-size: 0.86rem; }
+    footer .shell { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 1.5rem; }
+    @media (max-width: 620px) {
+      .toc ol { columns: 1; }
+      .brand img { height: 2.7rem; }
+      .nav-link { font-size: 0.78rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="shell" aria-label="Primary navigation">
+      <a class="brand" href="/" aria-label="Avalisa PO Bot home">
+        <img src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot">
+      </a>
+      <a class="nav-link" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero shell">
+      <p class="kicker">Compare your options</p>
+      <h1>Pocket Option Bots on GitHub and Python Scripts vs a Chrome Extension</h1>
+      <p class="lede">Free scripts on GitHub and a ready-made Chrome extension can both place trades on Pocket Option. They put very different work on your shoulders. Here is an honest comparison &mdash; and whichever you pick, start on a demo account.</p>
+      <div class="quick-links">
+        <a class="button" href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Add to Chrome</a>
+        <a class="button secondary" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+      </div>
+    </div>
+    <div class="shell">
+      <aside class="toc" aria-label="On this page">
+        <strong>On this page</strong>
+        <ol>
+          <li><a href="#script">The script route</a></li>
+          <li><a href="#cost">What it costs you</a></li>
+          <li><a href="#extension">What an extension changes</a></li>
+          <li><a href="#table">Side by side</a></li>
+          <li><a href="#steps">How to decide</a></li>
+          <li><a href="#plans">What Avalisa costs</a></li>
+          <li><a href="#risk">Risk statement</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ol>
+      </aside>
+      <article>
+        <section id="script">
+          <h2>What the GitHub and Python-script route looks like</h2>
+          <p>Public Pocket Option automation projects usually drive a browser from a script on your own computer, or encode one strategy (often a Martingale stake progression) in code you install and run yourself.</p>
+          <p>That is not bad in itself. Open code can be read, and for someone comfortable with Python it is a legitimate path. But it puts these jobs on you:</p>
+          <ul>
+            <li><strong>Setup and upkeep.</strong> Dependencies, environments, and a process that stops when it crashes until you restart it.</li>
+            <li><strong>Account handling.</strong> A script has to reach your Pocket Option session somehow. Read exactly how it signs in before you run it, and keeping that safe is your job.</li>
+            <li><strong>Site changes.</strong> When Pocket Option changes its page, a script can stop working or act on wrong assumptions. On a public repository, nobody owes you a fix.</li>
+            <li><strong>Stale code.</strong> Check the last commit date and the open issues. Code does not keep up with the site unless someone updates it.</li>
+          </ul>
+        </section>
+        <section id="cost">
+          <h2>What that costs in practice</h2>
+          <p>Hours before the first trade, every outage becoming your own troubleshooting, and every site change becoming a code change. None of that shows up in a star count.</p>
+        </section>
+        <section id="extension">
+          <h2>What a Chrome extension changes</h2>
+          <p>Avalisa PO Bot is a Google Chrome extension that runs on the Pocket Option tab you already use, in your own browser:</p>
+          <ul>
+            <li><strong>No code to run.</strong> Install from the Chrome Web Store, sign in with your Avalisa account and follow the <a href="https://avalisabot.vercel.app/guide">setup guide</a>.</li>
+            <li><strong>Updates come to you.</strong> New versions arrive through the Chrome Web Store instead of you patching code.</li>
+            <li><strong>A cap on losing streaks.</strong> Martingale Steps limits a losing cycle: Steps = N allows N + 1 trades, then resets. There is no separate stop-loss or daily-loss setting, and the bot pauses when the next stake would exceed your balance.</li>
+            <li><strong>Settings that follow you.</strong> Cloud settings sync on Basic and Pro keeps your configuration on your account.</li>
+            <li><strong>Two modes.</strong> Martingale mode (Always Buy, Always Sell or Alternating) and, on Pro, Avalisa Bot mode, a rule-based signal mode with Low (2 of 4 rules), Mid (3 of 4) or High (all 4) intensity.</li>
+          </ul>
+          <p>The honest limit of an in-browser design: keep the Pocket Option tab visible while the bot trades, because a background or minimised tab can delay trade-result detection.</p>
+        </section>
+        <section id="table">
+          <h2>Side by side</h2>
+          <ul>
+            <li><strong>Setup:</strong> script &mdash; hours of environment work; extension &mdash; install from the Web Store.</li>
+            <li><strong>Site changes:</strong> script &mdash; you fix them; extension &mdash; the publisher ships updates.</li>
+            <li><strong>Reading the code:</strong> script &mdash; all of it is yours to read; extension &mdash; you rely on the publisher.</li>
+            <li><strong>Strategy:</strong> script &mdash; whatever the repository encoded; extension &mdash; Martingale, plus the rule-based mode on Pro.</li>
+            <li><strong>Demo and real:</strong> script &mdash; depends on the project; extension &mdash; both supported, demo recommended first.</li>
+          </ul>
+        </section>
+        <section id="steps">
+          <h2>How to decide</h2>
+          <ol>
+            <li>Write down what you want to test &mdash; strategy, timeframe, stake &mdash; before anything touches an account.</li>
+            <li>Start on a Pocket Option <strong>demo account</strong> either way. Avalisa&apos;s free Demo plan gives you 10 Martingale trades.</li>
+            <li>For a public script, read its recent activity, open issues, and exactly how it signs in, before running it.</li>
+            <li>Move to real money only once you understand the behaviour on demo, and only with money you can afford to lose.</li>
+          </ol>
+          <p>On the broker&apos;s side: Pocket Option&apos;s own blog says automated strategies are fine as long as they comply with platform rules, and names market manipulation &mdash; not automation &mdash; as the explicit ban risk. That is their blog, not their formal Terms of Service, which we have not read directly; for a definitive answer on your own account, ask Pocket Option support.</p>
+        </section>
+        <section id="plans">
+          <h2>What Avalisa costs</h2>
+          <p>New accounts start on the free <strong>Demo</strong> plan: 10 Martingale trades, webapp bot access and dashboard access. <strong>Basic</strong> is $69 one-time (never renews). <strong>Pro</strong> is your choice at checkout: <strong>$119 one-time</strong>, or <strong>$29/month</strong>, a real recurring subscription that renews until you cancel. Pro adds Avalisa Bot mode. Prices are on <a href="https://avalisabot.vercel.app/pricing">/pricing</a>.</p>
+        </section>
+        <section id="risk" class="risk">
+          <h2>Risk statement</h2>
+          <p>Trading binary options is <strong>high risk</strong>. No bot, Avalisa PO Bot included, guarantees profit or changes the odds &mdash; at a 92% payout you need to win more than 52.1% of trades just to break even (1 / (1 + payout)). Martingale multiplies the stake after each loss and a losing streak can wipe out a balance: in the panel, Steps = N allows N + 1 trades in a losing cycle, so at 2x, Steps 3 costs 15 times the base stake. Capping Steps is the real limit; there is no separate stop-loss setting. Start on demo and only trade money you can afford to lose.</p>
+        </section>
+        <section id="faq">
+          <h2>Frequently asked questions</h2>
+          <h3>Is a Python script more controllable than an extension?</h3>
+          <p>It gives you more settings, and every one of them is yours to understand and repair when the site changes. An extension has fewer settings and its publisher maintains them.</p>
+          <h3>Why not just use a free script?</h3>
+          <p>It costs nothing to download. It costs setup time and upkeep afterwards. Avalisa&apos;s Demo plan is also free, so you can compare both on demo before paying anything.</p>
+          <h3>Will demo results match a real account?</h3>
+          <p>Not necessarily. Results vary by market, pair, timeframe and settings. Use demo to understand how the bot behaves, not as a forecast.</p>
+          <h3>What happens on a long losing streak?</h3>
+          <p>Martingale Steps sets the cap, and the bot pauses rather than place a stake bigger than your balance. Read <a href="/guide/martingale-risk-explained.html">Martingale risk explained</a> before raising it.</p>
+        </section>
+        <section id="start" class="final-cta">
+          <h2>Try it on demo first</h2>
+          <p>Install Avalisa PO Bot from the <a href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Chrome Web Store</a>, follow the <a href="https://avalisabot.vercel.app/guide">setup guide</a>, and start on a Pocket Option demo account.</p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <span>© Avalisa PO Bot</span>
+      <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a>
+    </div>
+  </footer>
+</body>
+</html>

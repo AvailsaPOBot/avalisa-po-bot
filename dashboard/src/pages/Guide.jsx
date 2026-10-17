@@ -331,6 +331,15 @@ export default function Guide() {
             </a>.
           </p>
           <p>
+            Comparing bots? Read{' '}
+            <a href="/guide/how-to-choose-a-pocket-option-bot.html">
+              how to choose a Pocket Option bot
+            </a>{' '}or{' '}
+            <a href="/guide/github-python-bots-vs-chrome-extension.html">
+              GitHub and Python bots vs a Chrome extension
+            </a>.
+          </p>
+          <p>
             Not ready to use real money? Read{' '}
             <a href="/guide/test-a-trading-bot-on-demo.html">
               how to test a trading bot on a demo account
