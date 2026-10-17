@@ -361,6 +361,12 @@ export default function Guide() {
             </a>.
           </p>
           <p>
+            Why does the bot wait for each result? Read{' '}
+            <a href="/guide/why-a-bot-trades-one-at-a-time.html">
+              why a bot should hold one trade at a time
+            </a>.
+          </p>
+          <p>
             Not ready to use real money? Read{' '}
             <a href="/guide/test-a-trading-bot-on-demo.html">
               how to test a trading bot on a demo account

@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Why a Pocket Option Bot Should Hold One Trade at a Time</title>
+  <meta name="description" content="Why Avalisa PO Bot opens one trade, waits for its result, then decides the next: how sequential trading keeps Martingale stakes defined and losing streaks capped.">
+  <meta property="og:title" content="Why a Pocket Option Bot Should Hold One Trade at a Time">
+  <meta property="og:description" content="Why Avalisa PO Bot opens one trade, waits for its result, then decides the next: how sequential trading keeps Martingale stakes defined and losing streaks capped.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://avalisabot.vercel.app/guide/why-a-bot-trades-one-at-a-time.html">
+  <link rel="canonical" href="https://avalisabot.vercel.app/guide/why-a-bot-trades-one-at-a-time.html">
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root {
+      --bg: #060606;
+      --surface: #0e1216;
+      --surface-deep: #07090b;
+      --text: #f3eee6;
+      --muted: rgba(243, 238, 230, 0.7);
+      --gold: #d8a24a;
+      --gold-light: #f1c878;
+      --line: rgba(216, 162, 74, 0.24);
+      --jade: #4a9b7e;
+      --display: Georgia, 'Times New Roman', serif;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 78% 3%, rgba(216, 162, 74, 0.18), transparent 26rem),
+        radial-gradient(circle at 5% 22%, rgba(74, 155, 126, 0.12), transparent 30rem),
+        linear-gradient(180deg, var(--bg), #090c0e 48%, #040404);
+      color: var(--text);
+      font: 16px/1.7 var(--sans);
+    }
+    a { color: var(--gold-light); text-underline-offset: 0.2em; }
+    a:hover { color: #ffe1a8; }
+    a:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 4px; }
+    .shell { width: min(calc(100% - 2rem), 860px); margin: 0 auto; }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: rgba(6, 6, 6, 0.88);
+    }
+    nav {
+      display: flex;
+      min-height: 4.35rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand img { display: block; width: auto; height: 3.1rem; }
+    .nav-link { color: var(--muted); font-size: 0.86rem; font-weight: 700; text-decoration: none; }
+    .hero { padding: clamp(3.5rem, 8vw, 6.5rem) 0 clamp(2rem, 5vw, 4rem); }
+    .kicker {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    h1, h2 { font-family: var(--display); font-weight: 500; line-height: 1.08; }
+    h1 { max-width: 820px; margin: 0.75rem 0 1.25rem; font-size: clamp(2.5rem, 7vw, 5rem); }
+    h2 { margin: 0 0 1rem; font-size: clamp(1.8rem, 4vw, 2.55rem); }
+    h3 { margin: 1.75rem 0 0.35rem; color: var(--gold-light); font-size: 1.05rem; }
+    p, li { color: var(--muted); }
+    .lede { max-width: 740px; margin: 0; font-size: clamp(1.05rem, 2.5vw, 1.24rem); }
+    .quick-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.6rem; }
+    .button {
+      display: inline-flex;
+      min-height: 2.8rem;
+      align-items: center;
+      border: 1px solid rgba(241, 200, 120, 0.55);
+      border-radius: 0.48rem;
+      padding: 0.7rem 1rem;
+      background: linear-gradient(180deg, #f1c878, #d0933c 52%, #9c6423);
+      color: #130d05;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .button.secondary { background: rgba(10, 10, 15, 0.6); color: var(--gold-light); }
+    .toc, article section, .risk, .final-cta {
+      border: 1px solid var(--line);
+      border-radius: 0.7rem;
+      background:
+        radial-gradient(circle at 92% 0%, rgba(216, 162, 74, 0.08), transparent 15rem),
+        linear-gradient(180deg, rgba(14, 18, 22, 0.92), rgba(7, 9, 11, 0.94));
+    }
+    .toc { margin-bottom: 1rem; padding: 1.35rem clamp(1.1rem, 3vw, 1.8rem); }
+    .toc strong { font-family: var(--display); font-size: 1.2rem; }
+    .toc ol { columns: 2; margin-bottom: 0; padding-left: 1.25rem; }
+    .toc li { break-inside: avoid; margin: 0.25rem 0; }
+    article { display: grid; gap: 1rem; padding-bottom: 4rem; }
+    article section { padding: clamp(1.3rem, 4vw, 2.2rem); scroll-margin-top: 1rem; }
+    article section > :last-child { margin-bottom: 0; }
+    ol, ul { padding-left: 1.45rem; }
+    li + li { margin-top: 0.5rem; }
+    strong { color: var(--text); }
+    .risk { border-color: rgba(241, 200, 120, 0.42); }
+    .risk h2 { color: var(--gold-light); }
+    .final-cta { text-align: left; }
+    footer { border-top: 1px solid var(--line); padding: 2rem 0; color: var(--muted); font-size: 0.86rem; }
+    footer .shell { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 1.5rem; }
+    @media (max-width: 620px) {
+      .toc ol { columns: 1; }
+      .brand img { height: 2.7rem; }
+      .nav-link { font-size: 0.78rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="shell" aria-label="Primary navigation">
+      <a class="brand" href="/" aria-label="Avalisa PO Bot home">
+        <img src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot">
+      </a>
+      <a class="nav-link" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero shell">
+      <p class="kicker">How it works</p>
+      <h1>Why a Trading Bot Should Hold One Trade at a Time</h1>
+      <p class="lede">Avalisa PO Bot opens one trade, waits for its result, and only then decides the next one. That is slower than firing off parallel positions &mdash; and it is the point. Here is why sequential trading keeps the staking logic intact and a bad streak contained.</p>
+      <div class="quick-links">
+        <a class="button" href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Add to Chrome</a>
+        <a class="button secondary" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+      </div>
+    </div>
+    <div class="shell">
+      <aside class="toc" aria-label="On this page">
+        <strong>On this page</strong>
+        <ol>
+          <li><a href="#sequence">Stakes depend on sequence</a></li>
+          <li><a href="#parallel">Why parallel is worse</a></li>
+          <li><a href="#math">The maths first</a></li>
+          <li><a href="#steps">Practical steps</a></li>
+          <li><a href="#risk">Risk statement</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ol>
+      </aside>
+      <article>
+        <section id="sequence">
+          <h2>Each trade resolves on its own; Martingale stakes depend on sequence</h2>
+          <p>A binary-options trade expires and resolves by itself. What ties two trades together is the staking plan, not the market. Martingale staking is deliberately conditional: after each loss the stake is multiplied &mdash; in Avalisa PO Bot the choices are 2x, 2.2x, 2.4x, 2.6x, 2.8x or 3x.</p>
+          <p>Because the next stake is only defined once the previous result is known, the loop has to be sequential: open one trade, wait for its result, then decide the next. Avalisa PO Bot works this way &mdash; while a trade is open it does not place another. &ldquo;One trade at a time&rdquo; is not a limitation of this kind of bot; it is the shape the staking maths requires.</p>
+        </section>
+        <section id="parallel">
+          <h2>Why overlapping trades are worse, not faster</h2>
+          <ul>
+            <li><strong>Exposure compounds.</strong> A single Martingale sequence can already wipe out a balance during a losing streak. Running several at once multiplies the money at risk without adding any new information.</li>
+            <li><strong>The stake stops being defined.</strong> If several positions resolve together, &ldquo;what is my stake after that loss?&rdquo; becomes ambiguous. With at most one live position, there is no ambiguity.</li>
+            <li><strong>Results stay attributable.</strong> The extension reads results from the Pocket Option tab, and a background or minimised tab can <a href="/guide/why-the-trading-tab-must-stay-open.html">delay result detection</a>. One open trade keeps each result tied to one known position, so your history is reviewable.</li>
+            <li><strong>The cap keeps working.</strong> There is no separate stop-loss or daily-loss-limit setting. Limiting Steps is the real way to cap a losing streak, and the bot pauses when the next stake would exceed your balance. Both assume one running sequence.</li>
+          </ul>
+        </section>
+        <section id="math">
+          <h2>The maths to run before touching any setting</h2>
+          <p>Binary options pay a fixed percentage <em>p</em>, so the break-even win rate is <strong>1 / (1 + p)</strong>. At a 92% payout that is about <strong>52.1%</strong> &mdash; more than half of every trade, indefinitely. Our own measurements (September 2026) found no setting that beat break-even over large samples; Martingale measured around 43&ndash;44%. More in <a href="/guide/honest-win-rate-break-even.html">honest win rates and break-even</a>.</p>
+          <p>And the cost of a streak: <strong>Steps = N allows N + 1 trades in a losing cycle; at 2x, Steps 3 costs 15 times the base stake.</strong> See <a href="/guide/martingale-risk-explained.html">Martingale risk explained</a>.</p>
+        </section>
+        <section id="steps">
+          <h2>Practical steps, in order</h2>
+          <ol>
+            <li><strong>Start on a demo account.</strong> The extension places trades the same way on demo and real accounts, so watch what a losing streak does there first.</li>
+            <li><strong>Set Martingale Steps to a small number, not Infinite.</strong> Work out the cycle cost with the rule above before you choose.</li>
+            <li><strong>Set a minimum payout.</strong> A lower payout raises your break-even rate &mdash; see <a href="/guide/payout-percentage-filter-importance.html">why the payout filter matters</a>.</li>
+            <li><strong>Choose pair behaviour deliberately.</strong> Pair Scan offers Current pair only, Auto scan favorites, or Auto-switch favorite. Fewer moving parts make results easier to read.</li>
+            <li><strong>Keep the Pocket Option tab visible</strong> while the bot runs.</li>
+            <li><strong>Change one setting at a time</strong>, and never mid-streak.</li>
+          </ol>
+        </section>
+        <section id="risk" class="risk">
+          <h2>Risk statement</h2>
+          <p>Trading binary options is <strong>high risk</strong>; only trade money you can afford to lose. Martingale multiplies the stake after each loss, and a losing streak can wipe out a balance. Trading involves risk. Avalisa does not guarantee profits. Start on a demo account.</p>
+        </section>
+        <section id="faq">
+          <h2>Frequently asked questions</h2>
+          <h3>Is one trade at a time slower?</h3>
+          <p>In trade count, yes. But each Martingale stake is defined by the previous result, so a sequential bot gives up nothing by waiting, while parallel trades add risk without adding information.</p>
+          <h3>What happens if I lose several in a row?</h3>
+          <p>The stake grows by your chosen multiplier after each loss, up to your Steps limit. When the next stake would exceed your balance, the bot pauses instead of continuing.</p>
+          <h3>What is the difference between Martingale and Avalisa Bot mode?</h3>
+          <p>Martingale follows a fixed direction (Always Buy, Always Sell or Alternating) and multiplies the stake after losses. Avalisa Bot mode needs Pro and trades only when enough of four chart rules agree: Low, Mid and High intensity require 2, 3 or all 4.</p>
+        </section>
+        <section id="start" class="final-cta">
+          <h2>Try it on demo</h2>
+          <p>Install Avalisa PO Bot from the <a href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Chrome Web Store</a>, follow the <a href="https://avalisabot.vercel.app/guide">setup guide</a>, and run it on a Pocket Option demo account first. On a phone, use the <a href="https://avalisabot.vercel.app/webapp">webapp bot</a>. Plans are on <a href="https://avalisabot.vercel.app/pricing">pricing</a>.</p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <span>© Avalisa PO Bot</span>
+      <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a>
+    </div>
+  </footer>
+</body>
+</html>
