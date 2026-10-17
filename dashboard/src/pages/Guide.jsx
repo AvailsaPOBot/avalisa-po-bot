@@ -355,6 +355,12 @@ export default function Guide() {
             </a>.
           </p>
           <p>
+            Wondering what &ldquo;AI&rdquo; means in a trading bot? Read{' '}
+            <a href="/guide/what-ai-in-a-trading-bot-actually-means.html">
+              what AI in a trading bot actually means
+            </a>.
+          </p>
+          <p>
             Not ready to use real money? Read{' '}
             <a href="/guide/test-a-trading-bot-on-demo.html">
               how to test a trading bot on a demo account

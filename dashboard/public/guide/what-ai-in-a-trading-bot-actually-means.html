@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>What &ldquo;AI&rdquo; in a Pocket Option Trading Bot Actually Means</title>
+  <meta name="description" content="What an &quot;AI trading bot&quot; really does on Pocket Option: fixed rules, stake sizing and clicks in your own tab. What no bot can predict, and the break-even maths to test it against.">
+  <meta property="og:title" content="What &ldquo;AI&rdquo; in a Pocket Option Trading Bot Actually Means">
+  <meta property="og:description" content="What an &quot;AI trading bot&quot; really does on Pocket Option: fixed rules, stake sizing and clicks in your own tab. What no bot can predict, and the break-even maths to test it against.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://avalisabot.vercel.app/guide/what-ai-in-a-trading-bot-actually-means.html">
+  <link rel="canonical" href="https://avalisabot.vercel.app/guide/what-ai-in-a-trading-bot-actually-means.html">
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root {
+      --bg: #060606;
+      --surface: #0e1216;
+      --surface-deep: #07090b;
+      --text: #f3eee6;
+      --muted: rgba(243, 238, 230, 0.7);
+      --gold: #d8a24a;
+      --gold-light: #f1c878;
+      --line: rgba(216, 162, 74, 0.24);
+      --jade: #4a9b7e;
+      --display: Georgia, 'Times New Roman', serif;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 78% 3%, rgba(216, 162, 74, 0.18), transparent 26rem),
+        radial-gradient(circle at 5% 22%, rgba(74, 155, 126, 0.12), transparent 30rem),
+        linear-gradient(180deg, var(--bg), #090c0e 48%, #040404);
+      color: var(--text);
+      font: 16px/1.7 var(--sans);
+    }
+    a { color: var(--gold-light); text-underline-offset: 0.2em; }
+    a:hover { color: #ffe1a8; }
+    a:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 4px; }
+    .shell { width: min(calc(100% - 2rem), 860px); margin: 0 auto; }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: rgba(6, 6, 6, 0.88);
+    }
+    nav {
+      display: flex;
+      min-height: 4.35rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand img { display: block; width: auto; height: 3.1rem; }
+    .nav-link { color: var(--muted); font-size: 0.86rem; font-weight: 700; text-decoration: none; }
+    .hero { padding: clamp(3.5rem, 8vw, 6.5rem) 0 clamp(2rem, 5vw, 4rem); }
+    .kicker {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    h1, h2 { font-family: var(--display); font-weight: 500; line-height: 1.08; }
+    h1 { max-width: 820px; margin: 0.75rem 0 1.25rem; font-size: clamp(2.5rem, 7vw, 5rem); }
+    h2 { margin: 0 0 1rem; font-size: clamp(1.8rem, 4vw, 2.55rem); }
+    h3 { margin: 1.75rem 0 0.35rem; color: var(--gold-light); font-size: 1.05rem; }
+    p, li { color: var(--muted); }
+    .lede { max-width: 740px; margin: 0; font-size: clamp(1.05rem, 2.5vw, 1.24rem); }
+    .quick-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.6rem; }
+    .button {
+      display: inline-flex;
+      min-height: 2.8rem;
+      align-items: center;
+      border: 1px solid rgba(241, 200, 120, 0.55);
+      border-radius: 0.48rem;
+      padding: 0.7rem 1rem;
+      background: linear-gradient(180deg, #f1c878, #d0933c 52%, #9c6423);
+      color: #130d05;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .button.secondary { background: rgba(10, 10, 15, 0.6); color: var(--gold-light); }
+    .toc, article section, .risk, .final-cta {
+      border: 1px solid var(--line);
+      border-radius: 0.7rem;
+      background:
+        radial-gradient(circle at 92% 0%, rgba(216, 162, 74, 0.08), transparent 15rem),
+        linear-gradient(180deg, rgba(14, 18, 22, 0.92), rgba(7, 9, 11, 0.94));
+    }
+    .toc { margin-bottom: 1rem; padding: 1.35rem clamp(1.1rem, 3vw, 1.8rem); }
+    .toc strong { font-family: var(--display); font-size: 1.2rem; }
+    .toc ol { columns: 2; margin-bottom: 0; padding-left: 1.25rem; }
+    .toc li { break-inside: avoid; margin: 0.25rem 0; }
+    article { display: grid; gap: 1rem; padding-bottom: 4rem; }
+    article section { padding: clamp(1.3rem, 4vw, 2.2rem); scroll-margin-top: 1rem; }
+    article section > :last-child { margin-bottom: 0; }
+    ol, ul { padding-left: 1.45rem; }
+    li + li { margin-top: 0.5rem; }
+    strong { color: var(--text); }
+    .risk { border-color: rgba(241, 200, 120, 0.42); }
+    .risk h2 { color: var(--gold-light); }
+    .final-cta { text-align: left; }
+    footer { border-top: 1px solid var(--line); padding: 2rem 0; color: var(--muted); font-size: 0.86rem; }
+    footer .shell { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 1.5rem; }
+    @media (max-width: 620px) {
+      .toc ol { columns: 1; }
+      .brand img { height: 2.7rem; }
+      .nav-link { font-size: 0.78rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="shell" aria-label="Primary navigation">
+      <a class="brand" href="/" aria-label="Avalisa PO Bot home">
+        <img src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot">
+      </a>
+      <a class="nav-link" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero shell">
+      <p class="kicker">Plain answers</p>
+      <h1>What &ldquo;AI&rdquo; in a Trading Bot Actually Means</h1>
+      <p class="lede">Most &ldquo;AI trading bot&rdquo; pages skip one fact: software can place trades for you, but it cannot know which way the price moves next. Here is what a Pocket Option bot really does, and how to test one before risking real money.</p>
+      <div class="quick-links">
+        <a class="button" href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Add to Chrome</a>
+        <a class="button secondary" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+      </div>
+    </div>
+    <div class="shell">
+      <aside class="toc" aria-label="On this page">
+        <strong>On this page</strong>
+        <ol>
+          <li><a href="#does">What the software does</a></li>
+          <li><a href="#cannot">What no bot can predict</a></li>
+          <li><a href="#martingale">Martingale needs a cap</a></li>
+          <li><a href="#test">How to test it</a></li>
+          <li><a href="#risk">Risk statement</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ol>
+      </aside>
+      <article>
+        <section id="does">
+          <h2>What the software actually does</h2>
+          <p>Avalisa PO Bot is a Chrome extension. It does four jobs, inside the Pocket Option page in your own browser, on your own account:</p>
+          <ol>
+            <li><strong>Decides when and which side to trade.</strong> In Avalisa Bot mode the engine is a fixed set of four chart rules (RSI 14, a 20-period moving average, Bollinger Bands, and momentum/candle checks). It trades only when enough of them agree: Low, Mid and High intensity require 2, 3 or all 4 rules. That is rule-based automation, not a learning machine &mdash; the word &ldquo;AI&rdquo; in this product category is mostly marketing.</li>
+            <li><strong>Sizes each stake.</strong> Martingale mode multiplies the next stake after a loss, by 2x up to 3x depending on your setting. Martingale itself reads no indicators.</li>
+            <li><strong>Applies your filters.</strong> Trade expiry, a minimum payout percentage, and which pairs to scan.</li>
+            <li><strong>Clicks for you.</strong> Trades are placed in your own Pocket Option tab. Keep that tab visible &mdash; a background or minimised tab can <a href="/guide/why-the-trading-tab-must-stay-open.html">delay trade-result detection</a>.</li>
+          </ol>
+          <p>Rules, money management and execution. There is no crystal ball in the box.</p>
+        </section>
+        <section id="cannot">
+          <h2>What no bot can predict</h2>
+          <ul>
+            <li><strong>The next candle.</strong> No software knows the direction in advance. Claims of near-perfect direction-reading are sales talk.</li>
+            <li><strong>Streaks.</strong> Markets produce losing runs, and losing runs are where Martingale gets expensive.</li>
+          </ul>
+          <p>The number that matters is break-even. Binary options pay a fixed percentage <em>p</em>, so the break-even win rate is <strong>1 / (1 + p)</strong>. At a 92% payout that is about <strong>52.1%</strong>; at 80% it is about 55.6%. Our own measurements (September 2026) found no setting that beat break-even over large samples; Martingale measured around 43&ndash;44%. We publish that because you should judge any bot, ours included, against this bar. More in <a href="/guide/honest-win-rate-break-even.html">honest win rates and break-even</a>.</p>
+        </section>
+        <section id="martingale">
+          <h2>Why Martingale needs a cap</h2>
+          <p>Multiplying the stake after each loss means a losing streak compounds. <strong>Steps = N allows N + 1 trades in a losing cycle; at 2x, Steps 3 costs 15 times the base stake.</strong> Limiting Steps is the real way to cap a losing streak &mdash; there is no separate stop-loss or daily-loss-limit setting. When the next stake would exceed your balance, the bot pauses. See <a href="/guide/martingale-risk-explained.html">Martingale risk explained</a>.</p>
+        </section>
+        <section id="test">
+          <h2>How to test it before real money</h2>
+          <ol>
+            <li><strong>Start on a demo account.</strong> The extension places trades the same way on demo and real accounts, so demo is the right first test.</li>
+            <li><strong>Mind the payout.</strong> A lower payout raises your break-even win rate before you trade once. Use the minimum-payout filter &mdash; see <a href="/guide/payout-percentage-filter-importance.html">why the payout filter matters</a>.</li>
+            <li><strong>If you use Martingale, set Steps to a small finite number.</strong></li>
+            <li><strong>Judge over many trades, not one day.</strong> Compare your result with your break-even number.</li>
+          </ol>
+        </section>
+        <section id="risk" class="risk">
+          <h2>Risk statement</h2>
+          <p>Trading binary options is <strong>high risk</strong>; only trade money you can afford to lose. Martingale doubles (or more) the stake after each loss, and a losing streak can wipe out a balance. Trading involves risk. Avalisa does not guarantee profits. Start on a demo account.</p>
+        </section>
+        <section id="faq">
+          <h2>Frequently asked questions</h2>
+          <h3>Does Avalisa use AI or machine learning?</h3>
+          <p>No. Avalisa Bot mode is a fixed rule engine (2, 3 or 4 of 4 chart rules), and Martingale mode is stake sizing. Neither learns or predicts.</p>
+          <h3>What is the difference between the two modes?</h3>
+          <p>Martingale mode is money management and is on every plan (10 trades on the free Demo). Avalisa Bot mode is the rule-based signal engine and needs Pro.</p>
+          <h3>What does it cost?</h3>
+          <p>Demo is free (10 Martingale trades). Basic is $69 one-time. Pro is $119 one-time or $29/month &mdash; a real recurring subscription &mdash; you choose at checkout. Details on <a href="https://avalisabot.vercel.app/pricing">pricing</a>.</p>
+          <h3>Does Pocket Option allow bots?</h3>
+          <p>See <a href="/guide/does-pocket-option-allow-bots-account-safety.html">does Pocket Option allow bots</a> for what Pocket Option&rsquo;s own blog says and what we have not verified.</p>
+        </section>
+        <section id="start" class="final-cta">
+          <h2>Try it on demo</h2>
+          <p>Install Avalisa PO Bot from the <a href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Chrome Web Store</a>, follow the <a href="https://avalisabot.vercel.app/guide">setup guide</a>, and run it on a Pocket Option demo account first. On a phone, use the <a href="https://avalisabot.vercel.app/webapp">webapp bot</a>. Related: <a href="/guide/what-automation-cannot-do.html">what automation cannot do</a>.</p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <span>© Avalisa PO Bot</span>
+      <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a>
+    </div>
+  </footer>
+</body>
+</html>
