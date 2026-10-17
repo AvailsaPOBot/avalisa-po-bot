@@ -204,20 +204,20 @@
             <li>Divide that number by the cycle-cost multiple for your chosen steps and multiplier (table below). The quotient is your largest safe base stake.</li>
             <li>Round down, then run a demo account at that size before going real.</li>
           </ol>
-          <p>Example: if you can afford to lose $300 in a streak and you choose 5 Martingale steps at a 2x multiplier, the full-cycle cost is at most 31&times; the base stake, so a base stake of about $9 keeps the worst case under $300. Never size backwards from how much you hope to gain.</p>
+          <p>Example: if you can afford to lose $300 in a streak and you set Martingale Steps to 4 at a 2x multiplier (up to five trades in a cycle), the full-cycle cost is at most 31&times; the base stake, so a base stake of about $9 keeps the worst case under $300. Never size backwards from how much you hope to gain.</p>
         </section>
 
         <section id="steps">
           <h2>Setting 3: Martingale steps and the loss multiplier</h2>
           <p>After each loss, the bot multiplies the next stake by your chosen multiplier: 2x (double), 2.2x, 2.4x, 2.6x, 2.8x, or 3x (triple). Martingale Steps is the number of such steps allowed before a cycle stops &mdash; or Infinite.</p>
           <p><strong>Limiting the step count is the real way to cap a losing streak.</strong> There is no separate stop-loss or daily-loss-limit setting in the bot; the step count is that setting. When the next stake would exceed your account balance, the bot pauses. A streak longer than your step limit ends the cycle at a known, bounded cost.</p>
-          <p>The verified cost of a full losing cycle, as a multiple of the base stake:</p>
+          <p>The verified cost of a full losing cycle, as a multiple of the base stake. The table counts <em>trades</em> in the cycle; the panel&rsquo;s Martingale Steps setting counts recovery steps after the first trade, so Steps&nbsp;=&nbsp;N allows N&nbsp;+&nbsp;1 trades (Steps&nbsp;4 is the five-trade row).</p>
           <div class="table-wrap">
             <table>
               <caption>Full losing-cycle cost, as a multiple of the base stake</caption>
               <thead>
                 <tr>
-                  <th scope="col">Steps</th>
+                  <th scope="col">Losing trades in the cycle</th>
                   <th scope="col">2x multiplier</th>
                   <th scope="col">3x multiplier</th>
                 </tr>
@@ -233,7 +233,7 @@
               </tbody>
             </table>
           </div>
-          <p>At 5 steps, the worst cycle costs 31&times; the base stake with doubling but 121&times; with tripling. The intermediate multipliers (2.2x to 2.8x) sit in between; if you use one, compute your own cycle cost from your exact step count &mdash; do not estimate.</p>
+          <p>At five losing trades (panel Steps&nbsp;4), the worst cycle costs 31&times; the base stake with doubling but 121&times; with tripling. The intermediate multipliers (2.2x to 2.8x) sit in between; if you use one, compute your own cycle cost from your exact step count &mdash; do not estimate.</p>
           <p>Also note the direction setting for Martingale: Always Buy, Always Sell, or Alternating. Choose the direction you have tested on demo, and keep the Pocket Option tab visible while the bot trades &mdash; a minimised or backgrounded tab can delay trade-result detection.</p>
         </section>
 

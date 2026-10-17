@@ -225,13 +225,13 @@
 
         <section id="martingale">
           <h2>Why Martingale makes the math harder, not easier</h2>
-          <p>Martingale raises the stake after each loss to recoup the cycle. Cost of a full losing cycle, as a multiple of the base stake:</p>
+          <p>Martingale raises the stake after each loss to recoup the cycle. Cost of a full losing cycle, as a multiple of the base stake (counted in trades; the panel&rsquo;s Martingale Steps setting allows Steps&nbsp;+&nbsp;1 trades, so seven trades is Steps&nbsp;6):</p>
           <div class="table-wrap">
             <table>
               <caption>Full losing-cycle cost, as a multiple of the base stake</caption>
               <thead>
                 <tr>
-                  <th scope="col">Steps</th>
+                  <th scope="col">Losing trades in a row</th>
                   <th scope="col">2x multiplier</th>
                   <th scope="col">3x multiplier</th>
                 </tr>
@@ -243,7 +243,7 @@
               </tbody>
             </table>
           </div>
-          <p>A seven-step losing streak at triple stakes costs the equivalent of 1,093 base stakes; a losing streak can wipe out a balance quickly. That is the real risk of Martingale. Capping the number of Martingale steps is the mitigation &mdash; the bot has no separate stop-loss or daily-loss-limit setting, and limiting steps is the only built-in way to bound a losing streak. Test on a demo account before real money.</p>
+          <p>Seven straight losses at triple stakes costs the equivalent of 1,093 base stakes; a losing streak can wipe out a balance quickly. That is the real risk of Martingale. Capping the number of Martingale steps is the mitigation &mdash; the bot has no separate stop-loss or daily-loss-limit setting, and limiting steps is the only built-in way to bound a losing streak. Test on a demo account before real money.</p>
         </section>
 
         <section id="helps">
