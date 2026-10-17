@@ -346,6 +346,15 @@ export default function Guide() {
             </a>.
           </p>
           <p>
+            Need to stop mid-session? See{' '}
+            <a href="/guide/how-to-stop-or-remove-the-bot-safely.html">
+              how to stop or remove the bot safely
+            </a>{' '}and{' '}
+            <a href="/guide/why-the-trading-tab-must-stay-open.html">
+              why the trading tab must stay visible
+            </a>.
+          </p>
+          <p>
             Not ready to use real money? Read{' '}
             <a href="/guide/test-a-trading-bot-on-demo.html">
               how to test a trading bot on a demo account

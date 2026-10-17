@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How to Stop, Disable or Uninstall Avalisa PO Bot Safely</title>
+  <meta name="description" content="How the Stop button handles an open trade, the automatic stops you can set, and how to disable or uninstall the Avalisa PO Bot extension.">
+  <meta property="og:title" content="How to Stop, Disable or Uninstall Avalisa PO Bot Safely">
+  <meta property="og:description" content="How the Stop button handles an open trade, the automatic stops you can set, and how to disable or uninstall the Avalisa PO Bot extension.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://avalisabot.vercel.app/guide/how-to-stop-or-remove-the-bot-safely.html">
+  <link rel="canonical" href="https://avalisabot.vercel.app/guide/how-to-stop-or-remove-the-bot-safely.html">
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root {
+      --bg: #060606;
+      --surface: #0e1216;
+      --surface-deep: #07090b;
+      --text: #f3eee6;
+      --muted: rgba(243, 238, 230, 0.7);
+      --gold: #d8a24a;
+      --gold-light: #f1c878;
+      --line: rgba(216, 162, 74, 0.24);
+      --jade: #4a9b7e;
+      --display: Georgia, 'Times New Roman', serif;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 78% 3%, rgba(216, 162, 74, 0.18), transparent 26rem),
+        radial-gradient(circle at 5% 22%, rgba(74, 155, 126, 0.12), transparent 30rem),
+        linear-gradient(180deg, var(--bg), #090c0e 48%, #040404);
+      color: var(--text);
+      font: 16px/1.7 var(--sans);
+    }
+    a { color: var(--gold-light); text-underline-offset: 0.2em; }
+    a:hover { color: #ffe1a8; }
+    a:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 4px; }
+    .shell { width: min(calc(100% - 2rem), 860px); margin: 0 auto; }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: rgba(6, 6, 6, 0.88);
+    }
+    nav {
+      display: flex;
+      min-height: 4.35rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand img { display: block; width: auto; height: 3.1rem; }
+    .nav-link { color: var(--muted); font-size: 0.86rem; font-weight: 700; text-decoration: none; }
+    .hero { padding: clamp(3.5rem, 8vw, 6.5rem) 0 clamp(2rem, 5vw, 4rem); }
+    .kicker {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    h1, h2 { font-family: var(--display); font-weight: 500; line-height: 1.08; }
+    h1 { max-width: 820px; margin: 0.75rem 0 1.25rem; font-size: clamp(2.5rem, 7vw, 5rem); }
+    h2 { margin: 0 0 1rem; font-size: clamp(1.8rem, 4vw, 2.55rem); }
+    h3 { margin: 1.75rem 0 0.35rem; color: var(--gold-light); font-size: 1.05rem; }
+    p, li { color: var(--muted); }
+    .lede { max-width: 740px; margin: 0; font-size: clamp(1.05rem, 2.5vw, 1.24rem); }
+    .quick-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.6rem; }
+    .button {
+      display: inline-flex;
+      min-height: 2.8rem;
+      align-items: center;
+      border: 1px solid rgba(241, 200, 120, 0.55);
+      border-radius: 0.48rem;
+      padding: 0.7rem 1rem;
+      background: linear-gradient(180deg, #f1c878, #d0933c 52%, #9c6423);
+      color: #130d05;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .button.secondary { background: rgba(10, 10, 15, 0.6); color: var(--gold-light); }
+    .toc, article section, .risk, .final-cta {
+      border: 1px solid var(--line);
+      border-radius: 0.7rem;
+      background:
+        radial-gradient(circle at 92% 0%, rgba(216, 162, 74, 0.08), transparent 15rem),
+        linear-gradient(180deg, rgba(14, 18, 22, 0.92), rgba(7, 9, 11, 0.94));
+    }
+    .toc { margin-bottom: 1rem; padding: 1.35rem clamp(1.1rem, 3vw, 1.8rem); }
+    .toc strong { font-family: var(--display); font-size: 1.2rem; }
+    .toc ol { columns: 2; margin-bottom: 0; padding-left: 1.25rem; }
+    .toc li { break-inside: avoid; margin: 0.25rem 0; }
+    article { display: grid; gap: 1rem; padding-bottom: 4rem; }
+    article section { padding: clamp(1.3rem, 4vw, 2.2rem); scroll-margin-top: 1rem; }
+    article section > :last-child { margin-bottom: 0; }
+    ol, ul { padding-left: 1.45rem; }
+    li + li { margin-top: 0.5rem; }
+    strong { color: var(--text); }
+    .risk { border-color: rgba(241, 200, 120, 0.42); }
+    .risk h2 { color: var(--gold-light); }
+    .final-cta { text-align: left; }
+    footer { border-top: 1px solid var(--line); padding: 2rem 0; color: var(--muted); font-size: 0.86rem; }
+    footer .shell { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 1.5rem; }
+    @media (max-width: 620px) {
+      .toc ol { columns: 1; }
+      .brand img { height: 2.7rem; }
+      .nav-link { font-size: 0.78rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="shell" aria-label="Primary navigation">
+      <a class="brand" href="/" aria-label="Avalisa PO Bot home">
+        <img src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot">
+      </a>
+      <a class="nav-link" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero shell">
+      <p class="kicker">Control</p>
+      <h1>How to Stop or Remove the Bot Safely</h1>
+      <p class="lede">Stop the bot mid-session, understand what happens to a trade that is already open, set automatic stops in advance, or remove the extension completely.</p>
+      <div class="quick-links">
+        <a class="button" href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Add to Chrome</a>
+        <a class="button secondary" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+      </div>
+    </div>
+    <div class="shell">
+      <aside class="toc" aria-label="On this page">
+        <strong>On this page</strong>
+        <ol>
+          <li><a href="#stop">Stop button</a></li>
+          <li><a href="#close">Closing the tab</a></li>
+          <li><a href="#limits">Automatic stops</a></li>
+          <li><a href="#remove">Disable or uninstall</a></li>
+          <li><a href="#risk">Risk statement</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ol>
+      </aside>
+      <article>
+        <section id="stop">
+          <h2>Stop: use the Stop button in the panel</h2>
+          <p>The Avalisa PO Bot panel sits on your Pocket Option page and has two buttons: <strong>&#9654; Start</strong> and <strong>&#9632; Stop</strong>. Press <strong>Stop</strong> whenever you want the bot to stop placing trades. The status line under the buttons returns to <em>Stopped</em>.</p>
+          <h3>If a trade is open when you press Stop</h3>
+          <p>The bot does not abandon an order it has already placed. The status changes to <em>Stopping &mdash; waiting for the current order to resolve</em>, it tracks that order to its result, and then stops without placing another one. If no result is seen within 60 seconds, the bot stops tracking it and marks it as unresolved: before it lets you press Start again, it asks you to check your Pocket Option trade history and confirm all orders are closed. That is deliberate &mdash; it stops the next Martingale step being sized on a result the bot never saw.</p>
+          <p>A binary option runs to its expiry on Pocket Option&rsquo;s side. Stopping the bot stops <em>new</em> trades; it does not cancel a trade that is already running.</p>
+        </section>
+        <section id="close">
+          <h2>Closing the tab or browser</h2>
+          <p>The bot runs inside the Pocket Option tab in your own browser, so closing that tab or quitting Chrome also ends its activity. Prefer the Stop button when you can: it lets the bot finish tracking an open order cleanly. If you closed the tab mid-trade, check your Pocket Option trade history before you start again so you know where the last cycle ended.</p>
+        </section>
+        <section id="limits">
+          <h2>Automatic stops you can set in advance</h2>
+          <ul>
+            <li><strong>Martingale Steps.</strong> Limiting Steps is the real way to cap a losing streak &mdash; there is no separate stop-loss or daily-loss-limit setting. Steps = N allows N + 1 trades in a losing cycle, then the stake resets to your Start Amount. At 2x, Steps 3 costs 15 times the base stake. &ldquo;Infinite&rdquo; keeps recovering until a win or a manual stop.</li>
+            <li><strong>Balance check.</strong> When the next stake would be bigger than your balance, the bot pauses instead of placing it.</li>
+            <li><strong>Low payout.</strong> Under the minimum-payout setting you can choose <em>Stop bot</em>, so the bot stops when the payout falls below your minimum.</li>
+          </ul>
+        </section>
+        <section id="remove">
+          <h2>Disable or uninstall the extension</h2>
+          <ol>
+            <li>In Chrome, open <code>chrome://extensions</code> (or the puzzle-piece Extensions icon in the toolbar).</li>
+            <li>Find <strong>Avalisa PO Bot</strong>. Toggle it off to disable it, or choose <strong>Remove</strong> and confirm to uninstall it.</li>
+            <li>Reload or reopen your Pocket Option tab so the panel is gone.</li>
+          </ol>
+          <p>Removing the extension removes only our automation. Your Pocket Option account, balance and history belong to Pocket Option and are not changed by installing or removing the extension. You can reinstall any time from the <a href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Chrome Web Store</a>.</p>
+        </section>
+        <section id="risk" class="risk">
+          <h2>Risk statement</h2>
+          <p>Trading binary options is <strong>high risk</strong>. Martingale multiplies the stake after each loss, and a losing streak can wipe out a balance. Only trade money you can afford to lose. Trading involves risk. Avalisa does not guarantee profits. Start on a demo account.</p>
+        </section>
+        <section id="faq">
+          <h2>Frequently asked questions</h2>
+          <h3>Is there a pause button?</h3>
+          <p>Stop is the pause: press Stop, and press Start when you are ready.</p>
+          <h3>Does uninstalling delete my Pocket Option account or balance?</h3>
+          <p>No. The extension lives in your browser; your account lives with Pocket Option.</p>
+          <h3>Does uninstalling cancel a paid plan?</h3>
+          <p>Basic ($69) and the $119 Pro option are one-time payments, so there is nothing to cancel. The $29/month Pro option is a real recurring subscription &mdash; removing the extension does not cancel it. Email <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a> if you need help with that.</p>
+          <h3>The bot says an order is unresolved. What now?</h3>
+          <p>Open your Pocket Option trade history, confirm every order has closed, confirm that in the panel when it asks, then start again. If the panel and your history disagree, send a screenshot of both to <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a>.</p>
+        </section>
+        <section id="start" class="final-cta">
+          <h2>Practise stopping on demo</h2>
+          <p>On a Pocket Option demo account, start the bot, press Stop with a trade open, and watch what the panel does. The free Demo plan includes 10 Martingale trades. Related: <a href="/guide/settings-guide.html">settings guide</a>, <a href="/guide/martingale-risk-explained.html">Martingale risk explained</a> and <a href="/guide/why-the-trading-tab-must-stay-open.html">why the trading tab must stay visible</a>.</p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <span>© Avalisa PO Bot</span>
+      <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a>
+    </div>
+  </footer>
+</body>
+</html>
