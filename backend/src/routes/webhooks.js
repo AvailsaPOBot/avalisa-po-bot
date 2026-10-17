@@ -310,7 +310,16 @@ async function handleWhopMembership(data, eventType) {
     return;
   }
 
-  const user = await prisma.user.findUnique({ where: { email: customerEmail }, include: { license: true } });
+  // Accounts store emails trimmed + lowercased (auth.js register), but Whop may send
+  // any case — an exact-case lookup left paid buyers on Demo. Normalise, then fall back
+  // to a case-insensitive match for legacy rows saved before normalisation.
+  const normalizedEmail = String(customerEmail).trim().toLowerCase();
+  const user =
+    (await prisma.user.findUnique({ where: { email: normalizedEmail }, include: { license: true } })) ||
+    (await prisma.user.findFirst({
+      where: { email: { equals: normalizedEmail, mode: 'insensitive' } },
+      include: { license: true },
+    }));
   if (!user) {
     console.warn(`[Whop] No user found for email: ${customerEmail}`);
     recordUnmappedPurchase(prisma, {

@@ -6,7 +6,9 @@ function mockPrisma({ throws = false, user = { id: 'user_123', email: 'customer@
   const created = [];
   const upserts = [];
   const creates = [];
+  const lookups = [];
   return {
+    lookups,
     created,
     upserts,
     creates,
@@ -18,7 +20,16 @@ function mockPrisma({ throws = false, user = { id: 'user_123', email: 'customer@
       },
     },
     user: {
-      findUnique: async () => user,
+      findUnique: async (args) => {
+        lookups.push({ method: 'findUnique', args });
+        if (typeof user === 'function') return user('findUnique', args);
+        return user;
+      },
+      findFirst: async (args) => {
+        lookups.push({ method: 'findFirst', args });
+        if (typeof user === 'function') return user('findFirst', args);
+        return user;
+      },
     },
     license: {
       findUnique: async () => null,
@@ -447,6 +458,51 @@ test('a completed, mappable PayPal capture grants a licence without an alert', a
     });
     assert.equal(response.statusCode, 200);
     assert.equal(alerts.length, 0);
+    assert.equal(prisma.upserts.length, 1);
+  } finally {
+    restore();
+  }
+});
+
+test('a Whop purchase whose email differs only in case still grants the licence', async () => {
+  const stored = { id: 'user_case', email: 'buyer@example.com', license: null };
+  const prisma = mockPrisma({
+    user: (method, args) => (method === 'findUnique' && args.where.email === 'buyer@example.com' ? stored : null),
+  });
+  const alerts = [];
+  const { router, restore } = loadWebhooksRouter(prisma, {
+    recordUnmappedPurchase: (injectedPrisma, details) => alerts.push(details),
+  });
+
+  try {
+    const response = await postWhop(router, {
+      id: 'mem_case_123',
+      user: { email: '  Buyer@Example.COM ' },
+      plan: { id: 'plan_basic', name: 'Basic', price_cents: 6900 },
+    });
+    assert.equal(response.statusCode, 200);
+    assert.equal(alerts.length, 0);
+    assert.equal(prisma.upserts.length, 1);
+    assert.equal(prisma.lookups[0].args.where.email, 'buyer@example.com');
+  } finally {
+    restore();
+  }
+});
+
+test('a legacy mixed-case account is found by the case-insensitive fallback', async () => {
+  const stored = { id: 'user_legacy', email: 'Legacy@Example.com', license: null };
+  const prisma = mockPrisma({
+    user: (method, args) => (method === 'findFirst' && args.where.email.mode === 'insensitive' ? stored : null),
+  });
+  const { router, restore } = loadWebhooksRouter(prisma, { recordUnmappedPurchase: () => {} });
+
+  try {
+    const response = await postWhop(router, {
+      id: 'mem_legacy_123',
+      user: { email: 'legacy@example.com' },
+      plan: { id: 'plan_basic', name: 'Basic', price_cents: 6900 },
+    });
+    assert.equal(response.statusCode, 200);
     assert.equal(prisma.upserts.length, 1);
   } finally {
     restore();
