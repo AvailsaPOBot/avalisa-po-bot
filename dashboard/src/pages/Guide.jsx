@@ -379,6 +379,12 @@ export default function Guide() {
             </a>.
           </p>
           <p>
+            Coming from forex? Read{' '}
+            <a href="/guide/binary-options-vs-forex-automation.html">
+              automating binary options vs forex
+            </a>.
+          </p>
+          <p>
             Not ready to use real money? Read{' '}
             <a href="/guide/test-a-trading-bot-on-demo.html">
               how to test a trading bot on a demo account
