@@ -325,6 +325,12 @@ export default function Guide() {
             </a>.
           </p>
           <p>
+            On a phone? See{' '}
+            <a href="/guide/is-there-a-pocket-option-bot-app-or-apk.html">
+              is there a Pocket Option bot app or APK
+            </a>.
+          </p>
+          <p>
             Not ready to use real money? Read{' '}
             <a href="/guide/test-a-trading-bot-on-demo.html">
               how to test a trading bot on a demo account
