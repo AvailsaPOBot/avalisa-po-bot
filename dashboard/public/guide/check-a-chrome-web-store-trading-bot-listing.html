@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How to Check a Pocket Option Bot Listing on the Chrome Web Store</title>
+  <meta name="description" content="Before installing a Pocket Option bot extension, read its Chrome Web Store listing: publisher, permissions, host access, reviews, last update and support contact.">
+  <meta property="og:title" content="How to Check a Pocket Option Bot Listing on the Chrome Web Store">
+  <meta property="og:description" content="Before installing a Pocket Option bot extension, read its Chrome Web Store listing: publisher, permissions, host access, reviews, last update and support contact.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://avalisabot.vercel.app/guide/check-a-chrome-web-store-trading-bot-listing.html">
+  <link rel="canonical" href="https://avalisabot.vercel.app/guide/check-a-chrome-web-store-trading-bot-listing.html">
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root {
+      --bg: #060606;
+      --surface: #0e1216;
+      --surface-deep: #07090b;
+      --text: #f3eee6;
+      --muted: rgba(243, 238, 230, 0.7);
+      --gold: #d8a24a;
+      --gold-light: #f1c878;
+      --line: rgba(216, 162, 74, 0.24);
+      --jade: #4a9b7e;
+      --display: Georgia, 'Times New Roman', serif;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 78% 3%, rgba(216, 162, 74, 0.18), transparent 26rem),
+        radial-gradient(circle at 5% 22%, rgba(74, 155, 126, 0.12), transparent 30rem),
+        linear-gradient(180deg, var(--bg), #090c0e 48%, #040404);
+      color: var(--text);
+      font: 16px/1.7 var(--sans);
+    }
+    a { color: var(--gold-light); text-underline-offset: 0.2em; }
+    a:hover { color: #ffe1a8; }
+    a:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 4px; }
+    .shell { width: min(calc(100% - 2rem), 860px); margin: 0 auto; }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: rgba(6, 6, 6, 0.88);
+    }
+    nav {
+      display: flex;
+      min-height: 4.35rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand img { display: block; width: auto; height: 3.1rem; }
+    .nav-link { color: var(--muted); font-size: 0.86rem; font-weight: 700; text-decoration: none; }
+    .hero { padding: clamp(3.5rem, 8vw, 6.5rem) 0 clamp(2rem, 5vw, 4rem); }
+    .kicker {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    h1, h2 { font-family: var(--display); font-weight: 500; line-height: 1.08; }
+    h1 { max-width: 820px; margin: 0.75rem 0 1.25rem; font-size: clamp(2.5rem, 7vw, 5rem); }
+    h2 { margin: 0 0 1rem; font-size: clamp(1.8rem, 4vw, 2.55rem); }
+    h3 { margin: 1.75rem 0 0.35rem; color: var(--gold-light); font-size: 1.05rem; }
+    p, li { color: var(--muted); }
+    .lede { max-width: 740px; margin: 0; font-size: clamp(1.05rem, 2.5vw, 1.24rem); }
+    .quick-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.6rem; }
+    .button {
+      display: inline-flex;
+      min-height: 2.8rem;
+      align-items: center;
+      border: 1px solid rgba(241, 200, 120, 0.55);
+      border-radius: 0.48rem;
+      padding: 0.7rem 1rem;
+      background: linear-gradient(180deg, #f1c878, #d0933c 52%, #9c6423);
+      color: #130d05;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .button.secondary { background: rgba(10, 10, 15, 0.6); color: var(--gold-light); }
+    .toc, article section, .risk, .final-cta {
+      border: 1px solid var(--line);
+      border-radius: 0.7rem;
+      background:
+        radial-gradient(circle at 92% 0%, rgba(216, 162, 74, 0.08), transparent 15rem),
+        linear-gradient(180deg, rgba(14, 18, 22, 0.92), rgba(7, 9, 11, 0.94));
+    }
+    .toc { margin-bottom: 1rem; padding: 1.35rem clamp(1.1rem, 3vw, 1.8rem); }
+    .toc strong { font-family: var(--display); font-size: 1.2rem; }
+    .toc ol { columns: 2; margin-bottom: 0; padding-left: 1.25rem; }
+    .toc li { break-inside: avoid; margin: 0.25rem 0; }
+    article { display: grid; gap: 1rem; padding-bottom: 4rem; }
+    article section { padding: clamp(1.3rem, 4vw, 2.2rem); scroll-margin-top: 1rem; }
+    article section > :last-child { margin-bottom: 0; }
+    ol, ul { padding-left: 1.45rem; }
+    li + li { margin-top: 0.5rem; }
+    strong { color: var(--text); }
+    .risk { border-color: rgba(241, 200, 120, 0.42); }
+    .risk h2 { color: var(--gold-light); }
+    .final-cta { text-align: left; }
+    footer { border-top: 1px solid var(--line); padding: 2rem 0; color: var(--muted); font-size: 0.86rem; }
+    footer .shell { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 1.5rem; }
+    @media (max-width: 620px) {
+      .toc ol { columns: 1; }
+      .brand img { height: 2.7rem; }
+      .nav-link { font-size: 0.78rem; }
+    }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+    th, td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); text-align: left; color: var(--muted); }
+    th { color: var(--text); }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="shell" aria-label="Primary navigation">
+      <a class="brand" href="/" aria-label="Avalisa PO Bot home">
+        <img src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot">
+      </a>
+      <a class="nav-link" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero shell">
+      <p class="kicker">Before you install</p>
+      <h1>How to Check a Chrome Web Store Bot Listing Before You Install</h1>
+      <p class="lede">Two minutes on the store listing tells you who publishes a Pocket Option extension, what it can access, and whether a human stands behind it. For choosing between bots on features, see <a href="/guide/how-to-choose-a-pocket-option-bot.html">how to choose a Pocket Option bot</a>; for setup steps, see <a href="/guide/how-to-install-avalisa-po-bot.html">how to install Avalisa PO Bot</a>.</p>
+      <div class="quick-links">
+        <a class="button" href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Add to Chrome</a>
+        <a class="button secondary" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+      </div>
+    </div>
+    <div class="shell">
+      <aside class="toc" aria-label="On this page">
+        <strong>On this page</strong>
+        <ol>
+          <li><a href="#listing">What a listing tells you</a></li>
+          <li><a href="#access">Reading permissions and site access</a></li>
+          <li><a href="#red-flags">Red flags in a listing</a></li>
+          <li><a href="#official">Finding the official Avalisa listing</a></li>
+          <li><a href="#faq">Frequently asked questions</a></li>
+          <li><a href="#risk">Risk statement</a></li>
+        </ol>
+      </aside>
+      <article>
+        <section id="listing">
+          <h2>What a listing tells you</h2>
+          <p>A Chrome Web Store listing is the closest thing an extension has to a product label. Before you click Install, look for:</p>
+          <ul>
+            <li><strong>Publisher</strong> &mdash; a named publisher, not an anonymous account.</li>
+            <li><strong>Permissions</strong> &mdash; the browser-wide powers the extension asks for.</li>
+            <li><strong>Site access</strong> &mdash; which websites it can read and change.</li>
+            <li><strong>Reviews</strong> &mdash; what people report after actually using it, and whether the publisher replies.</li>
+            <li><strong>Last updated</strong> &mdash; a listing untouched for a long time may break when the trading site changes.</li>
+            <li><strong>Support contact</strong> &mdash; an email or site where a person answers.</li>
+          </ul>
+          <p>None of this replaces testing. A listing that passes every check still deserves a demo run first &mdash; see <a href="/guide/test-a-trading-bot-on-demo.html">testing a bot on a demo account</a>.</p>
+        </section>
+        <section id="access">
+          <h2>Reading permissions and site access</h2>
+          <p><strong>Permissions</strong> are browser-wide powers. <code>storage</code>, for example, only lets the extension save its own settings in your browser.</p>
+          <p><strong>Site access</strong> (the manifest&rsquo;s <code>host_permissions</code>) lists the websites the extension can read and modify. A Pocket Option panel needs Pocket Option&rsquo;s own trading domains &mdash; that is where it reads the chart and places trades. It has no reason to reach your email, your bank or &ldquo;all websites&rdquo;.</p>
+          <p>As a worked example, this is everything Avalisa PO Bot&rsquo;s manifest declares:</p>
+          <ul>
+            <li>Permissions: <code>storage</code> &mdash; saves its own settings locally.</li>
+            <li>Site access: <code>https://pocketoption.com/*</code>, <code>https://po.cash/*</code>, <code>https://po.trade/*</code> &mdash; Pocket Option&rsquo;s trading sites only.</li>
+          </ul>
+          <p>That is the shape of a narrow, single-purpose extension. Compare any other listing against it.</p>
+        </section>
+        <section id="red-flags">
+          <h2>Red flags in a listing</h2>
+          <ul>
+            <li><strong>Access to all sites</strong> when it claims to do one job on one trading site.</li>
+            <li><strong>No support contact</strong> &mdash; when money is on screen, you need a real address to write to.</li>
+            <li><strong>Profit or win-rate promises</strong> &mdash; no honest listing guarantees results.</li>
+            <li><strong>Asking for your broker password</strong> &mdash; a panel that works inside your already signed-in Pocket Option tab never needs it.</li>
+          </ul>
+          <p>For bot offers in general, see <a href="/guide/is-a-pocket-option-bot-safe-or-scam.html">is a Pocket Option bot safe or a scam?</a></p>
+        </section>
+        <section id="official">
+          <h2>Finding the official Avalisa listing</h2>
+          <p>Search the Chrome Web Store for &ldquo;Avalisa PO Bot&rdquo; and confirm the address is the official listing: <a href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa</a>. Check the publisher, the permissions and the support email before you click Install.</p>
+          <p>After installing: pin the extension so the panel is one click away, sign in with your Avalisa account (your plan is tied to the account), and start on a Pocket Option demo account. When you are ready to move on, see <a href="/guide/pocket-option-demo-to-real-account.html">moving from demo to a real account</a>.</p>
+        </section>
+        <section id="faq">
+          <h2>Frequently asked questions</h2>
+          <h3>Does a longer permissions list mean a better bot?</h3>
+          <p>No. More access means more that can go wrong. For a Pocket Option panel, local settings storage plus access to the trading site is the expected shape.</p>
+          <h3>The listing looks fine but reviews mention problems. Install anyway?</h3>
+          <p>Read whether the problems are recent and whether the publisher answered. If they are common and unanswered, wait or choose another extension.</p>
+          <h3>I installed the wrong one. What now?</h3>
+          <p>Remove it from Chrome&rsquo;s extensions page, and if it ever asked for your Pocket Option password, change that password. See <a href="/guide/how-to-stop-or-remove-the-bot-safely.html">how to stop or remove the bot safely</a>.</p>
+          <h3>Something on the Avalisa listing looks wrong. Who do I ask?</h3>
+          <p>Email <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a> with a screenshot.</p>
+        </section>
+        <section id="risk" class="risk">
+          <h2>Risk statement</h2>
+          <p>Binary options are <strong>high risk</strong>, and you can lose your entire deposit. In our large-sample measurements no setting has beaten break-even. Use only money you can afford to lose. Trading involves risk. Avalisa does not guarantee profits. Start on a demo account.</p>
+        </section>
+        <section id="start" class="final-cta">
+          <h2>Check first, then test on demo</h2>
+          <p>Open the <a href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">official listing</a>, compare it with the checks above, then try the bot on a Pocket Option demo account. The free Demo plan includes 10 Martingale trades; Basic is $69 one-time; Pro is $119 one-time or $29/month (a recurring subscription) &mdash; see <a href="https://avalisabot.vercel.app/pricing">pricing</a>.</p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <span>© Avalisa PO Bot</span>
+      <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a>
+    </div>
+  </footer>
+</body>
+</html>

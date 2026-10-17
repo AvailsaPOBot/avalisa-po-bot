@@ -427,6 +427,18 @@ export default function Guide() {
             </a>.
           </p>
           <p>
+            Checking a bot before installing? Read{' '}
+            <a href="/guide/check-a-chrome-web-store-trading-bot-listing.html">
+              how to check a Chrome Web Store listing
+            </a>.
+          </p>
+          <p>
+            Following signals? Read{' '}
+            <a href="/guide/pocket-option-signal-and-prediction-bots.html">
+              how a signal becomes a trade
+            </a>.
+          </p>
+          <p>
             Prefer not to use Martingale? Read{' '}
             <a href="/guide/trading-without-martingale-flat-staking.html">
               flat staking vs Martingale
