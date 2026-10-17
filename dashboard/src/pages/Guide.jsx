@@ -340,6 +340,12 @@ export default function Guide() {
             </a>.
           </p>
           <p>
+            Curious what the bot reads? See{' '}
+            <a href="/guide/rsi-macd-stochastic-plain-english.html">
+              RSI, MACD and Stochastic in plain English
+            </a>.
+          </p>
+          <p>
             Not ready to use real money? Read{' '}
             <a href="/guide/test-a-trading-bot-on-demo.html">
               how to test a trading bot on a demo account
