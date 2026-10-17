@@ -7,7 +7,9 @@ import toast from 'react-hot-toast';
 
 const VALID_TABS = ['settings', 'history', 'bots', 'admin'];
 const REVIEW_ASK_STORAGE_KEY = 'avalisa-review-ask-complete';
-const CHROME_WEB_STORE_REVIEW_URL = 'https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa/reviews';
+const CHROME_WEB_STORE_URL = 'https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa';
+const CHROME_WEB_STORE_REVIEW_URL = `${CHROME_WEB_STORE_URL}/reviews`;
+const INSTALL_STEP_STORAGE_KEY = 'avalisa-install-step-dismissed';
 
 const STRATEGIES = [
   { id: 'martingale', label: 'Martingale', plans: ['free', 'basic', 'lifetime'], desc: 'Double on loss to recover' },
@@ -35,6 +37,18 @@ function planDisplayName(plan) {
   return plan || 'demo';
 }
 
+function hasDismissedInstallStep() {
+  try {
+    return window.localStorage.getItem(INSTALL_STEP_STORAGE_KEY) === 'true';
+  } catch (err) {
+    return false;
+  }
+}
+
+function completedTradeCount(s) {
+  return ['wins', 'losses', 'ties'].reduce((total, result) => total + (Number(s?.[result]) || 0), 0);
+}
+
 function hasCompletedReviewAsk() {
   try {
     return window.localStorage.getItem(REVIEW_ASK_STORAGE_KEY) === 'true';
@@ -52,6 +66,8 @@ export default function Dashboard() {
   const [settings, setSettings] = useState(null);
   const [history, setHistory] = useState([]);
   const [stats, setStats] = useState(null);
+  const [demoStats, setDemoStats] = useState(null);
+  const [installStepDismissed, setInstallStepDismissed] = useState(hasDismissedInstallStep);
   const [historyType, setHistoryType] = useState('real');
   const [saving, setSaving] = useState(false);
   const [reviewAskCompleted, setReviewAskCompleted] = useState(hasCompletedReviewAsk);
@@ -336,6 +352,15 @@ export default function Dashboard() {
     } catch (err) { /* silent */ }
   }, []);
 
+  // Demo-account trades count too: most new users start on a Pocket Option demo
+  // account, and the install step and review ask must see that activity.
+  const loadDemoStats = useCallback(async () => {
+    try {
+      const res = await api.get('/api/trades/history?type=demo&limit=50');
+      setDemoStats(res.data.stats || null);
+    } catch (err) { /* silent */ }
+  }, []);
+
   const loadHistory = useCallback(async (type) => {
     try {
       const res = await api.get(`/api/trades/history?type=${type}&limit=50`);
@@ -343,7 +368,7 @@ export default function Dashboard() {
     } catch (err) { /* silent */ }
   }, []);
 
-  useEffect(() => { loadSettings(); loadStats(); }, [loadSettings, loadStats]);
+  useEffect(() => { loadSettings(); loadStats(); loadDemoStats(); }, [loadSettings, loadStats, loadDemoStats]);
   useEffect(() => { loadHistory(historyType); }, [loadHistory, historyType]);
   useEffect(() => { loadAdminUsers(); }, [loadAdminUsers]);
   useEffect(() => { loadPendingClaims(); }, [loadPendingClaims]);
@@ -369,6 +394,15 @@ export default function Dashboard() {
     setSettings(s => ({ ...s, [key]: value }));
   }
 
+  function dismissInstallStep() {
+    setInstallStepDismissed(true);
+    try {
+      window.localStorage.setItem(INSTALL_STEP_STORAGE_KEY, 'true');
+    } catch (err) {
+      // Storage can be unavailable; dismissing for this session is enough.
+    }
+  }
+
   function completeReviewAsk() {
     setReviewAskCompleted(true);
     try {
@@ -389,9 +423,11 @@ export default function Dashboard() {
   // stop that works — and it lands just BEFORE the paywall rather than at it, so we are not
   // asking a user for a favour at the moment they hit a wall.
   const REVIEW_ASK_MIN_TRADES = 8;
-  const completedTrades = ['wins', 'losses', 'ties']
-    .reduce((total, result) => total + (Number(stats?.[result]) || 0), 0);
+  const completedTrades = completedTradeCount(stats) + completedTradeCount(demoStats);
   const shouldShowReviewAsk = completedTrades >= REVIEW_ASK_MIN_TRADES && !reviewAskCompleted;
+  // New accounts landed here with no pointer to the extension, so most never placed a
+  // trade. Until the first trade (real or demo), lead with the install step.
+  const shouldShowInstallStep = stats !== null && demoStats !== null && completedTrades === 0 && !installStepDismissed;
 
   return (
     <div className="dashboard-page max-w-6xl mx-auto px-4 py-10">
@@ -431,6 +467,28 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {shouldShowInstallStep && (
+        <section className="card mb-8" aria-labelledby="install-step-heading" data-testid="install-step-card">
+          <h2 id="install-step-heading" className="text-lg font-semibold text-white mb-1">Next step: install the Avalisa extension</h2>
+          <p className="text-gray-400 text-sm mb-3">The bot runs inside Chrome on Pocket Option. Your account is ready — trades start once the extension is installed.</p>
+          <ol className="text-gray-300 text-sm list-decimal pl-5 mb-4 space-y-1">
+            <li>Add Avalisa PO Bot from the Chrome Web Store.</li>
+            <li>Open Pocket Option in Chrome and sign in to the bot panel with this email and your Avalisa password. Signed up with Google or Facebook? <Link to="/forgot-password" className="text-brand-400 underline">Set a password first</Link>.</li>
+            <li>Switch Pocket Option to a demo account and run a few test trades first.</li>
+          </ol>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <a href={CHROME_WEB_STORE_URL} target="_blank" rel="noopener noreferrer" className="btn-primary text-center text-sm py-2 px-4">
+              Add to Chrome
+            </a>
+            <Link to="/guide" className="btn-outline text-center text-sm py-2 px-4">Setup guide</Link>
+            <Link to="/webapp" className="btn-outline text-center text-sm py-2 px-4">On a phone? Use the Webapp Bot</Link>
+            <button type="button" onClick={dismissInstallStep} className="text-gray-400 text-sm py-2 px-4 hover:text-white">
+              I&apos;ve installed it
+            </button>
+          </div>
+        </section>
+      )}
 
       {/* Stats */}
       {stats && (
