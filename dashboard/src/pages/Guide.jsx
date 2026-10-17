@@ -415,6 +415,18 @@ export default function Guide() {
             </a>.
           </p>
           <p>
+            Curious about candle-streak entries? Read{' '}
+            <a href="/guide/pocket-option-candle-streak-pin-bar.html">
+              what candle streak and pin-bar rules assume
+            </a>.
+          </p>
+          <p>
+            Prefer not to use Martingale? Read{' '}
+            <a href="/guide/trading-without-martingale-flat-staking.html">
+              flat staking vs Martingale
+            </a>.
+          </p>
+          <p>
             Not ready to use real money? Read{' '}
             <a href="/guide/test-a-trading-bot-on-demo.html">
               how to test a trading bot on a demo account
