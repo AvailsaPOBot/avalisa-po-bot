@@ -373,6 +373,12 @@ export default function Guide() {
             </a>.
           </p>
           <p>
+            Why do entries sometimes differ from the signal? Read{' '}
+            <a href="/guide/execution-delay-in-a-browser-trading-bot.html">
+              execution delay in a browser trading bot
+            </a>.
+          </p>
+          <p>
             Not ready to use real money? Read{' '}
             <a href="/guide/test-a-trading-bot-on-demo.html">
               how to test a trading bot on a demo account

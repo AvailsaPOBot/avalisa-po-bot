@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Execution Delay in a Browser Trading Bot: What It Is and When It Matters</title>
+  <meta name="description" content="Signal-to-order latency, payout slippage and result-detection delay in a browser bot for Pocket Option: when they matter and the settings that bound them.">
+  <meta property="og:title" content="Execution Delay in a Browser Trading Bot: What It Is and When It Matters">
+  <meta property="og:description" content="Signal-to-order latency, payout slippage and result-detection delay in a browser bot for Pocket Option: when they matter and the settings that bound them.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://avalisabot.vercel.app/guide/execution-delay-in-a-browser-trading-bot.html">
+  <link rel="canonical" href="https://avalisabot.vercel.app/guide/execution-delay-in-a-browser-trading-bot.html">
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root {
+      --bg: #060606;
+      --surface: #0e1216;
+      --surface-deep: #07090b;
+      --text: #f3eee6;
+      --muted: rgba(243, 238, 230, 0.7);
+      --gold: #d8a24a;
+      --gold-light: #f1c878;
+      --line: rgba(216, 162, 74, 0.24);
+      --jade: #4a9b7e;
+      --display: Georgia, 'Times New Roman', serif;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 78% 3%, rgba(216, 162, 74, 0.18), transparent 26rem),
+        radial-gradient(circle at 5% 22%, rgba(74, 155, 126, 0.12), transparent 30rem),
+        linear-gradient(180deg, var(--bg), #090c0e 48%, #040404);
+      color: var(--text);
+      font: 16px/1.7 var(--sans);
+    }
+    a { color: var(--gold-light); text-underline-offset: 0.2em; }
+    a:hover { color: #ffe1a8; }
+    a:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 4px; }
+    .shell { width: min(calc(100% - 2rem), 860px); margin: 0 auto; }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: rgba(6, 6, 6, 0.88);
+    }
+    nav {
+      display: flex;
+      min-height: 4.35rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand img { display: block; width: auto; height: 3.1rem; }
+    .nav-link { color: var(--muted); font-size: 0.86rem; font-weight: 700; text-decoration: none; }
+    .hero { padding: clamp(3.5rem, 8vw, 6.5rem) 0 clamp(2rem, 5vw, 4rem); }
+    .kicker {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    h1, h2 { font-family: var(--display); font-weight: 500; line-height: 1.08; }
+    h1 { max-width: 820px; margin: 0.75rem 0 1.25rem; font-size: clamp(2.5rem, 7vw, 5rem); }
+    h2 { margin: 0 0 1rem; font-size: clamp(1.8rem, 4vw, 2.55rem); }
+    h3 { margin: 1.75rem 0 0.35rem; color: var(--gold-light); font-size: 1.05rem; }
+    p, li { color: var(--muted); }
+    .lede { max-width: 740px; margin: 0; font-size: clamp(1.05rem, 2.5vw, 1.24rem); }
+    .quick-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.6rem; }
+    .button {
+      display: inline-flex;
+      min-height: 2.8rem;
+      align-items: center;
+      border: 1px solid rgba(241, 200, 120, 0.55);
+      border-radius: 0.48rem;
+      padding: 0.7rem 1rem;
+      background: linear-gradient(180deg, #f1c878, #d0933c 52%, #9c6423);
+      color: #130d05;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .button.secondary { background: rgba(10, 10, 15, 0.6); color: var(--gold-light); }
+    .toc, article section, .risk, .final-cta {
+      border: 1px solid var(--line);
+      border-radius: 0.7rem;
+      background:
+        radial-gradient(circle at 92% 0%, rgba(216, 162, 74, 0.08), transparent 15rem),
+        linear-gradient(180deg, rgba(14, 18, 22, 0.92), rgba(7, 9, 11, 0.94));
+    }
+    .toc { margin-bottom: 1rem; padding: 1.35rem clamp(1.1rem, 3vw, 1.8rem); }
+    .toc strong { font-family: var(--display); font-size: 1.2rem; }
+    .toc ol { columns: 2; margin-bottom: 0; padding-left: 1.25rem; }
+    .toc li { break-inside: avoid; margin: 0.25rem 0; }
+    article { display: grid; gap: 1rem; padding-bottom: 4rem; }
+    article section { padding: clamp(1.3rem, 4vw, 2.2rem); scroll-margin-top: 1rem; }
+    article section > :last-child { margin-bottom: 0; }
+    ol, ul { padding-left: 1.45rem; }
+    li + li { margin-top: 0.5rem; }
+    strong { color: var(--text); }
+    .risk { border-color: rgba(241, 200, 120, 0.42); }
+    .risk h2 { color: var(--gold-light); }
+    .final-cta { text-align: left; }
+    footer { border-top: 1px solid var(--line); padding: 2rem 0; color: var(--muted); font-size: 0.86rem; }
+    footer .shell { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 1.5rem; }
+    @media (max-width: 620px) {
+      .toc ol { columns: 1; }
+      .brand img { height: 2.7rem; }
+      .nav-link { font-size: 0.78rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="shell" aria-label="Primary navigation">
+      <a class="brand" href="/" aria-label="Avalisa PO Bot home">
+        <img src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot">
+      </a>
+      <a class="nav-link" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero shell">
+      <p class="kicker">How it works</p>
+      <h1>Execution Delay in a Browser Trading Bot</h1>
+      <p class="lede">Execution delay is the gap between a signal firing and the order being placed &mdash; plus the gap between a trade closing and the bot noticing the result. In a browser bot both gaps exist. They matter most when trades are short and the market is moving, and they can be bounded even though they cannot be removed.</p>
+      <div class="quick-links">
+        <a class="button" href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Add to Chrome</a>
+        <a class="button secondary" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+      </div>
+    </div>
+    <div class="shell">
+      <aside class="toc" aria-label="On this page">
+        <strong>On this page</strong>
+        <ol>
+          <li><a href="#what">What delay actually is</a></li>
+          <li><a href="#when">When it matters</a></li>
+          <li><a href="#steps">Practical steps</a></li>
+          <li><a href="#math">The cost of a streak</a></li>
+          <li><a href="#risk">Risk statement</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ol>
+      </aside>
+      <article>
+        <section id="what">
+          <h2>Three delays get lumped under one name</h2>
+          <ol>
+            <li><strong>Signal-to-order latency.</strong> The strategy decides &ldquo;trade now&rdquo;; the bot then has to find the right element on the page, set the amount and submit. Every hop through the browser and the site&rsquo;s own scripts adds time.</li>
+            <li><strong>Payout slippage.</strong> Between the signal and the site accepting the order, conditions can move. In binary-style trades the shift that matters is the payout percentage: if it dropped since the signal, you entered a worse trade than you planned.</li>
+            <li><strong>Result-detection latency.</strong> After the trade closes, the bot has to notice the outcome before it can log it and decide the next step. A background or minimised tab can <a href="/guide/why-the-trading-tab-must-stay-open.html">delay that detection</a>.</li>
+          </ol>
+          <p>None of these is unique to one bot &mdash; every browser-based tool shares them. What differs is how carefully the tool behaves around them.</p>
+        </section>
+        <section id="when">
+          <h2>When delay matters &mdash; and when it mostly doesn&rsquo;t</h2>
+          <h3>It matters when</h3>
+          <ul>
+            <li><strong>The timeframe is short.</strong> On a trade that expires in under a minute or two, a few seconds of entry delay or a payout shift is a large share of the whole trade.</li>
+            <li><strong>The pair is volatile.</strong> Fast-moving pairs change payout and direction quickly, so the gap between signal and order is where assumptions go stale.</li>
+            <li><strong>You run Martingale.</strong> The next stake depends on the previous result, so reading each result correctly is what keeps the sequence coherent. Avalisa PO Bot holds <a href="/guide/why-a-bot-trades-one-at-a-time.html">one trade at a time</a> for exactly this reason.</li>
+          </ul>
+          <h3>It matters less when</h3>
+          <ul>
+            <li>Timeframes are longer and the pair is quiet: there is more slack between signal and expiry, so typical browser latency is a smaller share of the trade.</li>
+          </ul>
+        </section>
+        <section id="steps">
+          <h2>Practical steps to bound the damage</h2>
+          <ol>
+            <li><strong>Keep the Pocket Option tab visible</strong> while the bot trades.</li>
+            <li><strong>Set a minimum payout.</strong> The bot checks Minimum payout % before placing a trade; if the payout is below it, it either switches to a favorite pair that meets it or stops &mdash; your choice in the panel. A lower payout raises the win rate you need &mdash; see <a href="/guide/payout-percentage-filter-importance.html">why the payout filter matters</a>.</li>
+            <li><strong>Try longer timeframes first.</strong> Short expiries leave the least slack for the browser and the site to respond.</li>
+            <li><strong>Cap Martingale Steps.</strong> There is no separate stop-loss or daily-loss-limit setting; limiting Steps is the real way to cap a losing streak. Treat Infinite as uncapped risk.</li>
+            <li><strong>Choose pair behaviour deliberately.</strong> Pair Scan offers Current pair only, Auto scan favorites or Auto-switch favorite. Start with the current pair until you know how the others behave.</li>
+            <li><strong>Read your trade history, not your assumptions.</strong> Compare what actually happened with what you expected, on demo, before any real balance.</li>
+          </ol>
+        </section>
+        <section id="math">
+          <h2>The cost of a streak, counted out</h2>
+          <p>Delay explains why an entry was worse than planned; the staking plan explains why a streak was expensive. In the panel, <strong>Steps = N allows N + 1 trades in a losing cycle</strong>: at 2x, Steps 2 costs 7 times the base stake, Steps 3 costs 15 times, Steps 4 costs 31 times. Try your own numbers in the <a href="/guide/martingale-calculator.html">Martingale calculator</a>.</p>
+          <p>Binary options pay a fixed percentage <em>p</em>, so the break-even win rate is <strong>1 / (1 + p)</strong> &mdash; about 52.1% at a 92% payout. Our own measurements (September 2026) found no setting that beat break-even over large samples. More in <a href="/guide/honest-win-rate-break-even.html">honest win rates and break-even</a>.</p>
+        </section>
+        <section id="risk" class="risk">
+          <h2>Risk statement</h2>
+          <p>Trading binary options is <strong>high risk</strong>; only trade money you can afford to lose. Martingale multiplies the stake after each loss, and a losing streak can wipe out a balance. A bot is a discipline tool, not a money source. Trading involves risk. Avalisa does not guarantee profits. Start on a demo account.</p>
+        </section>
+        <section id="faq">
+          <h2>Frequently asked questions</h2>
+          <h3>Why did a trade open at a different payout from the one I saw?</h3>
+          <p>The payout can move between the signal and the order. The bot checks your Minimum payout % before each trade and switches pair or stops below it; quieter pairs and longer timeframes shrink the effect of the gap.</p>
+          <h3>Is delay why I lost my last streak?</h3>
+          <p>Delay can make entries worse than planned, but Martingale stakes are what make a streak expensive. Check both: what you actually got, and how many Steps the cycle was allowed.</p>
+          <h3>Does keeping the tab visible make entries faster?</h3>
+          <p>What we have verified is its effect on result detection: a background or minimised tab can delay the bot noticing outcomes. Keep it visible either way.</p>
+          <h3>Is slippage the same as delay?</h3>
+          <p>No. Delay is the time gap; slippage is what changed during it. You cannot remove the time, but the payout floor bounds what you accept inside it.</p>
+        </section>
+        <section id="start" class="final-cta">
+          <h2>Learn it where losing costs nothing</h2>
+          <p>The free Demo plan includes 10 Martingale trades on any supported timeframe. Install Avalisa PO Bot from the <a href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Chrome Web Store</a>, follow the <a href="https://avalisabot.vercel.app/guide">setup guide</a>, and run it on a Pocket Option demo account first. On a phone, use the <a href="https://avalisabot.vercel.app/webapp">webapp bot</a>. Basic is $69 one-time; Pro is $119 one-time or $29/month (a recurring subscription) &mdash; you choose at checkout on <a href="https://avalisabot.vercel.app/pricing">pricing</a>.</p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <span>© Avalisa PO Bot</span>
+      <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a>
+    </div>
+  </footer>
+</body>
+</html>
