@@ -284,16 +284,21 @@ export default function Pricing() {
                   <span>Whop checkout is temporarily unavailable</span>
                 </div>
               )}
-              <button
-                type="button"
-                className="lux-payment-choice lux-payment-choice--paypal"
-                disabled={!paypalEnabled || paypalBusyPlan === selectedPaymentPlan.paypalPlan}
-                onClick={() => startPayPalCheckout(selectedPaymentPlan.paypalPlan)}
-              >
-                <CreditCard size={16} />
-                <strong>PayPal</strong>
-                <span>{paypalEnabled ? 'Pay with PayPal account or supported card' : 'PayPal will appear after backend setup'}</span>
-              </button>
+              {/* Only offer PayPal once the backend has it configured. A greyed-out
+                  "PayPal will appear after backend setup" told buyers the store was
+                  unfinished at the moment they were deciding to pay. */}
+              {paypalEnabled && (
+                <button
+                  type="button"
+                  className="lux-payment-choice lux-payment-choice--paypal"
+                  disabled={paypalBusyPlan === selectedPaymentPlan.paypalPlan}
+                  onClick={() => startPayPalCheckout(selectedPaymentPlan.paypalPlan)}
+                >
+                  <CreditCard size={16} />
+                  <strong>PayPal</strong>
+                  <span>Pay with PayPal account or supported card</span>
+                </button>
+              )}
             </div>
           </section>
         </div>
