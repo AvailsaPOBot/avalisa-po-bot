@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const { authMiddleware } = require('../middleware/auth');
 const prisma = require('../lib/prisma');
 const { PLAN_IDS, getPlanEntitlements } = require('../lib/plans');
+const { grantPendingWhopPurchase } = require('../lib/pendingPurchase');
 const { sendEmail, emailConfigured } = require('../lib/email');
 const { createResetToken, decodeUserId, verifyResetToken } = require('../lib/resetToken');
 const { recordFunnelEvent } = require('../lib/funnel');
@@ -67,7 +68,7 @@ function findUserByEmail(email, select) {
 
 async function createUserFromOAuth(email) {
   const passwordHash = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), 12);
-  return prisma.user.create({
+  const user = await prisma.user.create({
     data: {
       email,
       passwordHash,
@@ -84,6 +85,8 @@ async function createUserFromOAuth(email) {
     },
     select: { id: true, email: true, poUserId: true, isAdmin: true, createdAt: true },
   });
+  await grantPendingWhopPurchase(prisma, user);
+  return user;
 }
 
 async function findOrCreateOAuthUser(email) {
@@ -181,6 +184,8 @@ router.post('/register', async (req, res) => {
       select: { id: true, email: true, poUserId: true, createdAt: true },
     });
 
+    // A buyer who paid on Whop before registering gets that purchase now, not Demo.
+    await grantPendingWhopPurchase(prisma, user);
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '30d' });
     recordFunnelEvent(prisma, 'signup', { userId: user.id });
     res.status(201).json({ user, token });

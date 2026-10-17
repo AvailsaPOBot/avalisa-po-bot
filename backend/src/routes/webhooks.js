@@ -5,6 +5,7 @@ const { PLAN_IDS, getPaidPlanFromWhop, getPlanEntitlements, getAiTradesAllowance
 const { activatePaidLicense } = require('../lib/licenseActivation');
 const { decodeCustomId, normalizeCheckoutPlan, verifyPayPalWebhook } = require('../lib/paypal');
 const { recordUnmappedPurchase } = require('../lib/purchaseAlert');
+const { whopRecurrence } = require('../lib/pendingPurchase');
 
 const router = express.Router();
 
@@ -297,6 +298,8 @@ async function handleWhopMembership(data, eventType) {
     ''
   );
 
+  const { isRecurring, renewalEnd, expiresAt } = whopRecurrence(data);
+
   if (!customerEmail) {
     console.warn(`[Whop] No email for membership ${membershipId}`);
     recordUnmappedPurchase(prisma, {
@@ -331,6 +334,9 @@ async function handleWhopMembership(data, eventType) {
       planName,
       planId,
       eventType,
+      // Lets grantPendingWhopPurchase apply this purchase when the buyer registers.
+      isRecurring,
+      renewalEnd,
     });
     return;
   }
@@ -366,15 +372,6 @@ async function handleWhopMembership(data, eventType) {
   // revoke". Every licence created before 2026-08-27 has null, so one-time and lifetime
   // buyers are protected by construction — a cancellation event can never take their
   // access away. Only a licence we explicitly marked as expiring is revocable.
-  const renewalEnd =
-    data?.renewal_period_end ?? data?.plan?.renewal_period_end ?? data?.current_period_end ?? null;
-  const isRecurring = Boolean(
-    data?.plan?.billing_period ||
-    data?.plan?.plan_type === 'renewal' ||
-    data?.billing_period ||
-    renewalEnd
-  );
-  const expiresAt = isRecurring && renewalEnd ? new Date(Number(renewalEnd) * 1000 || renewalEnd) : null;
   if (isRecurring) {
     console.log(`[Whop] Recurring membership ${membershipId} -> expiresAt ${expiresAt ? expiresAt.toISOString() : 'unknown'}`);
   }
