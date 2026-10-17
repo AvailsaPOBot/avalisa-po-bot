@@ -9,6 +9,7 @@ const { grantPendingWhopPurchase } = require('../lib/pendingPurchase');
 const { sendEmail, emailConfigured } = require('../lib/email');
 const { createResetToken, decodeUserId, verifyResetToken } = require('../lib/resetToken');
 const { recordFunnelEvent } = require('../lib/funnel');
+const { sendWelcomeEmail } = require('../lib/welcomeEmail');
 
 const router = express.Router();
 
@@ -86,6 +87,7 @@ async function createUserFromOAuth(email) {
     select: { id: true, email: true, poUserId: true, isAdmin: true, createdAt: true },
   });
   await grantPendingWhopPurchase(prisma, user);
+  sendWelcomeEmail(user);
   return user;
 }
 
@@ -188,6 +190,7 @@ router.post('/register', async (req, res) => {
     await grantPendingWhopPurchase(prisma, user);
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '30d' });
     recordFunnelEvent(prisma, 'signup', { userId: user.id });
+    sendWelcomeEmail(user);
     res.status(201).json({ user, token });
   } catch (err) {
     console.error('Registration error details:', err.message);
