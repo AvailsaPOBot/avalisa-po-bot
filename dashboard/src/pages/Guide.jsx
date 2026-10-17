@@ -313,6 +313,18 @@ export default function Guide() {
             </a>.
           </p>
           <p>
+            Worried about your account? Read{' '}
+            <a href="/guide/can-you-get-banned-for-using-a-bot.html">
+              can your Pocket Option account be banned for using a bot
+            </a>.
+          </p>
+          <p>
+            Want to start free? See{' '}
+            <a href="/guide/is-there-a-free-pocket-option-bot.html">
+              what is free and what costs money
+            </a>.
+          </p>
+          <p>
             Not ready to use real money? Read{' '}
             <a href="/guide/test-a-trading-bot-on-demo.html">
               how to test a trading bot on a demo account
