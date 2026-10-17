@@ -385,6 +385,24 @@ export default function Guide() {
             </a>.
           </p>
           <p>
+            Choosing values? Read{' '}
+            <a href="/guide/best-pocket-option-bot-settings.html">
+              the honest guide to the best bot settings
+            </a>.
+          </p>
+          <p>
+            Comparing approaches? Read{' '}
+            <a href="/guide/pocket-option-copy-trading-vs-bot.html">
+              copy trading vs a rules-based bot
+            </a>.
+          </p>
+          <p>
+            Seen an &quot;insider bot&quot; offer? Read{' '}
+            <a href="/guide/pocket-option-insider-bot-offers.html">
+              the warning signs before you pay or send anything
+            </a>.
+          </p>
+          <p>
             Not ready to use real money? Read{' '}
             <a href="/guide/test-a-trading-bot-on-demo.html">
               how to test a trading bot on a demo account
