@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pocket Option Martingale Calculator: Stake and Worst-Case Cost per Step</title>
+  <meta name="description" content="Free Martingale calculator for Avalisa PO Bot settings: enter base stake, multiplier and Martingale Steps to see every stake in a losing cycle and its worst-case total.">
+  <meta property="og:title" content="Pocket Option Martingale Calculator: Stake and Worst-Case Cost per Step">
+  <meta property="og:description" content="Free Martingale calculator for Avalisa PO Bot settings: enter base stake, multiplier and Martingale Steps to see every stake in a losing cycle and its worst-case total.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://avalisabot.vercel.app/guide/martingale-calculator.html">
+  <link rel="canonical" href="https://avalisabot.vercel.app/guide/martingale-calculator.html">
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root {
+      --bg: #060606;
+      --surface: #0e1216;
+      --surface-deep: #07090b;
+      --text: #f3eee6;
+      --muted: rgba(243, 238, 230, 0.7);
+      --gold: #d8a24a;
+      --gold-light: #f1c878;
+      --line: rgba(216, 162, 74, 0.24);
+      --jade: #4a9b7e;
+      --display: Georgia, 'Times New Roman', serif;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 78% 3%, rgba(216, 162, 74, 0.18), transparent 26rem),
+        radial-gradient(circle at 5% 22%, rgba(74, 155, 126, 0.12), transparent 30rem),
+        linear-gradient(180deg, var(--bg), #090c0e 48%, #040404);
+      color: var(--text);
+      font: 16px/1.7 var(--sans);
+    }
+    a { color: var(--gold-light); text-underline-offset: 0.2em; }
+    a:hover { color: #ffe1a8; }
+    a:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 4px; }
+    .shell { width: min(calc(100% - 2rem), 860px); margin: 0 auto; }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: rgba(6, 6, 6, 0.88);
+    }
+    nav {
+      display: flex;
+      min-height: 4.35rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand img { display: block; width: auto; height: 3.1rem; }
+    .nav-link { color: var(--muted); font-size: 0.86rem; font-weight: 700; text-decoration: none; }
+    .hero { padding: clamp(3.5rem, 8vw, 6.5rem) 0 clamp(2rem, 5vw, 4rem); }
+    .kicker {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    h1, h2 { font-family: var(--display); font-weight: 500; line-height: 1.08; }
+    h1 { max-width: 820px; margin: 0.75rem 0 1.25rem; font-size: clamp(2.5rem, 7vw, 5rem); }
+    h2 { margin: 0 0 1rem; font-size: clamp(1.8rem, 4vw, 2.55rem); }
+    h3 { margin: 1.75rem 0 0.35rem; color: var(--gold-light); font-size: 1.05rem; }
+    p, li { color: var(--muted); }
+    .lede { max-width: 740px; margin: 0; font-size: clamp(1.05rem, 2.5vw, 1.24rem); }
+    .quick-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.6rem; }
+    .button {
+      display: inline-flex;
+      min-height: 2.8rem;
+      align-items: center;
+      border: 1px solid rgba(241, 200, 120, 0.55);
+      border-radius: 0.48rem;
+      padding: 0.7rem 1rem;
+      background: linear-gradient(180deg, #f1c878, #d0933c 52%, #9c6423);
+      color: #130d05;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .button.secondary { background: rgba(10, 10, 15, 0.6); color: var(--gold-light); }
+    .toc, article section, .risk, .final-cta {
+      border: 1px solid var(--line);
+      border-radius: 0.7rem;
+      background:
+        radial-gradient(circle at 92% 0%, rgba(216, 162, 74, 0.08), transparent 15rem),
+        linear-gradient(180deg, rgba(14, 18, 22, 0.92), rgba(7, 9, 11, 0.94));
+    }
+    .toc { margin-bottom: 1rem; padding: 1.35rem clamp(1.1rem, 3vw, 1.8rem); }
+    .toc strong { font-family: var(--display); font-size: 1.2rem; }
+    .toc ol { columns: 2; margin-bottom: 0; padding-left: 1.25rem; }
+    .toc li { break-inside: avoid; margin: 0.25rem 0; }
+    article { display: grid; gap: 1rem; padding-bottom: 4rem; }
+    article section { padding: clamp(1.3rem, 4vw, 2.2rem); scroll-margin-top: 1rem; }
+    article section > :last-child { margin-bottom: 0; }
+    ol, ul { padding-left: 1.45rem; }
+    li + li { margin-top: 0.5rem; }
+    strong { color: var(--text); }
+    .risk { border-color: rgba(241, 200, 120, 0.42); }
+    .risk h2 { color: var(--gold-light); }
+    .final-cta { text-align: left; }
+    footer { border-top: 1px solid var(--line); padding: 2rem 0; color: var(--muted); font-size: 0.86rem; }
+    footer .shell { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 1.5rem; }
+    @media (max-width: 620px) {
+      .toc ol { columns: 1; }
+      .brand img { height: 2.7rem; }
+      .nav-link { font-size: 0.78rem; }
+    }
+    .calc { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 0.9rem; margin: 1rem 0 1.25rem; }
+    .calc label { display: grid; gap: 0.3rem; color: var(--text); font-size: 0.86rem; font-weight: 700; }
+    .calc input, .calc select { min-height: 2.6rem; border: 1px solid var(--line); border-radius: 0.45rem; padding: 0.45rem 0.6rem; background: var(--surface-deep); color: var(--text); font: inherit; }
+    .calc input:focus-visible, .calc select:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 2px; }
+    .result { margin: 0 0 1rem; border-left: 3px solid var(--gold); padding: 0.6rem 0.9rem; background: rgba(216, 162, 74, 0.07); color: var(--text); }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    th, td { border-bottom: 1px solid var(--line); padding: 0.5rem 0.6rem; text-align: right; color: var(--muted); }
+    th { color: var(--text); font-size: 0.82rem; }
+    th:first-child, td:first-child { text-align: left; }
+    tr.over td { color: #e98b7a; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="shell" aria-label="Primary navigation">
+      <a class="brand" href="/" aria-label="Avalisa PO Bot home">
+        <img src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot">
+      </a>
+      <a class="nav-link" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero shell">
+      <p class="kicker">Martingale calculator</p>
+      <h1>Martingale Calculator: What Each Step Stakes, and What a Full Losing Cycle Costs</h1>
+      <p class="lede">Enter the same numbers you would put in the Avalisa PO Bot panel &mdash; start amount, multiplier and Martingale Steps &mdash; and see every stake in a losing cycle and its worst-case total. Pure arithmetic: it does not predict results, it shows what you are putting at risk.</p>
+      <div class="quick-links">
+        <a class="button" href="#calculator">Open the calculator</a>
+        <a class="button secondary" href="/guide/martingale-risk-explained.html">Martingale risk explained</a>
+      </div>
+    </div>
+    <div class="shell">
+      <aside class="toc" aria-label="On this page">
+        <strong>On this page</strong>
+        <ol>
+          <li><a href="#calculator">Calculator</a></li>
+          <li><a href="#steps-rule">How Steps maps to trades</a></li>
+          <li><a href="#tables">Worked tables (2x and 2.2x)</a></li>
+          <li><a href="#read">How to use the number</a></li>
+          <li><a href="#risk">Risk statement</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ol>
+      </aside>
+      <article>
+        <section id="calculator">
+          <h2>Calculator</h2>
+          <form class="calc" id="calc" onsubmit="return false">
+            <label>Start amount ($)
+              <input id="base" type="number" min="0.01" step="0.01" value="1" inputmode="decimal">
+            </label>
+            <label>Multiplier after a loss
+              <select id="mult">
+                <option value="2" selected>2x (double)</option>
+                <option value="2.2">2.2x</option>
+                <option value="2.4">2.4x</option>
+                <option value="2.6">2.6x</option>
+                <option value="2.8">2.8x</option>
+                <option value="3">3x (triple)</option>
+              </select>
+            </label>
+            <label>Martingale Steps
+              <input id="steps" type="number" min="0" max="15" step="1" value="3" inputmode="numeric">
+            </label>
+            <label>Balance ($, optional)
+              <input id="bal" type="number" min="0" step="0.01" placeholder="e.g. 100" inputmode="decimal">
+            </label>
+          </form>
+          <p class="result" id="summary" aria-live="polite">At 2x with Steps 3, a full losing cycle is 4 trades and stakes $15.00 in total (15&times; the start amount).</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Trade in cycle</th><th>Stake this trade</th><th>Total staked so far</th></tr></thead>
+              <tbody id="rows">
+                <tr><td>1</td><td>$1.00</td><td>$1.00</td></tr>
+                <tr><td>2</td><td>$2.00</td><td>$3.00</td></tr>
+                <tr><td>3</td><td>$4.00</td><td>$7.00</td></tr>
+                <tr><td>4</td><td>$8.00</td><td>$15.00</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Figures are shown to the cent; totals are summed before rounding. Pocket Option may round each real stake to its own minimum increment. Steps is limited to 15 here &mdash; the panel also offers Infinite, which has no worst case at all.</p>
+        </section>
+        <section id="steps-rule">
+          <h2>How the Steps setting maps to trades</h2>
+          <p>In the Avalisa PO Bot panel, <strong>Martingale Steps counts recovery steps after the first trade</strong>: Steps&nbsp;=&nbsp;N allows <strong>N&nbsp;+&nbsp;1 trades</strong> in a losing cycle, then the stake returns to the start amount. So at 2x, Steps&nbsp;3 places $1, $2, $4, $8 on a $1 start &mdash; 15&times; the start amount if all four lose. A win at any point also returns the stake to the start amount.</p>
+          <p>The bot pauses when the next stake would exceed the available balance. If you enter a balance above, any trade the balance could not cover is marked in red.</p>
+        </section>
+        <section id="tables">
+          <h2>Worked tables: $1 start amount</h2>
+          <h3>Multiplier 2x</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Steps setting</th><th>Trades in cycle</th><th>Last stake</th><th>Worst-case total</th></tr></thead>
+              <tbody>
+                <tr><td>0</td><td>1</td><td>$1.00</td><td>$1.00</td></tr>
+                <tr><td>1</td><td>2</td><td>$2.00</td><td>$3.00</td></tr>
+                <tr><td>2</td><td>3</td><td>$4.00</td><td>$7.00</td></tr>
+                <tr><td>3</td><td>4</td><td>$8.00</td><td>$15.00</td></tr>
+                <tr><td>4</td><td>5</td><td>$16.00</td><td>$31.00</td></tr>
+                <tr><td>5</td><td>6</td><td>$32.00</td><td>$63.00</td></tr>
+                <tr><td>6</td><td>7</td><td>$64.00</td><td>$127.00</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>Multiplier 2.2x</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Steps setting</th><th>Trades in cycle</th><th>Last stake</th><th>Worst-case total</th></tr></thead>
+              <tbody>
+                <tr><td>0</td><td>1</td><td>$1.00</td><td>$1.00</td></tr>
+                <tr><td>1</td><td>2</td><td>$2.20</td><td>$3.20</td></tr>
+                <tr><td>2</td><td>3</td><td>$4.84</td><td>$8.04</td></tr>
+                <tr><td>3</td><td>4</td><td>$10.65</td><td>$18.69</td></tr>
+                <tr><td>4</td><td>5</td><td>$23.43</td><td>$42.11</td></tr>
+                <tr><td>5</td><td>6</td><td>$51.54</td><td>$93.65</td></tr>
+                <tr><td>6</td><td>7</td><td>$113.38</td><td>$207.03</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Scale to your own start amount by multiplying: a $5 start at 2x with Steps&nbsp;4 is 5 &times; $31 = $155 worst case.</p>
+        </section>
+        <section id="read">
+          <h2>How to use the number before you set Steps</h2>
+          <ul>
+            <li><strong>Read the total as the price of one bad streak.</strong> Each extra step at 2x adds a stake as large as everything before it combined: Steps&nbsp;3 to Steps&nbsp;6 takes a $1 cycle from $15 to $127.</li>
+            <li><strong>A streak longer than the cycle does not stop at the total.</strong> After a full losing cycle the stake returns to the start amount and a new cycle begins, so a longer run of losses keeps costing.</li>
+            <li><strong>Higher multipliers cost more at every step.</strong> Compare the 2x and 2.2x tables at the same Steps.</li>
+            <li><strong>Limiting Steps is the real cap.</strong> There is no separate stop-loss or daily-loss-limit setting; the balance pause is a last-resort brake, not a plan.</li>
+            <li><strong>Watch a full losing cycle on demo first.</strong> The free demo includes 10 Martingale trades &mdash; enough to see one happen before any real money is involved.</li>
+          </ul>
+          <p>Why the odds are not on your side either way: <a href="/guide/honest-win-rate-break-even.html">honest win rates and break-even</a>.</p>
+        </section>
+        <section id="risk" class="risk">
+          <h2>Risk statement</h2>
+          <p>Trading binary options is <strong>high risk</strong>; only trade money you can afford to lose. Martingale multiplies the stake after each loss and does not change the odds of any single trade &mdash; a losing streak can wipe out a balance. This calculator shows what is at risk, not what you will win. Trading involves risk. Avalisa does not guarantee profits. Start on a demo account.</p>
+        </section>
+        <section id="faq">
+          <h2>Frequently asked questions</h2>
+          <h3>Does Steps 3 mean three trades?</h3>
+          <p>No. Steps counts recovery steps after the first trade, so Steps&nbsp;3 allows four trades in a losing cycle.</p>
+          <h3>Which multipliers does Avalisa PO Bot offer?</h3>
+          <p>2x, 2.2x, 2.4x, 2.6x, 2.8x and 3x, all in the calculator above.</p>
+          <h3>What happens when my balance cannot cover the next stake?</h3>
+          <p>The bot pauses instead of placing it. Choosing Steps so that a full cycle fits well inside your balance avoids reaching that point.</p>
+          <h3>Can the calculator tell me which setting will be profitable?</h3>
+          <p>No. It only adds up stakes. Our own large-sample measurements found no setting that beat break-even.</p>
+        </section>
+        <section id="start" class="final-cta">
+          <h2>Try your numbers on demo</h2>
+          <p>Install Avalisa PO Bot from the <a href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Chrome Web Store</a>, follow the <a href="https://avalisabot.vercel.app/guide">setup guide</a>, and run your chosen Steps on a Pocket Option demo account first. On a phone, use the <a href="https://avalisabot.vercel.app/webapp">webapp bot</a>. Plans are on <a href="https://avalisabot.vercel.app/pricing">pricing</a>.</p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <span>© Avalisa PO Bot</span>
+      <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a>
+    </div>
+  </footer>
+  <script>
+    (function () {
+      var $ = function (id) { return document.getElementById(id); };
+      var money = function (v) { return '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+      var times = function (v) { return (Math.round(v * 100) / 100).toLocaleString('en-US'); };
+      function render() {
+        var base = parseFloat($('base').value);
+        var mult = parseFloat($('mult').value);
+        var steps = parseInt($('steps').value, 10);
+        var bal = parseFloat($('bal').value);
+        if (!(base > 0) || !(mult > 0) || isNaN(steps)) { $('summary').textContent = 'Enter a start amount above 0 and a Steps value.'; $('rows').innerHTML = ''; return; }
+        steps = Math.max(0, Math.min(15, steps));
+        var stake = base, total = 0, html = '', firstOver = 0;
+        for (var i = 0; i <= steps; i++) {
+          total += stake;
+          var over = bal > 0 && total > bal;
+          if (over && !firstOver) firstOver = i + 1;
+          html += '<tr' + (over ? ' class="over"' : '') + '><td>' + (i + 1) + '</td><td>' + money(stake) + '</td><td>' + money(total) + '</td></tr>';
+          stake *= mult;
+        }
+        $('rows').innerHTML = html;
+        var label = mult === 2 ? '2x' : mult === 3 ? '3x' : mult + 'x';
+        var s = 'At ' + label + ' with Steps ' + steps + ', a full losing cycle is ' + (steps + 1) + (steps ? ' trades' : ' trade') + ' and stakes ' + money(total) + ' in total (' + times(total / base) + '× the start amount).';
+        if (bal > 0) s += firstOver ? ' A ' + money(bal) + ' balance cannot cover trade ' + firstOver + ' — the bot would pause there.' : ' That is ' + times(total / bal * 100) + '% of a ' + money(bal) + ' balance.';
+        $('summary').textContent = s;
+      }
+      ['base', 'mult', 'steps', 'bal'].forEach(function (id) { $(id).addEventListener('input', render); });
+      render();
+    })();
+  </script>
+</body>
+</html>

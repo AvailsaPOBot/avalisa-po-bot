@@ -367,6 +367,12 @@ export default function Guide() {
             </a>.
           </p>
           <p>
+            What does a losing streak cost at your settings? Use the{' '}
+            <a href="/guide/martingale-calculator.html">
+              Martingale calculator
+            </a>.
+          </p>
+          <p>
             Not ready to use real money? Read{' '}
             <a href="/guide/test-a-trading-bot-on-demo.html">
               how to test a trading bot on a demo account
