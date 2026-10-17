@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>When to Stop: Setting an End Point for an Automated Trading Session</title>
+  <meta name="description" content="Write a stopping plan before an automated Pocket Option session: a Steps cap (N + 1 trades), a money cap, a clock cap and a walk-away trigger. No stop-loss setting exists.">
+  <meta property="og:title" content="When to Stop: Setting an End Point for an Automated Trading Session">
+  <meta property="og:description" content="Write a stopping plan before an automated Pocket Option session: a Steps cap (N + 1 trades), a money cap, a clock cap and a walk-away trigger. No stop-loss setting exists.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://avalisabot.vercel.app/guide/when-to-stop-automated-trading-session.html">
+  <link rel="canonical" href="https://avalisabot.vercel.app/guide/when-to-stop-automated-trading-session.html">
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root {
+      --bg: #060606;
+      --surface: #0e1216;
+      --surface-deep: #07090b;
+      --text: #f3eee6;
+      --muted: rgba(243, 238, 230, 0.7);
+      --gold: #d8a24a;
+      --gold-light: #f1c878;
+      --line: rgba(216, 162, 74, 0.24);
+      --jade: #4a9b7e;
+      --display: Georgia, 'Times New Roman', serif;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 78% 3%, rgba(216, 162, 74, 0.18), transparent 26rem),
+        radial-gradient(circle at 5% 22%, rgba(74, 155, 126, 0.12), transparent 30rem),
+        linear-gradient(180deg, var(--bg), #090c0e 48%, #040404);
+      color: var(--text);
+      font: 16px/1.7 var(--sans);
+    }
+    a { color: var(--gold-light); text-underline-offset: 0.2em; }
+    a:hover { color: #ffe1a8; }
+    a:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 4px; }
+    .shell { width: min(calc(100% - 2rem), 860px); margin: 0 auto; }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: rgba(6, 6, 6, 0.88);
+    }
+    nav {
+      display: flex;
+      min-height: 4.35rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand img { display: block; width: auto; height: 3.1rem; }
+    .nav-link { color: var(--muted); font-size: 0.86rem; font-weight: 700; text-decoration: none; }
+    .hero { padding: clamp(3.5rem, 8vw, 6.5rem) 0 clamp(2rem, 5vw, 4rem); }
+    .kicker {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    h1, h2 { font-family: var(--display); font-weight: 500; line-height: 1.08; }
+    h1 { max-width: 820px; margin: 0.75rem 0 1.25rem; font-size: clamp(2.5rem, 7vw, 5rem); }
+    h2 { margin: 0 0 1rem; font-size: clamp(1.8rem, 4vw, 2.55rem); }
+    h3 { margin: 1.75rem 0 0.35rem; color: var(--gold-light); font-size: 1.05rem; }
+    p, li { color: var(--muted); }
+    .lede { max-width: 740px; margin: 0; font-size: clamp(1.05rem, 2.5vw, 1.24rem); }
+    .quick-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.6rem; }
+    .button {
+      display: inline-flex;
+      min-height: 2.8rem;
+      align-items: center;
+      border: 1px solid rgba(241, 200, 120, 0.55);
+      border-radius: 0.48rem;
+      padding: 0.7rem 1rem;
+      background: linear-gradient(180deg, #f1c878, #d0933c 52%, #9c6423);
+      color: #130d05;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .button.secondary { background: rgba(10, 10, 15, 0.6); color: var(--gold-light); }
+    .toc, article section, .risk, .final-cta {
+      border: 1px solid var(--line);
+      border-radius: 0.7rem;
+      background:
+        radial-gradient(circle at 92% 0%, rgba(216, 162, 74, 0.08), transparent 15rem),
+        linear-gradient(180deg, rgba(14, 18, 22, 0.92), rgba(7, 9, 11, 0.94));
+    }
+    .toc { margin-bottom: 1rem; padding: 1.35rem clamp(1.1rem, 3vw, 1.8rem); }
+    .toc strong { font-family: var(--display); font-size: 1.2rem; }
+    .toc ol { columns: 2; margin-bottom: 0; padding-left: 1.25rem; }
+    .toc li { break-inside: avoid; margin: 0.25rem 0; }
+    article { display: grid; gap: 1rem; padding-bottom: 4rem; }
+    article section { padding: clamp(1.3rem, 4vw, 2.2rem); scroll-margin-top: 1rem; }
+    article section > :last-child { margin-bottom: 0; }
+    ol, ul { padding-left: 1.45rem; }
+    li + li { margin-top: 0.5rem; }
+    strong { color: var(--text); }
+    .risk { border-color: rgba(241, 200, 120, 0.42); }
+    .risk h2 { color: var(--gold-light); }
+    .final-cta { text-align: left; }
+    footer { border-top: 1px solid var(--line); padding: 2rem 0; color: var(--muted); font-size: 0.86rem; }
+    footer .shell { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 1.5rem; }
+    @media (max-width: 620px) {
+      .toc ol { columns: 1; }
+      .brand img { height: 2.7rem; }
+      .nav-link { font-size: 0.78rem; }
+    }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+    th, td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); text-align: left; color: var(--muted); }
+    th { color: var(--text); }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="shell" aria-label="Primary navigation">
+      <a class="brand" href="/" aria-label="Avalisa PO Bot home">
+        <img src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot">
+      </a>
+      <a class="nav-link" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero shell">
+      <p class="kicker">Session discipline</p>
+      <h1>When to Stop: Setting an End Point for an Automated Session</h1>
+      <p class="lede">An automated session only works if you decide before it starts when it ends &mdash; in trades, in time and in money. This page is about writing that plan down. For the Stop button and removing the extension, see <a href="/guide/how-to-stop-or-remove-the-bot-safely.html">how to stop or remove the bot safely</a>.</p>
+      <div class="quick-links">
+        <a class="button" href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Add to Chrome</a>
+        <a class="button secondary" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+      </div>
+    </div>
+    <div class="shell">
+      <aside class="toc" aria-label="On this page">
+        <strong>On this page</strong>
+        <ol>
+          <li><a href="#why">Why an end point</a></li>
+          <li><a href="#controls">What the bot controls</a></li>
+          <li><a href="#plan">Write your plan</a></li>
+          <li><a href="#run">Running the session</a></li>
+          <li><a href="#risk">Risk statement</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ol>
+      </aside>
+      <article>
+        <section id="why">
+          <h2>Why an end point matters more with a bot</h2>
+          <p>When you trade by hand, tiredness is your natural off switch. When the trades place themselves, that switch disappears. The usual failure is not one bad trade but a session that keeps extending because each next trade feels like &ldquo;one more&rdquo;. An end point written down before the first trade replaces the impulse with a rule.</p>
+        </section>
+        <section id="controls">
+          <h2>What the bot controls, and what it does not</h2>
+          <ul>
+            <li><strong>Martingale mode</strong> raises the stake after a loss by the multiplier you choose: 2x, 2.2x, 2.4x, 2.6x, 2.8x or 3x.</li>
+            <li><strong>There is no separate stop-loss or daily-loss-limit setting.</strong> Limiting Martingale Steps is the real way to cap a losing streak. Steps can be a number or Infinite &mdash; and Infinite is exactly what an end point rules out.</li>
+            <li>If the next stake would exceed your balance, <strong>the bot pauses</strong>. That is a safety floor, not a plan.</li>
+          </ul>
+          <p>The bot runs the system you chose; it does not judge when that system is going badly for you. That judgement is yours, made in advance. Sizing the money behind it is covered in <a href="/guide/bankroll-rules-automation.html">bankroll rules for automation</a>.</p>
+        </section>
+        <section id="plan">
+          <h2>Write your end point before you open the platform</h2>
+          <ol>
+            <li><strong>Cap the cycle in trades.</strong> Choose a finite Martingale Steps value and know what it allows: <strong>Steps = N permits N + 1 trades</strong> in a losing cycle (the first trade plus N recovery trades), then the stake resets to the start amount. At 2x, Steps 3 means up to 4 trades and a worst-case cycle cost of 15&times; the base stake.</li>
+            <li><strong>Pick a multiplier you can explain.</strong> A lower multiplier (2x rather than 3x) grows each recovery stake more slowly. Pick it first, then choose Steps so the largest stake in the cycle fits the money set aside for this session. The <a href="/guide/martingale-calculator.html">Martingale calculator</a> shows every stake.</li>
+            <li><strong>Set a money end point.</strong> Decide the largest losing session you will accept and write the number down. With no built-in daily-loss limit, <em>you</em> are the daily-loss limit. When the balance has moved that far, stop.</li>
+            <li><strong>Set a clock cap.</strong> A start time and an end time, or a maximum number of sessions a day. Sessions that drift past the planned window are where impulsive changes happen.</li>
+            <li><strong>Set a walk-away trigger.</strong> &ldquo;Two losing cycles in a row&rdquo; is a legitimate trigger. So is noticing that you cannot stop checking the screen.</li>
+            <li><strong>Use the trade filters.</strong> Timeframe and Minimum payout % decide which trades are taken. At payout p, break-even win rate = 1 / (1 + p), about 52.1% at 92%; lower payouts push that line higher.</li>
+            <li><strong>Put it on one line each</strong> &mdash; Steps, multiplier, money cap, clock cap, walk-away trigger &mdash; somewhere you will see it.</li>
+          </ol>
+        </section>
+        <section id="run">
+          <h2>Running the session with the rules in force</h2>
+          <ul>
+            <li><strong>Keep the Pocket Option tab visible.</strong> A background or minimised tab can delay trade-result detection, so a session can run past its end point without you noticing.</li>
+            <li><strong>Do not change settings mid-session.</strong> Editing Steps or the multiplier while a cycle is open is how an end point slides. Stop, write a new plan, start a new session.</li>
+            <li><strong>Stopping at your cap is the plan working</strong>, even when the session lost.</li>
+            <li><strong>Review afterwards, not during.</strong> Compare what happened with what you wrote &mdash; a <a href="/guide/trading-journal-for-bot-sessions.html">trading journal</a> makes this easy.</li>
+          </ul>
+        </section>
+        <section id="risk" class="risk">
+          <h2>Risk statement</h2>
+          <p>Binary options are <strong>high risk</strong>, and you can lose your entire deposit. In our large-sample measurements no setting has beaten break-even, and no combination of stopping rules changes that. Use only money you can afford to lose. Trading involves risk. Avalisa does not guarantee profits. Practise every rule on a demo account first.</p>
+        </section>
+        <section id="faq">
+          <h2>Frequently asked questions</h2>
+          <h3>How many losing trades should I allow in one session?</h3>
+          <p>There is no universal number. Ask instead: what does the whole cycle cost if every trade in it loses? Steps = N is N + 1 trades, so at 2x, Steps 3 is 4 trades and 15&times; the base stake. Choose Steps so that number is a loss you can accept calmly, then check it on demo.</p>
+          <h3>Does the bot have a daily loss limit?</h3>
+          <p>No. There is no separate stop-loss or daily-loss-limit setting. Limiting Martingale Steps caps a losing streak, and the bot pauses if the next stake would exceed your balance. Any per-session or per-day limit is one you set and enforce yourself.</p>
+          <h3>Should I watch the whole time?</h3>
+          <p>No, but do not hide the tab. Keep it visible so results are detected on time, and check at the end points you wrote down.</p>
+          <h3>Can I practise my stopping rules without real money?</h3>
+          <p>Yes. The extension works on Pocket Option demo accounts the same way as on real ones, and demo is where these rules belong first.</p>
+          <h3>My session did not stop the way I set it. Who do I ask?</h3>
+          <p>Email <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a> with a screenshot of your settings and what the session did.</p>
+        </section>
+        <section id="start" class="final-cta">
+          <h2>Start with an end point, not a hope</h2>
+          <p>Install Avalisa PO Bot from the <a href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Chrome Web Store</a>, open a demo account, write your Steps cap, multiplier, money cap and clock cap, and see whether you keep to them. The free Demo plan includes 10 Martingale trades; Basic is $69 one-time; Pro is $119 one-time or $29/month (a recurring subscription) &mdash; see <a href="https://avalisabot.vercel.app/pricing">pricing</a>.</p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <span>© Avalisa PO Bot</span>
+      <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a>
+    </div>
+  </footer>
+</body>
+</html>

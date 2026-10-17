@@ -421,6 +421,12 @@ export default function Guide() {
             </a>.
           </p>
           <p>
+            Want a written stopping plan? Read{' '}
+            <a href="/guide/when-to-stop-automated-trading-session.html">
+              when to stop an automated session
+            </a>.
+          </p>
+          <p>
             Prefer not to use Martingale? Read{' '}
             <a href="/guide/trading-without-martingale-flat-staking.html">
               flat staking vs Martingale
