@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pocket Option Demo to Real Account: Moving a Bot to Live</title>
+  <meta name="description" content="What stays the same and what changes when you move a Pocket Option bot from a demo to a real account, plus a checklist to run before you switch.">
+  <meta property="og:title" content="Pocket Option Demo to Real Account: Moving a Bot to Live">
+  <meta property="og:description" content="What stays the same and what changes when you move a Pocket Option bot from a demo to a real account, plus a checklist to run before you switch.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://avalisabot.vercel.app/guide/pocket-option-demo-to-real-account.html">
+  <link rel="canonical" href="https://avalisabot.vercel.app/guide/pocket-option-demo-to-real-account.html">
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root {
+      --bg: #060606;
+      --surface: #0e1216;
+      --surface-deep: #07090b;
+      --text: #f3eee6;
+      --muted: rgba(243, 238, 230, 0.7);
+      --gold: #d8a24a;
+      --gold-light: #f1c878;
+      --line: rgba(216, 162, 74, 0.24);
+      --jade: #4a9b7e;
+      --display: Georgia, 'Times New Roman', serif;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 78% 3%, rgba(216, 162, 74, 0.18), transparent 26rem),
+        radial-gradient(circle at 5% 22%, rgba(74, 155, 126, 0.12), transparent 30rem),
+        linear-gradient(180deg, var(--bg), #090c0e 48%, #040404);
+      color: var(--text);
+      font: 16px/1.7 var(--sans);
+    }
+    a { color: var(--gold-light); text-underline-offset: 0.2em; }
+    a:hover { color: #ffe1a8; }
+    a:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 4px; }
+    .shell { width: min(calc(100% - 2rem), 860px); margin: 0 auto; }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: rgba(6, 6, 6, 0.88);
+    }
+    nav {
+      display: flex;
+      min-height: 4.35rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand img { display: block; width: auto; height: 3.1rem; }
+    .nav-link { color: var(--muted); font-size: 0.86rem; font-weight: 700; text-decoration: none; }
+    .hero { padding: clamp(3.5rem, 8vw, 6.5rem) 0 clamp(2rem, 5vw, 4rem); }
+    .kicker {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    h1, h2 { font-family: var(--display); font-weight: 500; line-height: 1.08; }
+    h1 { max-width: 820px; margin: 0.75rem 0 1.25rem; font-size: clamp(2.5rem, 7vw, 5rem); }
+    h2 { margin: 0 0 1rem; font-size: clamp(1.8rem, 4vw, 2.55rem); }
+    h3 { margin: 1.75rem 0 0.35rem; color: var(--gold-light); font-size: 1.05rem; }
+    p, li { color: var(--muted); }
+    .lede { max-width: 740px; margin: 0; font-size: clamp(1.05rem, 2.5vw, 1.24rem); }
+    .quick-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.6rem; }
+    .button {
+      display: inline-flex;
+      min-height: 2.8rem;
+      align-items: center;
+      border: 1px solid rgba(241, 200, 120, 0.55);
+      border-radius: 0.48rem;
+      padding: 0.7rem 1rem;
+      background: linear-gradient(180deg, #f1c878, #d0933c 52%, #9c6423);
+      color: #130d05;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .button.secondary { background: rgba(10, 10, 15, 0.6); color: var(--gold-light); }
+    .toc, article section, .risk, .final-cta {
+      border: 1px solid var(--line);
+      border-radius: 0.7rem;
+      background:
+        radial-gradient(circle at 92% 0%, rgba(216, 162, 74, 0.08), transparent 15rem),
+        linear-gradient(180deg, rgba(14, 18, 22, 0.92), rgba(7, 9, 11, 0.94));
+    }
+    .toc { margin-bottom: 1rem; padding: 1.35rem clamp(1.1rem, 3vw, 1.8rem); }
+    .toc strong { font-family: var(--display); font-size: 1.2rem; }
+    .toc ol { columns: 2; margin-bottom: 0; padding-left: 1.25rem; }
+    .toc li { break-inside: avoid; margin: 0.25rem 0; }
+    article { display: grid; gap: 1rem; padding-bottom: 4rem; }
+    article section { padding: clamp(1.3rem, 4vw, 2.2rem); scroll-margin-top: 1rem; }
+    article section > :last-child { margin-bottom: 0; }
+    ol, ul { padding-left: 1.45rem; }
+    li + li { margin-top: 0.5rem; }
+    strong { color: var(--text); }
+    .risk { border-color: rgba(241, 200, 120, 0.42); }
+    .risk h2 { color: var(--gold-light); }
+    .final-cta { text-align: left; }
+    footer { border-top: 1px solid var(--line); padding: 2rem 0; color: var(--muted); font-size: 0.86rem; }
+    footer .shell { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 1.5rem; }
+    @media (max-width: 620px) {
+      .toc ol { columns: 1; }
+      .brand img { height: 2.7rem; }
+      .nav-link { font-size: 0.78rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="shell" aria-label="Primary navigation">
+      <a class="brand" href="/" aria-label="Avalisa PO Bot home">
+        <img src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot">
+      </a>
+      <a class="nav-link" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero shell">
+      <p class="kicker">Before real money</p>
+      <h1>From Demo to a Real Account</h1>
+      <p class="lede">The extension places trades the same way on a demo account as on a real one, so moving to a real account changes the money and the pressure, not the mechanics. Here is what stays the same, what changes, and the checklist to run before you switch.</p>
+      <div class="quick-links">
+        <a class="button" href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Add to Chrome</a>
+        <a class="button secondary" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+      </div>
+    </div>
+    <div class="shell">
+      <aside class="toc" aria-label="On this page">
+        <strong>On this page</strong>
+        <ol>
+          <li><a href="#same">What stays the same</a></li>
+          <li><a href="#changes">What changes</a></li>
+          <li><a href="#checklist">Checklist before you switch</a></li>
+          <li><a href="#switch">Switching the account</a></li>
+          <li><a href="#risk">Risk statement</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ol>
+      </aside>
+      <article>
+        <section id="same">
+          <h2>What stays exactly the same</h2>
+          <ul>
+            <li><strong>Trade placement.</strong> The extension does not run separate trade-placement logic for demo and real. It reads whichever Pocket Option account is active and places trades the same way on either.</li>
+            <li><strong>Your settings.</strong> Strategy, Direction, multiplier, Martingale Steps, timeframe, Minimum payout % and Pair Scan are the same controls on both account types &mdash; see the <a href="/guide/settings-guide.html">settings guide</a>.</li>
+            <li><strong>The tab rule.</strong> Keep the Pocket Option tab visible while the bot trades; a background or minimised tab can delay trade-result detection. More in <a href="/guide/why-the-trading-tab-must-stay-open.html">why the trading tab must stay open</a>.</li>
+          </ul>
+        </section>
+        <section id="changes">
+          <h2>What changes when you go live</h2>
+          <ul>
+            <li><strong>Real money.</strong> Every losing cycle now costs actual funds, not virtual credit.</li>
+            <li><strong>Emotions.</strong> Watching a real balance move changes how people behave. Decide before you start that you will not change settings in the middle of a losing cycle.</li>
+            <li><strong>Payouts.</strong> Check the payout shown on the real account before you start, and make sure it still clears your Minimum payout % setting.</li>
+          </ul>
+          <p>Why results on demo and real can feel different is covered in <a href="/guide/why-bots-win-on-demo-and-lose-on-real.html">why bots &ldquo;win&rdquo; on demo and lose on real</a>; this page is the practical checklist.</p>
+        </section>
+        <section id="checklist">
+          <h2>Checklist before you switch</h2>
+          <ol>
+            <li><strong>The same settings ran on demo.</strong> Move over a configuration you have actually run on demo &mdash; not a new idea tested for the first time with real money. See <a href="/guide/test-a-trading-bot-on-demo.html">how to test a trading bot on demo</a>.</li>
+            <li><strong>You know the full losing-cycle cost and can afford it.</strong> Steps = N allows N + 1 trades in a losing cycle; at 2x, Steps 3 costs 15 times the base stake. There is no separate stop-loss &mdash; limiting Steps is the cap, and the bot pauses when the next stake would exceed the balance. Work out your own numbers in the <a href="/guide/martingale-calculator.html">Martingale calculator</a>.</li>
+            <li><strong>A small base stake.</strong> Size it so that full-cycle cost is an amount you can lose without changing your plans.</li>
+            <li><strong>The tab stays visible</strong> for the whole session.</li>
+          </ol>
+        </section>
+        <section id="switch">
+          <h2>How to switch the active account</h2>
+          <p>Use Pocket Option&rsquo;s own account controls to make your real account the active one. The extension has no demo/real mode of its own: it follows whichever account Pocket Option shows as active. Before you press start, check that the balance on screen is the real-account balance you expect.</p>
+        </section>
+        <section id="risk" class="risk">
+          <h2>Risk statement</h2>
+          <p>Binary options are <strong>high risk</strong>, and Martingale losing streaks compound quickly. Our own measurements (September 2026) found no setting that beat break-even over large samples &mdash; see <a href="/guide/honest-win-rate-break-even.html">honest win rates and break-even</a>. Use only money you can afford to lose. Trading involves risk. Avalisa does not guarantee profits. Start on a demo account.</p>
+        </section>
+        <section id="faq">
+          <h2>Frequently asked questions</h2>
+          <h3>Do I need to reinstall or reconfigure the extension for a real account?</h3>
+          <p>No. There is no separate demo or real configuration; the same extension and settings work on whichever account is active.</p>
+          <h3>What if the real-account payout is lower than on demo?</h3>
+          <p>A lower payout raises the win rate you need to break even: at payout p, break-even is 1 / (1 + p) &mdash; 52.1% at a 92% payout. Check the payout shown and your Minimum payout % setting before trading.</p>
+          <h3>Can I withdraw after bot trading?</h3>
+          <p>Withdrawals go through Pocket Option&rsquo;s own normal flow, the same whether trades were placed by hand or by the extension.</p>
+        </section>
+        <section id="start" class="final-cta">
+          <h2>Practise the switch on demo first</h2>
+          <p>Install Avalisa PO Bot from the <a href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Chrome Web Store</a>, follow the <a href="https://avalisabot.vercel.app/guide">setup guide</a>, and run it on a Pocket Option demo account first. The free Demo plan includes 10 Martingale trades. Basic is $69 one-time; Pro is $119 one-time or $29/month (a recurring subscription) &mdash; you choose at checkout on <a href="https://avalisabot.vercel.app/pricing">pricing</a>.</p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <span>© Avalisa PO Bot</span>
+      <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a>
+    </div>
+  </footer>
+</body>
+</html>

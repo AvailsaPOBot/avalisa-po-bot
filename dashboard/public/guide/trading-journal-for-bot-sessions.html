@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trading Journal for Bot Sessions: What to Record</title>
+  <meta name="description" content="A simple trading journal for automated Pocket Option sessions: what to record per trade and per session, why the Steps value matters, and how to review it honestly.">
+  <meta property="og:title" content="Trading Journal for Bot Sessions: What to Record">
+  <meta property="og:description" content="A simple trading journal for automated Pocket Option sessions: what to record per trade and per session, why the Steps value matters, and how to review it honestly.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://avalisabot.vercel.app/guide/trading-journal-for-bot-sessions.html">
+  <link rel="canonical" href="https://avalisabot.vercel.app/guide/trading-journal-for-bot-sessions.html">
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root {
+      --bg: #060606;
+      --surface: #0e1216;
+      --surface-deep: #07090b;
+      --text: #f3eee6;
+      --muted: rgba(243, 238, 230, 0.7);
+      --gold: #d8a24a;
+      --gold-light: #f1c878;
+      --line: rgba(216, 162, 74, 0.24);
+      --jade: #4a9b7e;
+      --display: Georgia, 'Times New Roman', serif;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 78% 3%, rgba(216, 162, 74, 0.18), transparent 26rem),
+        radial-gradient(circle at 5% 22%, rgba(74, 155, 126, 0.12), transparent 30rem),
+        linear-gradient(180deg, var(--bg), #090c0e 48%, #040404);
+      color: var(--text);
+      font: 16px/1.7 var(--sans);
+    }
+    a { color: var(--gold-light); text-underline-offset: 0.2em; }
+    a:hover { color: #ffe1a8; }
+    a:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 4px; }
+    .shell { width: min(calc(100% - 2rem), 860px); margin: 0 auto; }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: rgba(6, 6, 6, 0.88);
+    }
+    nav {
+      display: flex;
+      min-height: 4.35rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand img { display: block; width: auto; height: 3.1rem; }
+    .nav-link { color: var(--muted); font-size: 0.86rem; font-weight: 700; text-decoration: none; }
+    .hero { padding: clamp(3.5rem, 8vw, 6.5rem) 0 clamp(2rem, 5vw, 4rem); }
+    .kicker {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    h1, h2 { font-family: var(--display); font-weight: 500; line-height: 1.08; }
+    h1 { max-width: 820px; margin: 0.75rem 0 1.25rem; font-size: clamp(2.5rem, 7vw, 5rem); }
+    h2 { margin: 0 0 1rem; font-size: clamp(1.8rem, 4vw, 2.55rem); }
+    h3 { margin: 1.75rem 0 0.35rem; color: var(--gold-light); font-size: 1.05rem; }
+    p, li { color: var(--muted); }
+    .lede { max-width: 740px; margin: 0; font-size: clamp(1.05rem, 2.5vw, 1.24rem); }
+    .quick-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.6rem; }
+    .button {
+      display: inline-flex;
+      min-height: 2.8rem;
+      align-items: center;
+      border: 1px solid rgba(241, 200, 120, 0.55);
+      border-radius: 0.48rem;
+      padding: 0.7rem 1rem;
+      background: linear-gradient(180deg, #f1c878, #d0933c 52%, #9c6423);
+      color: #130d05;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .button.secondary { background: rgba(10, 10, 15, 0.6); color: var(--gold-light); }
+    .toc, article section, .risk, .final-cta {
+      border: 1px solid var(--line);
+      border-radius: 0.7rem;
+      background:
+        radial-gradient(circle at 92% 0%, rgba(216, 162, 74, 0.08), transparent 15rem),
+        linear-gradient(180deg, rgba(14, 18, 22, 0.92), rgba(7, 9, 11, 0.94));
+    }
+    .toc { margin-bottom: 1rem; padding: 1.35rem clamp(1.1rem, 3vw, 1.8rem); }
+    .toc strong { font-family: var(--display); font-size: 1.2rem; }
+    .toc ol { columns: 2; margin-bottom: 0; padding-left: 1.25rem; }
+    .toc li { break-inside: avoid; margin: 0.25rem 0; }
+    article { display: grid; gap: 1rem; padding-bottom: 4rem; }
+    article section { padding: clamp(1.3rem, 4vw, 2.2rem); scroll-margin-top: 1rem; }
+    article section > :last-child { margin-bottom: 0; }
+    ol, ul { padding-left: 1.45rem; }
+    li + li { margin-top: 0.5rem; }
+    strong { color: var(--text); }
+    .risk { border-color: rgba(241, 200, 120, 0.42); }
+    .risk h2 { color: var(--gold-light); }
+    .final-cta { text-align: left; }
+    footer { border-top: 1px solid var(--line); padding: 2rem 0; color: var(--muted); font-size: 0.86rem; }
+    footer .shell { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 1.5rem; }
+    @media (max-width: 620px) {
+      .toc ol { columns: 1; }
+      .brand img { height: 2.7rem; }
+      .nav-link { font-size: 0.78rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="shell" aria-label="Primary navigation">
+      <a class="brand" href="/" aria-label="Avalisa PO Bot home">
+        <img src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot">
+      </a>
+      <a class="nav-link" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero shell">
+      <p class="kicker">Good habits</p>
+      <h1>A Trading Journal for Bot Sessions</h1>
+      <p class="lede">Automated sessions produce details you will not remember later: which settings were on, what happened, why the bot paused. A simple journal turns a blurry week into something you can review and compare.</p>
+      <div class="quick-links">
+        <a class="button" href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Add to Chrome</a>
+        <a class="button secondary" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+      </div>
+    </div>
+    <div class="shell">
+      <aside class="toc" aria-label="On this page">
+        <strong>On this page</strong>
+        <ol>
+          <li><a href="#why">Why journal</a></li>
+          <li><a href="#trade">Per trade</a></li>
+          <li><a href="#session">Per session</a></li>
+          <li><a href="#cost">Losing-cycle cost</a></li>
+          <li><a href="#steps">Practical steps</a></li>
+          <li><a href="#risk">Risk statement</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ol>
+      </aside>
+      <article>
+        <section id="why">
+          <h2>Why journal automated sessions</h2>
+          <ul>
+            <li><strong>You cannot judge settings from memory.</strong> Without records you cannot tell whether a settings change helped or just coincided with a lucky or unlucky stretch.</li>
+            <li><strong>A losing streak is information.</strong> A journal shows whether it came from one pair, one timeframe, or plain variance.</li>
+            <li><strong>Problems need evidence.</strong> If a result or a stake looks wrong, a timestamped record of settings, stakes, results and pauses is the fastest way to diagnose it &mdash; and to get help from support.</li>
+            <li><strong>It keeps expectations honest.</strong> Your own logged wins, losses and paused cycles beat hindsight.</li>
+          </ul>
+        </section>
+        <section id="trade">
+          <h2>What to record per trade</h2>
+          <ol>
+            <li>Date and time the trade was placed.</li>
+            <li>Market / pair.</li>
+            <li>Direction (up / down).</li>
+            <li>Timeframe (trade expiry).</li>
+            <li>Stake.</li>
+            <li>Payout shown at entry.</li>
+            <li>Martingale position: which trade of the cycle it was (1, 2, 3&hellip;), the multiplier (2x to 3x) and the Steps value set in the panel.</li>
+            <li>Result (win or loss).</li>
+            <li>Balance before and after.</li>
+            <li>Mode: Martingale or Avalisa Bot (Pro only).</li>
+            <li>Notes: anything unusual &mdash; pauses, a minimised tab, connection problems.</li>
+          </ol>
+          <p>The dashboard shows your trade history (basic on Demo, fuller on paid plans); copy what you need into your own journal. What no tool records for you is <em>why</em> &mdash; the notes column is yours.</p>
+        </section>
+        <section id="session">
+          <h2>What to record per session</h2>
+          <ul>
+            <li><strong>Settings snapshot at the start:</strong> mode, timeframe, Minimum payout %, Pair Scan, multiplier and the Steps value set in the panel. Change one thing at a time between sessions, or the journal cannot tell you what made the difference. The full list is in the <a href="/guide/settings-guide.html">settings guide</a>.</li>
+            <li><strong>Account type:</strong> demo or real &mdash; never mix them in one review.</li>
+            <li><strong>Environment:</strong> was the Pocket Option tab visible the whole time? A background or minimised tab can delay trade-result detection.</li>
+            <li><strong>Pauses:</strong> when and why the bot stopped &mdash; for example, the next stake would have exceeded the balance.</li>
+            <li><strong>Totals:</strong> trades, wins, losses, net change, longest losing streak.</li>
+          </ul>
+        </section>
+        <section id="cost">
+          <h2>The cost of a Martingale losing cycle</h2>
+          <p>Martingale raises the stake by your multiplier after each loss, so a losing cycle costs far more than its first trade. Steps = N allows N + 1 trades in a losing cycle; at 2x, Steps 3 costs 15 times the base stake. There is no separate stop-loss or daily-loss-limit setting &mdash; limiting Steps is the cap. That is why every session entry records the Steps value: it is your worst-case cost per cycle. Try your numbers in the <a href="/guide/martingale-calculator.html">Martingale calculator</a>.</p>
+        </section>
+        <section id="steps">
+          <h2>Practical steps</h2>
+          <ol>
+            <li><strong>Start on a demo account</strong> and build the habit with no money at risk &mdash; see <a href="/guide/test-a-trading-bot-on-demo.html">how to test a trading bot on demo</a>.</li>
+            <li><strong>Copy history into the journal after every session</strong>, not when it &ldquo;feels done&rdquo;.</li>
+            <li><strong>Log every settings change:</strong> date, what changed, from what to what.</li>
+            <li><strong>Review weekly.</strong> Compare each settings combination with the break-even win rate for its payout, 1 / (1 + p) &mdash; explained in <a href="/guide/honest-win-rate-break-even.html">honest win rates and break-even</a>. A combination below break-even is the journal doing its job.</li>
+          </ol>
+        </section>
+        <section id="risk" class="risk">
+          <h2>Risk statement</h2>
+          <p>Binary options are <strong>high risk</strong>, and a system that multiplies stakes after losses can lose more than you expect. Use only money you can afford to lose. Trading involves risk. Avalisa does not guarantee profits. Start on a demo account.</p>
+        </section>
+        <section id="faq">
+          <h2>Frequently asked questions</h2>
+          <h3>Do I need a paid plan to keep a journal?</h3>
+          <p>No. The free Demo plan includes basic trade history, which is enough to learn the habit. The free Demo plan includes 10 Martingale trades. Basic is $69 one-time; Pro is $119 one-time or $29/month (a recurring subscription) &mdash; you choose at checkout on <a href="https://avalisabot.vercel.app/pricing">pricing</a>.</p>
+          <h3>What if I can&rsquo;t tell why the bot paused?</h3>
+          <p>Write down what you suspect at the time and mark it with a question mark. An unconfirmed note beats a confidently invented reason.</p>
+          <h3>Can a journal predict whether a settings change will work?</h3>
+          <p>No. It measures what already happened; it is your history, not a forecast.</p>
+          <h3>How detailed does it need to be?</h3>
+          <p>Enough that someone else could reconstruct the session: settings snapshot, copied history, interruptions and totals.</p>
+        </section>
+        <section id="start" class="final-cta">
+          <h2>Start your first logged session on demo</h2>
+          <p>Install Avalisa PO Bot from the <a href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Chrome Web Store</a>, follow the <a href="https://avalisabot.vercel.app/guide">setup guide</a>, and keep every session journaled from the first demo run.</p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <span>© Avalisa PO Bot</span>
+      <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a>
+    </div>
+  </footer>
+</body>
+</html>

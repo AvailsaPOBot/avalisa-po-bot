@@ -403,6 +403,18 @@ export default function Guide() {
             </a>.
           </p>
           <p>
+            Moving off demo? Read{' '}
+            <a href="/guide/pocket-option-demo-to-real-account.html">
+              the checklist before switching to a real account
+            </a>.
+          </p>
+          <p>
+            Want to review your sessions? Read{' '}
+            <a href="/guide/trading-journal-for-bot-sessions.html">
+              how to keep a trading journal for bot sessions
+            </a>.
+          </p>
+          <p>
             Not ready to use real money? Read{' '}
             <a href="/guide/test-a-trading-bot-on-demo.html">
               how to test a trading bot on a demo account
