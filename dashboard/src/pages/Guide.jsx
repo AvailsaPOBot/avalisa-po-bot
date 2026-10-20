@@ -439,6 +439,18 @@ export default function Guide() {
             </a>.
           </p>
           <p>
+            Thinking of asking ChatGPT to write one? Read{' '}
+            <a href="/guide/can-chatgpt-write-a-binary-options-bot.html">
+              what a generated bot gets wrong
+            </a>.
+          </p>
+          <p>
+            Reading bot reviews or Reddit threads? Read{' '}
+            <a href="/guide/how-to-read-binary-options-bot-reviews.html">
+              how to tell a useful review from a plug
+            </a>.
+          </p>
+          <p>
             Thinking of building your own? Read{' '}
             <a href="/guide/making-your-own-pocket-option-bot.html">
               what making your own bot takes
