@@ -47,11 +47,11 @@ export default function Register() {
         <form className="lux-auth-card" onSubmit={handleSubmit}>
           <div className="lux-auth-brand"><img className="brand-signature brand-signature--auth" src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot" /></div>
           <h1>Create Avalisa account</h1>
-          <p>Start with Demo and test Martingale mode before upgrading.</p>
+          <p>Free to start: the Demo plan includes 10 Martingale trades. Run them on a Pocket Option demo account first.</p>
 
           <a className="lux-auth-offer" href={AFFILIATE_LINK} target="_blank" rel="noreferrer">
             <Gift size={18} />
-            <span>New to Pocket Option? Register through Avalisa to request Pro access.</span>
+            <span>New to Pocket Option? Open an account through our link (we earn a commission), then add your Pocket Option ID in Settings to request Pro.</span>
           </a>
 
           <label><Mail size={15} /> Email<input type="email" required placeholder="you@example.com" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} /></label>

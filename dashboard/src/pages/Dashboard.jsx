@@ -474,7 +474,7 @@ export default function Dashboard() {
           <p className="text-gray-400 text-sm mb-3">The bot runs inside Chrome on Pocket Option. Your account is ready — trades start once the extension is installed.</p>
           <ol className="text-gray-300 text-sm list-decimal pl-5 mb-4 space-y-1">
             <li>Add Avalisa PO Bot from the Chrome Web Store.</li>
-            <li>Open Pocket Option in Chrome and sign in to the bot panel with this email and your Avalisa password. Signed up with Google or Facebook? <Link to="/forgot-password" className="text-brand-400 underline">Set a password first</Link>.</li>
+            <li>Open Pocket Option in Chrome and sign in to the bot panel with this email and your Avalisa password. Signed up with Google or Facebook? <Link to="/forgot-password" className="text-brand-400 underline">Create a password first</Link>.</li>
             <li>Switch Pocket Option to a demo account and run a few test trades first.</li>
           </ol>
           <div className="flex flex-col gap-2 sm:flex-row">

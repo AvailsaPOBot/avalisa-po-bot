@@ -58,7 +58,7 @@ test('affiliate URL literal appears exactly once across dashboard source', () =>
 
 test('every dashboard affiliate consumer resolves the shared URL', async () => {
   const { unmount: unmountRegister } = render(<Register />);
-  expectAffiliateHref(screen.getByRole('link', { name: /register through avalisa/i }));
+  expectAffiliateHref(screen.getByRole('link', { name: /open an account through our link/i }));
   unmountRegister();
 
   const { unmount: unmountPricing } = render(<Pricing />);
