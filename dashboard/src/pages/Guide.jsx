@@ -451,6 +451,24 @@ export default function Guide() {
             </a>.
           </p>
           <p>
+            Looking for an official Pocket Option bot? Read{' '}
+            <a href="/guide/is-there-an-official-pocket-option-bot.html">
+              how to tell a broker product from a third-party tool
+            </a>.
+          </p>
+          <p>
+            Paying a freelancer or seller for a bot? Read{' '}
+            <a href="/guide/buying-a-pocket-option-bot-from-a-seller.html">
+              the questions to ask first
+            </a>.
+          </p>
+          <p>
+            Comparing a PC .exe bot with an extension? Read{' '}
+            <a href="/guide/pocket-option-bot-pc-exe-vs-extension.html">
+              what each can reach on your computer
+            </a>.
+          </p>
+          <p>
             Thinking of building your own? Read{' '}
             <a href="/guide/making-your-own-pocket-option-bot.html">
               what making your own bot takes

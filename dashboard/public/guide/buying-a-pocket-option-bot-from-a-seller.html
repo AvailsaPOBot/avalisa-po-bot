@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Buying a Pocket Option Bot From a Freelancer or Seller: Questions to Ask First</title>
+  <meta name="description" content="Paying someone for a custom or second-hand Pocket Option bot? Find out whether it is a script, a licence or a signal feed, who fixes it, and what proof to ask for first.">
+  <meta property="og:title" content="Buying a Pocket Option Bot From a Freelancer or Seller: Questions to Ask First">
+  <meta property="og:description" content="Paying someone for a custom or second-hand Pocket Option bot? Find out whether it is a script, a licence or a signal feed, who fixes it, and what proof to ask for first.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://avalisabot.vercel.app/guide/buying-a-pocket-option-bot-from-a-seller.html">
+  <link rel="canonical" href="https://avalisabot.vercel.app/guide/buying-a-pocket-option-bot-from-a-seller.html">
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root {
+      --bg: #060606;
+      --surface: #0e1216;
+      --surface-deep: #07090b;
+      --text: #f3eee6;
+      --muted: rgba(243, 238, 230, 0.7);
+      --gold: #d8a24a;
+      --gold-light: #f1c878;
+      --line: rgba(216, 162, 74, 0.24);
+      --jade: #4a9b7e;
+      --display: Georgia, 'Times New Roman', serif;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 78% 3%, rgba(216, 162, 74, 0.18), transparent 26rem),
+        radial-gradient(circle at 5% 22%, rgba(74, 155, 126, 0.12), transparent 30rem),
+        linear-gradient(180deg, var(--bg), #090c0e 48%, #040404);
+      color: var(--text);
+      font: 16px/1.7 var(--sans);
+    }
+    a { color: var(--gold-light); text-underline-offset: 0.2em; }
+    a:hover { color: #ffe1a8; }
+    a:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 4px; }
+    .shell { width: min(calc(100% - 2rem), 860px); margin: 0 auto; }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: rgba(6, 6, 6, 0.88);
+    }
+    nav {
+      display: flex;
+      min-height: 4.35rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand img { display: block; width: auto; height: 3.1rem; }
+    .nav-link { color: var(--muted); font-size: 0.86rem; font-weight: 700; text-decoration: none; }
+    .hero { padding: clamp(3.5rem, 8vw, 6.5rem) 0 clamp(2rem, 5vw, 4rem); }
+    .kicker {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    h1, h2 { font-family: var(--display); font-weight: 500; line-height: 1.08; }
+    h1 { max-width: 820px; margin: 0.75rem 0 1.25rem; font-size: clamp(2.5rem, 7vw, 5rem); }
+    h2 { margin: 0 0 1rem; font-size: clamp(1.8rem, 4vw, 2.55rem); }
+    h3 { margin: 1.75rem 0 0.35rem; color: var(--gold-light); font-size: 1.05rem; }
+    p, li { color: var(--muted); }
+    .lede { max-width: 740px; margin: 0; font-size: clamp(1.05rem, 2.5vw, 1.24rem); }
+    .quick-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.6rem; }
+    .button {
+      display: inline-flex;
+      min-height: 2.8rem;
+      align-items: center;
+      border: 1px solid rgba(241, 200, 120, 0.55);
+      border-radius: 0.48rem;
+      padding: 0.7rem 1rem;
+      background: linear-gradient(180deg, #f1c878, #d0933c 52%, #9c6423);
+      color: #130d05;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .button.secondary { background: rgba(10, 10, 15, 0.6); color: var(--gold-light); }
+    .toc, article section, .risk, .final-cta {
+      border: 1px solid var(--line);
+      border-radius: 0.7rem;
+      background:
+        radial-gradient(circle at 92% 0%, rgba(216, 162, 74, 0.08), transparent 15rem),
+        linear-gradient(180deg, rgba(14, 18, 22, 0.92), rgba(7, 9, 11, 0.94));
+    }
+    .toc { margin-bottom: 1rem; padding: 1.35rem clamp(1.1rem, 3vw, 1.8rem); }
+    .toc strong { font-family: var(--display); font-size: 1.2rem; }
+    .toc ol { columns: 2; margin-bottom: 0; padding-left: 1.25rem; }
+    .toc li { break-inside: avoid; margin: 0.25rem 0; }
+    article { display: grid; gap: 1rem; padding-bottom: 4rem; }
+    article section { padding: clamp(1.3rem, 4vw, 2.2rem); scroll-margin-top: 1rem; }
+    article section > :last-child { margin-bottom: 0; }
+    ol, ul { padding-left: 1.45rem; }
+    li + li { margin-top: 0.5rem; }
+    strong { color: var(--text); }
+    .risk { border-color: rgba(241, 200, 120, 0.42); }
+    .risk h2 { color: var(--gold-light); }
+    .final-cta { text-align: left; }
+    footer { border-top: 1px solid var(--line); padding: 2rem 0; color: var(--muted); font-size: 0.86rem; }
+    footer .shell { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 1.5rem; }
+    @media (max-width: 620px) {
+      .toc ol { columns: 1; }
+      .brand img { height: 2.7rem; }
+      .nav-link { font-size: 0.78rem; }
+    }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+    th, td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); text-align: left; color: var(--muted); }
+    th { color: var(--text); }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="shell" aria-label="Primary navigation">
+      <a class="brand" href="/" aria-label="Avalisa PO Bot home">
+        <img src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot">
+      </a>
+      <a class="nav-link" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero shell">
+      <p class="kicker">Before you buy</p>
+      <h1>Buying a Pocket Option Bot From a Freelancer or Seller: Questions to Ask First</h1>
+      <p class="lede">Before you pay anyone for a Pocket Option bot, find out what you are actually buying (a script, a licence or a signal feed), who fixes it when the trading page changes, and what proof of behaviour you can see before money moves.</p>
+      <div class="quick-links">
+        <a class="button" href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Add to Chrome</a>
+        <a class="button secondary" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+      </div>
+    </div>
+    <div class="shell">
+      <aside class="toc" aria-label="On this page"><strong>On this page</strong><ol><li><a href="#what-you-are-actually-buying-a-script-a-">What you are actually buying &mdash; a script, a licence, or a signal feed</a></li><li><a href="#who-fixes-it-when-the-trading-page-chang">Who fixes it when the trading page changes</a></li><li><a href="#proof-worth-asking-for-a-demo-trade-log-">Proof worth asking for &mdash; a demo trade log with total count, settings and losses, not screenshots</a></li><li><a href="#questions-before-paying">Questions before paying</a></li><li><a href="#frequently-asked-questions">Frequently asked questions</a></li><li><a href="#risk">Risk statement</a></li></ol></aside>
+      <article>
+<section id="about"><p>This page is about paying a person &mdash; a freelancer or reseller &mdash; for a custom or second-hand bot, what you are actually buying, who maintains it after delivery, refunds, and what proof to ask for. It is not about choosing between ready-made bots (see <a href="/guide/how-to-choose-a-pocket-option-bot.html">how to choose a Pocket Option bot</a>) or building one yourself.</p></section>
+<section id="what-you-are-actually-buying-a-script-a-"><h2>What you are actually buying &mdash; a script, a licence, or a signal feed</h2><p>"Bot" can mean three different things, and they cost and behave differently:</p><ul><li><strong>A script</strong> &mdash; code (a browser extension or a script) you run yourself on your own machine. You own the file; the seller's job is done at delivery unless they promised updates.</li><li><strong>A licence</strong> &mdash; the right to use someone else's software, sometimes tied to your account or device. Ask whether the licence is per-account or per-device, whether it expires, and whether it survives a seller's server going offline.</li><li><strong>A signal feed</strong> &mdash; you don't get software at all; you get entries (a list, a channel, a subscription) and you place the trades yourself or feed them to something else. Ask what happens when the feed stops.</li></ul><p>A fixed, named product with published plans is easier to reason about than an anonymous one. For comparison, Avalisa publishes its plans plainly: Basic is $69 one-time; Pro is $119 one-time OR $29/month (a real recurring subscription) &mdash; you choose at checkout. If a seller's offer has no such plain description, ask what exactly you get and for how long.</p></section>
+<section id="who-fixes-it-when-the-trading-page-chang"><h2>Who fixes it when the trading page changes</h2><p>A Pocket Option bot works by reading and clicking the trading page. When the platform changes that page, the bot can silently stop working &mdash; or worse, misread it. Before paying, ask:</p><ul><li>Who fixes it, and how fast? A freelancer who disappears after delivery fixes nothing.</li><li>Is support included in the price, or sold separately later?</li><li>What happens to your licence or feed if the seller stops maintaining it?</li></ul><p>If the answer to "who fixes it" is "nobody," you are buying a script that may stop working the next time the trading page changes &mdash; and you are the one who has to notice.</p></section>
+<section id="proof-worth-asking-for-a-demo-trade-log-"><h2>Proof worth asking for &mdash; a demo trade log with total count, settings and losses, not screenshots</h2><p>Screenshots are cheap and editable. Ask for a <strong>demo trade log</strong>: the full history of trades the bot actually placed on a Pocket Option demo account, showing:</p><ul><li><strong>The total trade count</strong>, not just the last few entries &mdash; a log of hundreds of trades is harder to cherry-pick than ten wins.</li><li><strong>The settings used</strong> (timeframe, stake pattern, stop rules) so you can compare them against your own plan.</li><li><strong>The losses, not just the wins.</strong> Any honest log shows losing trades. If the seller only shows wins, ask for the losing entries specifically.</li></ul><p>You can then test the same settings yourself on a demo account &mdash; see <a href="/guide/test-a-trading-bot-on-demo.html">test a trading bot on demo</a>. Remember the maths underneath any log: at a 92% payout, break-even is a 52.1% win rate (break-even = 1/(1+p)). If the bot uses Martingale, the exposure grows with the step count &mdash; Steps N means N+1 trades in a cycle, so at 2x, Steps 2 = 7x and Steps 3 = 15x the base stake. Ask what step count the shown log used; see <a href="/guide/martingale-risk-explained.html">Martingale risk, explained</a>.</p></section>
+<section id="questions-before-paying"><h2>Questions before paying</h2><p>Ask these before money moves, and keep the answers in writing:</p><ol><li><strong>Refunds:</strong> If the bot doesn't work as described, do you get your money back? What counts as "doesn't work"? Who decides?</li><li><strong>Updates:</strong> Are fixes included, or extra? How long after delivery will you fix it if the trading page changes?</li><li><strong>Your login:</strong> Does it ask for your Pocket Option login? A script that runs in your own browser should not need your password at all &mdash; if it does, ask what it does with it.</li><li><strong>Ownership:</strong> If it's a script, do you get the actual file? If it's a licence, what exactly does it cover and for how long?</li></ol><p>If any answer is vague, the answer is "no." Also check the general safety questions in <a href="/guide/is-a-pocket-option-bot-safe-or-scam.html">is a Pocket Option bot safe or a scam</a>.</p></section>
+<section id="frequently-asked-questions"><h2>Frequently asked questions</h2><h3>Do I need to give a freelancer my Pocket Option password?</h3><p>No. A bot that runs in your own browser trades from your already-logged-in session and does not need your password. If a seller asks for your login, ask exactly what they use it for and whether they can see your account balance.</p><h3>The seller showed me a demo log with lots of wins. Should I trust it?</h3><p>Check the total trade count, the settings used, and whether losing trades are in it. Wins are easy to show; a full log with losses and settings is what tells you what the bot actually does. Then run the same settings on your own demo account before paying.</p><h3>Can I get my money back if it stops working?</h3><p>Only if you agreed a refund before paying. Ask what counts as a failure, who decides, and how long after delivery you can claim it &mdash; and keep that answer in writing.</p></section>
+<section id="risk" class="risk"><h2>Risk statement</h2><p>Martingale raises the stake after every loss, and a losing streak can wipe out a balance. Binary options are <strong>high risk</strong>. Use only money you can afford to lose. Trading involves risk. Avalisa does not guarantee profits. Start on a demo account.</p></section>
+<section id="start" class="final-cta"><h2>Try it on demo first</h2><p>Install Avalisa PO Bot from the <a href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Chrome Web Store</a> and test on a demo account before real money. The free Demo plan includes 10 Martingale trades; Basic is $69 one-time; Pro is $119 one-time or $29/month (a recurring subscription) &mdash; see <a href="https://avalisabot.vercel.app/pricing">pricing</a>.</p></section>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <span>© Avalisa PO Bot</span>
+      <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a>
+    </div>
+  </footer>
+</body>
+</html>
