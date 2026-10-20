@@ -427,6 +427,18 @@ export default function Guide() {
             </a>.
           </p>
           <p>
+            New to bots? Read{' '}
+            <a href="/guide/what-is-a-binary-options-bot.html">
+              what a binary options bot is
+            </a>.
+          </p>
+          <p>
+            Thinking of building your own? Read{' '}
+            <a href="/guide/making-your-own-pocket-option-bot.html">
+              what making your own bot takes
+            </a>.
+          </p>
+          <p>
             Checking a bot before installing? Read{' '}
             <a href="/guide/check-a-chrome-web-store-trading-bot-listing.html">
               how to check a Chrome Web Store listing

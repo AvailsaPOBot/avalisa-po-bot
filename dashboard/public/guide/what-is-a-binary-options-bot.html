@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>What a Binary Options Bot Is (and What One Can and Cannot Do)</title>
+  <meta name="description" content="The three kinds of binary options bot — signal relays, scripts, in-browser extensions — what any bot controls, what none controls, and break-even 1/(1+p): 52.1% at a 92% payout.">
+  <meta property="og:title" content="What a Binary Options Bot Is (and What One Can and Cannot Do)">
+  <meta property="og:description" content="The three kinds of binary options bot — signal relays, scripts, in-browser extensions — what any bot controls, what none controls, and break-even 1/(1+p): 52.1% at a 92% payout.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://avalisabot.vercel.app/guide/what-is-a-binary-options-bot.html">
+  <link rel="canonical" href="https://avalisabot.vercel.app/guide/what-is-a-binary-options-bot.html">
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root {
+      --bg: #060606;
+      --surface: #0e1216;
+      --surface-deep: #07090b;
+      --text: #f3eee6;
+      --muted: rgba(243, 238, 230, 0.7);
+      --gold: #d8a24a;
+      --gold-light: #f1c878;
+      --line: rgba(216, 162, 74, 0.24);
+      --jade: #4a9b7e;
+      --display: Georgia, 'Times New Roman', serif;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 78% 3%, rgba(216, 162, 74, 0.18), transparent 26rem),
+        radial-gradient(circle at 5% 22%, rgba(74, 155, 126, 0.12), transparent 30rem),
+        linear-gradient(180deg, var(--bg), #090c0e 48%, #040404);
+      color: var(--text);
+      font: 16px/1.7 var(--sans);
+    }
+    a { color: var(--gold-light); text-underline-offset: 0.2em; }
+    a:hover { color: #ffe1a8; }
+    a:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 4px; }
+    .shell { width: min(calc(100% - 2rem), 860px); margin: 0 auto; }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: rgba(6, 6, 6, 0.88);
+    }
+    nav {
+      display: flex;
+      min-height: 4.35rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand img { display: block; width: auto; height: 3.1rem; }
+    .nav-link { color: var(--muted); font-size: 0.86rem; font-weight: 700; text-decoration: none; }
+    .hero { padding: clamp(3.5rem, 8vw, 6.5rem) 0 clamp(2rem, 5vw, 4rem); }
+    .kicker {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    h1, h2 { font-family: var(--display); font-weight: 500; line-height: 1.08; }
+    h1 { max-width: 820px; margin: 0.75rem 0 1.25rem; font-size: clamp(2.5rem, 7vw, 5rem); }
+    h2 { margin: 0 0 1rem; font-size: clamp(1.8rem, 4vw, 2.55rem); }
+    h3 { margin: 1.75rem 0 0.35rem; color: var(--gold-light); font-size: 1.05rem; }
+    p, li { color: var(--muted); }
+    .lede { max-width: 740px; margin: 0; font-size: clamp(1.05rem, 2.5vw, 1.24rem); }
+    .quick-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.6rem; }
+    .button {
+      display: inline-flex;
+      min-height: 2.8rem;
+      align-items: center;
+      border: 1px solid rgba(241, 200, 120, 0.55);
+      border-radius: 0.48rem;
+      padding: 0.7rem 1rem;
+      background: linear-gradient(180deg, #f1c878, #d0933c 52%, #9c6423);
+      color: #130d05;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .button.secondary { background: rgba(10, 10, 15, 0.6); color: var(--gold-light); }
+    .toc, article section, .risk, .final-cta {
+      border: 1px solid var(--line);
+      border-radius: 0.7rem;
+      background:
+        radial-gradient(circle at 92% 0%, rgba(216, 162, 74, 0.08), transparent 15rem),
+        linear-gradient(180deg, rgba(14, 18, 22, 0.92), rgba(7, 9, 11, 0.94));
+    }
+    .toc { margin-bottom: 1rem; padding: 1.35rem clamp(1.1rem, 3vw, 1.8rem); }
+    .toc strong { font-family: var(--display); font-size: 1.2rem; }
+    .toc ol { columns: 2; margin-bottom: 0; padding-left: 1.25rem; }
+    .toc li { break-inside: avoid; margin: 0.25rem 0; }
+    article { display: grid; gap: 1rem; padding-bottom: 4rem; }
+    article section { padding: clamp(1.3rem, 4vw, 2.2rem); scroll-margin-top: 1rem; }
+    article section > :last-child { margin-bottom: 0; }
+    ol, ul { padding-left: 1.45rem; }
+    li + li { margin-top: 0.5rem; }
+    strong { color: var(--text); }
+    .risk { border-color: rgba(241, 200, 120, 0.42); }
+    .risk h2 { color: var(--gold-light); }
+    .final-cta { text-align: left; }
+    footer { border-top: 1px solid var(--line); padding: 2rem 0; color: var(--muted); font-size: 0.86rem; }
+    footer .shell { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 1.5rem; }
+    @media (max-width: 620px) {
+      .toc ol { columns: 1; }
+      .brand img { height: 2.7rem; }
+      .nav-link { font-size: 0.78rem; }
+    }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+    th, td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); text-align: left; color: var(--muted); }
+    th { color: var(--text); }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="shell" aria-label="Primary navigation">
+      <a class="brand" href="/" aria-label="Avalisa PO Bot home">
+        <img src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot">
+      </a>
+      <a class="nav-link" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero shell">
+      <p class="kicker">Bots explained</p>
+      <h1>What a Binary Options Bot Is (and What One Can and Cannot Do)</h1>
+      <p class="lede">A beginner&rsquo;s definition of the whole category: the three things people mean by &ldquo;bot&rdquo;, what any of them can and cannot control, and where Avalisa PO Bot fits. For the limits in detail, see <a href="/guide/what-automation-cannot-do.html">what automation cannot do</a>.</p>
+      <div class="quick-links">
+        <a class="button" href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Add to Chrome</a>
+        <a class="button secondary" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+      </div>
+    </div>
+    <div class="shell">
+      <aside class="toc" aria-label="On this page">
+        <strong>On this page</strong>
+        <ol>
+          <li><a href="#option">A binary option in one paragraph</a></li>
+          <li><a href="#kinds">The three kinds of &ldquo;bot&rdquo; people mean</a></li>
+          <li><a href="#controls">What any bot controls &mdash; and what none controls</a></li>
+          <li><a href="#platforms">Where Avalisa works</a></li>
+          <li><a href="#questions">Questions to ask before using any bot</a></li>
+          <li><a href="#faq">Frequently asked questions</a></li>
+          <li><a href="#risk">Risk statement</a></li>
+        </ol>
+      </aside>
+      <article>
+        <section id="option">
+          <h2>A binary option in one paragraph</h2>
+          <p>A binary option is a fixed-payout bet on whether a price ends above or below its current level at a set expiry. You pick a direction and a stake. If you are right you receive a fixed payout <em>p</em> on the stake (at 92%, a $10 stake returns $19.20); if you are wrong you lose the whole stake. Because a loss costs more than a win pays, the break-even win rate is <strong>1 / (1 + p)</strong> &mdash; at a 92% payout that is <strong>52.1%</strong>, not 50%. The derivation is on <a href="/guide/honest-win-rate-break-even.html">the break-even page</a>.</p>
+        </section>
+        <section id="kinds">
+          <h2>The three kinds of &ldquo;bot&rdquo; people mean</h2>
+          <ol>
+            <li><strong>Signal relays.</strong> A channel or website tells you when and which way to trade. You still place every trade yourself, so timing and discipline stay with you.</li>
+            <li><strong>Scripts and APIs.</strong> Standalone programs that place trades through code. They need a developer setup, usually your credentials stored in the program, and ongoing maintenance.</li>
+            <li><strong>In-browser extensions.</strong> Software inside your own browser that reads the trading page you already have open and places trades through the broker&rsquo;s own interface, in your own session.</li>
+          </ol>
+          <p>Avalisa PO Bot is the third kind: a Google Chrome extension that automates trades on Pocket Option in your own browser. It is not a signal service.</p>
+        </section>
+        <section id="controls">
+          <h2>What any bot controls &mdash; and what none controls</h2>
+          <p>Any bot controls the <em>inputs</em> of a trade: the stake, the direction rule, the expiry, and when to stop. That is the whole list.</p>
+          <p>No bot controls the next candle. It cannot make price move its way or know how the next expiry will settle. Its real value is discipline: applying one written rule the same way every time and stopping where you told it to. A listing that says a bot &ldquo;predicts&rdquo; the market is claiming the one thing no bot controls.</p>
+          <p>If a bot offers Martingale (raising the stake after a loss), check how it counts steps. In Avalisa&rsquo;s panel, Steps = N allows N + 1 trades in a losing cycle: at 2x, Steps 2 is $1 &rarr; $2 &rarr; $4, 7&times; the base stake. A losing streak can wipe out a balance &mdash; see <a href="/guide/martingale-risk-explained.html">Martingale risk explained</a>.</p>
+        </section>
+        <section id="platforms">
+          <h2>Where Avalisa works</h2>
+          <p>Avalisa PO Bot works on <strong>Pocket Option</strong>, a binary-options broker, on both Demo and Real accounts. The extension places trades the same way on either, so a demo run shows whether your settings do what you expect before any real money.</p>
+        </section>
+        <section id="questions">
+          <h2>Questions to ask before using any bot</h2>
+          <ul>
+            <li><strong>What exactly does it control?</strong> Stake, direction rule, expiry, stopping. Anything beyond that is a marketing claim.</li>
+            <li><strong>Where do my credentials go?</strong> A script may need them stored in the program; an in-browser extension works in the session you are already logged into.</li>
+            <li><strong>How does it stop?</strong> A bot with no limit keeps going until the balance decides for it.</li>
+            <li><strong>Can I test it on demo first?</strong> If not, you are testing with real money.</li>
+            <li><strong>What does it cost?</strong> Compare plans before paying &mdash; see <a href="/guide/how-to-choose-a-pocket-option-bot.html">how to choose a Pocket Option bot</a>.</li>
+          </ul>
+        </section>
+        <section id="faq">
+          <h2>Frequently asked questions</h2>
+          <h3>Is a binary options bot the same as a signal bot?</h3>
+          <p>No. A signal bot tells you what to trade and you place it by hand; a trading bot places the trade itself. Avalisa places trades, in your browser, on Pocket Option.</p>
+          <h3>Can a bot make me win more often?</h3>
+          <p>No bot can promise that. It applies a fixed rule and your stopping limits. Break-even, 1/(1+p), is set by the payout, not by the bot.</p>
+          <h3>Does Avalisa work with other brokers?</h3>
+          <p>No. It is built for Pocket Option, on Demo and Real accounts.</p>
+        </section>
+        <section id="risk" class="risk">
+          <h2>Risk statement</h2>
+          <p>Binary options are <strong>high risk</strong>, and you can lose your entire deposit. In our large-sample measurements no setting has beaten break-even. Use only money you can afford to lose. Trading involves risk. Avalisa does not guarantee profits. Start on a demo account.</p>
+        </section>
+        <section id="start" class="final-cta">
+          <h2>Try it on demo first</h2>
+          <p>Install Avalisa PO Bot from the <a href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Chrome Web Store</a> and test on a demo account before real money. The free Demo plan includes 10 Martingale trades; Basic is $69 one-time; Pro is $119 one-time or $29/month (a recurring subscription) &mdash; see <a href="https://avalisabot.vercel.app/pricing">pricing</a>.</p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <span>© Avalisa PO Bot</span>
+      <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Making Your Own Pocket Option Bot: What It Actually Takes</title>
+  <meta name="description" content="The six parts a do-it-yourself Pocket Option bot needs, what breaks when the page changes, and why a long demo sample (break-even 52.1% at a 92% payout) is the real work.">
+  <meta property="og:title" content="Making Your Own Pocket Option Bot: What It Actually Takes">
+  <meta property="og:description" content="The six parts a do-it-yourself Pocket Option bot needs, what breaks when the page changes, and why a long demo sample (break-even 52.1% at a 92% payout) is the real work.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://avalisabot.vercel.app/guide/making-your-own-pocket-option-bot.html">
+  <link rel="canonical" href="https://avalisabot.vercel.app/guide/making-your-own-pocket-option-bot.html">
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root {
+      --bg: #060606;
+      --surface: #0e1216;
+      --surface-deep: #07090b;
+      --text: #f3eee6;
+      --muted: rgba(243, 238, 230, 0.7);
+      --gold: #d8a24a;
+      --gold-light: #f1c878;
+      --line: rgba(216, 162, 74, 0.24);
+      --jade: #4a9b7e;
+      --display: Georgia, 'Times New Roman', serif;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 78% 3%, rgba(216, 162, 74, 0.18), transparent 26rem),
+        radial-gradient(circle at 5% 22%, rgba(74, 155, 126, 0.12), transparent 30rem),
+        linear-gradient(180deg, var(--bg), #090c0e 48%, #040404);
+      color: var(--text);
+      font: 16px/1.7 var(--sans);
+    }
+    a { color: var(--gold-light); text-underline-offset: 0.2em; }
+    a:hover { color: #ffe1a8; }
+    a:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 4px; }
+    .shell { width: min(calc(100% - 2rem), 860px); margin: 0 auto; }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: rgba(6, 6, 6, 0.88);
+    }
+    nav {
+      display: flex;
+      min-height: 4.35rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand img { display: block; width: auto; height: 3.1rem; }
+    .nav-link { color: var(--muted); font-size: 0.86rem; font-weight: 700; text-decoration: none; }
+    .hero { padding: clamp(3.5rem, 8vw, 6.5rem) 0 clamp(2rem, 5vw, 4rem); }
+    .kicker {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    h1, h2 { font-family: var(--display); font-weight: 500; line-height: 1.08; }
+    h1 { max-width: 820px; margin: 0.75rem 0 1.25rem; font-size: clamp(2.5rem, 7vw, 5rem); }
+    h2 { margin: 0 0 1rem; font-size: clamp(1.8rem, 4vw, 2.55rem); }
+    h3 { margin: 1.75rem 0 0.35rem; color: var(--gold-light); font-size: 1.05rem; }
+    p, li { color: var(--muted); }
+    .lede { max-width: 740px; margin: 0; font-size: clamp(1.05rem, 2.5vw, 1.24rem); }
+    .quick-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.6rem; }
+    .button {
+      display: inline-flex;
+      min-height: 2.8rem;
+      align-items: center;
+      border: 1px solid rgba(241, 200, 120, 0.55);
+      border-radius: 0.48rem;
+      padding: 0.7rem 1rem;
+      background: linear-gradient(180deg, #f1c878, #d0933c 52%, #9c6423);
+      color: #130d05;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .button.secondary { background: rgba(10, 10, 15, 0.6); color: var(--gold-light); }
+    .toc, article section, .risk, .final-cta {
+      border: 1px solid var(--line);
+      border-radius: 0.7rem;
+      background:
+        radial-gradient(circle at 92% 0%, rgba(216, 162, 74, 0.08), transparent 15rem),
+        linear-gradient(180deg, rgba(14, 18, 22, 0.92), rgba(7, 9, 11, 0.94));
+    }
+    .toc { margin-bottom: 1rem; padding: 1.35rem clamp(1.1rem, 3vw, 1.8rem); }
+    .toc strong { font-family: var(--display); font-size: 1.2rem; }
+    .toc ol { columns: 2; margin-bottom: 0; padding-left: 1.25rem; }
+    .toc li { break-inside: avoid; margin: 0.25rem 0; }
+    article { display: grid; gap: 1rem; padding-bottom: 4rem; }
+    article section { padding: clamp(1.3rem, 4vw, 2.2rem); scroll-margin-top: 1rem; }
+    article section > :last-child { margin-bottom: 0; }
+    ol, ul { padding-left: 1.45rem; }
+    li + li { margin-top: 0.5rem; }
+    strong { color: var(--text); }
+    .risk { border-color: rgba(241, 200, 120, 0.42); }
+    .risk h2 { color: var(--gold-light); }
+    .final-cta { text-align: left; }
+    footer { border-top: 1px solid var(--line); padding: 2rem 0; color: var(--muted); font-size: 0.86rem; }
+    footer .shell { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 1.5rem; }
+    @media (max-width: 620px) {
+      .toc ol { columns: 1; }
+      .brand img { height: 2.7rem; }
+      .nav-link { font-size: 0.78rem; }
+    }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+    th, td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); text-align: left; color: var(--muted); }
+    th { color: var(--text); }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="shell" aria-label="Primary navigation">
+      <a class="brand" href="/" aria-label="Avalisa PO Bot home">
+        <img src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot">
+      </a>
+      <a class="nav-link" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero shell">
+      <p class="kicker">Build it yourself?</p>
+      <h1>Making Your Own Pocket Option Bot: What It Actually Takes</h1>
+      <p class="lede">Not a list of scripts &mdash; the build-it-yourself project itself: the parts you would write, keep working and keep testing. For a comparison of ready-made tools, see <a href="/guide/how-to-choose-a-pocket-option-bot.html">how to choose a Pocket Option bot</a>.</p>
+      <div class="quick-links">
+        <a class="button" href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Add to Chrome</a>
+        <a class="button secondary" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+      </div>
+    </div>
+    <div class="shell">
+      <aside class="toc" aria-label="On this page">
+        <strong>On this page</strong>
+        <ol>
+          <li><a href="#parts">The six parts any bot needs</a></li>
+          <li><a href="#breaks">What breaks when the page changes</a></li>
+          <li><a href="#demo">Why a long demo sample is the real work</a></li>
+          <li><a href="#existing">When an existing extension makes more sense</a></li>
+          <li><a href="#faq">Frequently asked questions</a></li>
+          <li><a href="#risk">Risk statement</a></li>
+        </ol>
+      </aside>
+      <article>
+        <section id="parts">
+          <h2>The six parts any bot needs</h2>
+          <ol>
+            <li><strong>Reading the page.</strong> The live pair, current payout, expiry countdown and each finished trade&rsquo;s result. This touches the platform&rsquo;s page directly, so it is the part most likely to stop working silently.</li>
+            <li><strong>A written entry rule.</strong> If you cannot state it in one sentence, you cannot test it.</li>
+            <li><strong>Stake sizing.</strong> How much per trade and how it changes after a loss. With Martingale, a losing streak can wipe out a balance, so capping the steps is how you cap the streak.</li>
+            <li><strong>Placing the trade.</strong> The right button, amount and moment, without double-firing.</li>
+            <li><strong>Detecting the result.</strong> Fast enough to run the next step of the rule; a late reading corrupts the next stake.</li>
+            <li><strong>Stopping.</strong> A hard rule for when the bot stops &mdash; a step cap, a balance check, a session end.</li>
+          </ol>
+          <p>Each part is easy to describe and hard to make reliable, because each depends on the one before it.</p>
+        </section>
+        <section id="breaks">
+          <h2>What breaks when the page changes</h2>
+          <p>A browser bot has no formal contract with the site; it reads and clicks the page as it looks today. When a label moves or the trade panel is restyled, reading and clicking can stop with no error at all. That is the maintenance cost nobody prices in &mdash; and any bot, yours or someone else&rsquo;s, needs re-checking after platform updates. The tab matters too: a background or minimised tab can delay result detection, so keep it visible while the bot runs.</p>
+        </section>
+        <section id="demo">
+          <h2>Why a long demo sample is the real work</h2>
+          <p>At payout <em>p</em>, break-even is <strong>1 / (1 + p)</strong> &mdash; <strong>52.1%</strong> at a 92% payout. A rule that wins half its trades still loses money over time, and a short run cannot tell you which side of 52.1% your rule sits on. Run it on a demo account for a few hundred trades before trusting it. See <a href="/guide/test-a-trading-bot-on-demo.html">testing a bot on demo</a> and <a href="/guide/honest-win-rate-break-even.html">the break-even maths</a>.</p>
+        </section>
+        <section id="existing">
+          <h2>When an existing extension makes more sense</h2>
+          <p>If six parts plus maintenance is more than you want to own, a finished extension handles them as one maintained system. Avalisa PO Bot is a Chrome extension for Pocket Option with a Martingale mode and a rule-based Avalisa Bot mode (Pro), on Demo and Real accounts. In Martingale mode you cap a streak by limiting Steps &mdash; there is no separate stop-loss setting &mdash; and the bot pauses when the next stake would exceed the balance.</p>
+          <p>The honest trade-off: building gives you full control and costs you the maintenance; using an existing tool means trusting someone else&rsquo;s. Either way, break-even does not move.</p>
+        </section>
+        <section id="faq">
+          <h2>Frequently asked questions</h2>
+          <h3>Can I make a Pocket Option bot without code?</h3>
+          <p>Not really. Reading the page, placing trades and detecting results all need software. What you can avoid is writing and maintaining it yourself.</p>
+          <h3>How do I know my rule works before funding an account?</h3>
+          <p>Run it on demo long enough for the sample to mean something. At a 92% payout break-even is 52.1%, so short runs cannot separate a losing rule from luck.</p>
+          <h3>Will Pocket Option ban me for using a bot?</h3>
+          <p>Pocket Option&rsquo;s own blog says automated strategies are fine as long as they comply with platform rules, and names market manipulation &mdash; not automation itself &mdash; as the suspension risk. That is their stated position, not their formal Terms of Service, so read those before relying on it.</p>
+        </section>
+        <section id="risk" class="risk">
+          <h2>Risk statement</h2>
+          <p>Binary options are <strong>high risk</strong>, and you can lose your entire deposit. In our large-sample measurements no setting has beaten break-even. Use only money you can afford to lose. Trading involves risk. Avalisa does not guarantee profits. Start on a demo account.</p>
+        </section>
+        <section id="start" class="final-cta">
+          <h2>Skip the build, keep the test</h2>
+          <p>Install Avalisa PO Bot from the <a href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Chrome Web Store</a> and test on a demo account before real money. The free Demo plan includes 10 Martingale trades; Basic is $69 one-time; Pro is $119 one-time or $29/month (a recurring subscription) &mdash; see <a href="https://avalisabot.vercel.app/pricing">pricing</a>.</p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <span>© Avalisa PO Bot</span>
+      <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a>
+    </div>
+  </footer>
+</body>
+</html>
