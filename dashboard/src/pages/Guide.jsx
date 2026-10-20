@@ -433,6 +433,12 @@ export default function Guide() {
             </a>.
           </p>
           <p>
+            Used Martingale bots on MT5 or crypto? Read{' '}
+            <a href="/guide/martingale-bots-mt5-crypto-pocket-option.html">
+              what changes on Pocket Option
+            </a>.
+          </p>
+          <p>
             Thinking of building your own? Read{' '}
             <a href="/guide/making-your-own-pocket-option-bot.html">
               what making your own bot takes

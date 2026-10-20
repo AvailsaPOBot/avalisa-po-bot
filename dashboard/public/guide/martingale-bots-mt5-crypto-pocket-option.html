@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Martingale Bots on MT5, Crypto and Pocket Option: What Changes and What Doesn't</title>
+  <meta name="description" content="The Martingale loop is the same on MT5, crypto and binary options. Only fixed payouts let you write down a losing cycle&rsquo;s cost in advance: at 2x, Steps 3 = 15&times; the base stake.">
+  <meta property="og:title" content="Martingale Bots on MT5, Crypto and Pocket Option: What Changes and What Doesn't">
+  <meta property="og:description" content="The Martingale loop is the same on MT5, crypto and binary options. Only fixed payouts let you write down a losing cycle&rsquo;s cost in advance: at 2x, Steps 3 = 15&times; the base stake.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://avalisabot.vercel.app/guide/martingale-bots-mt5-crypto-pocket-option.html">
+  <link rel="canonical" href="https://avalisabot.vercel.app/guide/martingale-bots-mt5-crypto-pocket-option.html">
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root {
+      --bg: #060606;
+      --surface: #0e1216;
+      --surface-deep: #07090b;
+      --text: #f3eee6;
+      --muted: rgba(243, 238, 230, 0.7);
+      --gold: #d8a24a;
+      --gold-light: #f1c878;
+      --line: rgba(216, 162, 74, 0.24);
+      --jade: #4a9b7e;
+      --display: Georgia, 'Times New Roman', serif;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 78% 3%, rgba(216, 162, 74, 0.18), transparent 26rem),
+        radial-gradient(circle at 5% 22%, rgba(74, 155, 126, 0.12), transparent 30rem),
+        linear-gradient(180deg, var(--bg), #090c0e 48%, #040404);
+      color: var(--text);
+      font: 16px/1.7 var(--sans);
+    }
+    a { color: var(--gold-light); text-underline-offset: 0.2em; }
+    a:hover { color: #ffe1a8; }
+    a:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 4px; }
+    .shell { width: min(calc(100% - 2rem), 860px); margin: 0 auto; }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: rgba(6, 6, 6, 0.88);
+    }
+    nav {
+      display: flex;
+      min-height: 4.35rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand img { display: block; width: auto; height: 3.1rem; }
+    .nav-link { color: var(--muted); font-size: 0.86rem; font-weight: 700; text-decoration: none; }
+    .hero { padding: clamp(3.5rem, 8vw, 6.5rem) 0 clamp(2rem, 5vw, 4rem); }
+    .kicker {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    h1, h2 { font-family: var(--display); font-weight: 500; line-height: 1.08; }
+    h1 { max-width: 820px; margin: 0.75rem 0 1.25rem; font-size: clamp(2.5rem, 7vw, 5rem); }
+    h2 { margin: 0 0 1rem; font-size: clamp(1.8rem, 4vw, 2.55rem); }
+    h3 { margin: 1.75rem 0 0.35rem; color: var(--gold-light); font-size: 1.05rem; }
+    p, li { color: var(--muted); }
+    .lede { max-width: 740px; margin: 0; font-size: clamp(1.05rem, 2.5vw, 1.24rem); }
+    .quick-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.6rem; }
+    .button {
+      display: inline-flex;
+      min-height: 2.8rem;
+      align-items: center;
+      border: 1px solid rgba(241, 200, 120, 0.55);
+      border-radius: 0.48rem;
+      padding: 0.7rem 1rem;
+      background: linear-gradient(180deg, #f1c878, #d0933c 52%, #9c6423);
+      color: #130d05;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .button.secondary { background: rgba(10, 10, 15, 0.6); color: var(--gold-light); }
+    .toc, article section, .risk, .final-cta {
+      border: 1px solid var(--line);
+      border-radius: 0.7rem;
+      background:
+        radial-gradient(circle at 92% 0%, rgba(216, 162, 74, 0.08), transparent 15rem),
+        linear-gradient(180deg, rgba(14, 18, 22, 0.92), rgba(7, 9, 11, 0.94));
+    }
+    .toc { margin-bottom: 1rem; padding: 1.35rem clamp(1.1rem, 3vw, 1.8rem); }
+    .toc strong { font-family: var(--display); font-size: 1.2rem; }
+    .toc ol { columns: 2; margin-bottom: 0; padding-left: 1.25rem; }
+    .toc li { break-inside: avoid; margin: 0.25rem 0; }
+    article { display: grid; gap: 1rem; padding-bottom: 4rem; }
+    article section { padding: clamp(1.3rem, 4vw, 2.2rem); scroll-margin-top: 1rem; }
+    article section > :last-child { margin-bottom: 0; }
+    ol, ul { padding-left: 1.45rem; }
+    li + li { margin-top: 0.5rem; }
+    strong { color: var(--text); }
+    .risk { border-color: rgba(241, 200, 120, 0.42); }
+    .risk h2 { color: var(--gold-light); }
+    .final-cta { text-align: left; }
+    footer { border-top: 1px solid var(--line); padding: 2rem 0; color: var(--muted); font-size: 0.86rem; }
+    footer .shell { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 1.5rem; }
+    @media (max-width: 620px) {
+      .toc ol { columns: 1; }
+      .brand img { height: 2.7rem; }
+      .nav-link { font-size: 0.78rem; }
+    }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+    th, td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); text-align: left; color: var(--muted); }
+    th { color: var(--text); }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="shell" aria-label="Primary navigation">
+      <a class="brand" href="/" aria-label="Avalisa PO Bot home">
+        <img src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot">
+      </a>
+      <a class="nav-link" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero shell">
+      <p class="kicker">Martingale explained</p>
+      <h1>Martingale Bots on MT5, Crypto and Pocket Option: What Changes and What Doesn&rsquo;t</h1>
+      <p class="lede">For people who met Martingale bots on MT5, forex or crypto exchanges: the same doubling idea under fixed-payout binary options versus variable-outcome markets, and why the cycle-cost maths is the part that never changes.</p>
+      <div class="quick-links">
+        <a class="button" href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Add to Chrome</a>
+        <a class="button secondary" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+      </div>
+    </div>
+    <div class="shell">
+      <aside class="toc" aria-label="On this page">
+        <strong>On this page</strong>
+        <ol>
+          <li><a href="#loop">What a Martingale bot does on any platform</a></li>
+          <li><a href="#fixed">How a fixed payout changes the maths</a></li>
+          <li><a href="#cap">What a cap means on Avalisa</a></li>
+          <li><a href="#variable">Variable-outcome markets</a></li>
+          <li><a href="#faq">Frequently asked questions</a></li>
+          <li><a href="#risk">Risk statement</a></li>
+        </ol>
+      </aside>
+      <article>
+        <section id="loop">
+          <h2>What a Martingale bot does on any platform</h2>
+          <p>A Martingale bot follows one rule in every market: after a losing trade it raises the next stake (typically doubling it), and after a winning trade it resets to the starting amount. On MT5, on a crypto exchange or on a binary-options platform the loop is the same. What differs is what a win pays back, and whether that payout is fixed in advance.</p>
+        </section>
+        <section id="fixed">
+          <h2>How a fixed payout changes the maths</h2>
+          <p>When the payout is below 100%, a win after a losing streak does not recover a full base stake. At a 92% payout with a 2x multiplier: lose 1, lose 2, then win on a stake of 4, which pays 4 &times; 0.92 = 3.68. Losses were 1 + 2 = 3, so the cycle nets <strong>+0.68 of a base stake</strong>, not +1.</p>
+          <p>Because the payout is fixed, the cost of a full losing cycle is a fixed multiple of the base stake, known before you trade. In Avalisa&rsquo;s panel, Steps = N allows N + 1 trades in a losing cycle:</p>
+          <div class="table-wrap"><table>
+            <tr><th>Panel Steps</th><th>2x multiplier</th><th>3x multiplier</th></tr>
+            <tr><td>2</td><td>7&times;</td><td>13&times;</td></tr>
+            <tr><td>3</td><td>15&times;</td><td>40&times;</td></tr>
+            <tr><td>4</td><td>31&times;</td><td>121&times;</td></tr>
+            <tr><td>5</td><td>63&times;</td><td>364&times;</td></tr>
+            <tr><td>6</td><td>127&times;</td><td>1,093&times;</td></tr>
+          </table></div>
+          <p>The full treatment, including break-even, is in <a href="/guide/martingale-risk-explained.html">Martingale risk explained</a>, and the <a href="/guide/martingale-calculator.html">Martingale calculator</a> checks your own step count and multiplier.</p>
+        </section>
+        <section id="cap">
+          <h2>What a cap means on Avalisa</h2>
+          <p>On Avalisa, limiting the Martingale Steps setting is the only cap on a losing streak &mdash; there is no separate stop-loss or daily-loss-limit setting. Steps can be a number or Infinite; when the next stake would exceed the balance, the bot pauses. Avalisa works on Pocket Option only, on Demo and Real accounts, and places trades the same way on both, so a demo run shows what your cap does before any real money. If you would rather not use the doubling structure, read <a href="/guide/trading-without-martingale-flat-staking.html">trading without Martingale</a>.</p>
+        </section>
+        <section id="variable">
+          <h2>Variable-outcome markets: where the fixed table stops applying</h2>
+          <p>On MT5, forex or a crypto exchange, the size of a win depends on how far price moved, so there is no fixed payout and no cycle-cost multiple to look up beforehand. The doubling still compounds losses the same way &mdash; a long losing streak still consumes a geometric series of stakes &mdash; but each win&rsquo;s recovery varies trade by trade, so the table above does not transfer. Fixed payouts also give a fixed break-even win rate of 1 / (1 + p): <strong>52.1% at a 92% payout</strong>. Variable markets need their own position sizing and risk limits.</p>
+        </section>
+        <section id="faq">
+          <h2>Frequently asked questions</h2>
+          <h3>Does the cycle-cost table apply to my MT5 or crypto bot?</h3>
+          <p>No. It applies where the payout per trade is fixed in advance, as on a fixed-payout binary-options platform. Variable-outcome markets have no fixed multiple to check.</p>
+          <h3>Is there a stop-loss setting on Avalisa?</h3>
+          <p>No. Limiting Martingale Steps is the only cap on a losing streak; there is no separate stop-loss or daily-loss-limit setting.</p>
+          <h3>Can I test a capped setup before using real money?</h3>
+          <p>Yes. Avalisa runs on Pocket Option Demo accounts as well as Real ones, with the same trade logic and the same Steps cap.</p>
+        </section>
+        <section id="risk" class="risk">
+          <h2>Risk statement</h2>
+          <p>Martingale raises the stake after every loss, and a losing streak can wipe out a balance. Binary options are <strong>high risk</strong>. Use only money you can afford to lose. Trading involves risk. Avalisa does not guarantee profits. Start on a demo account.</p>
+        </section>
+        <section id="start" class="final-cta">
+          <h2>Try it on demo first</h2>
+          <p>Install Avalisa PO Bot from the <a href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Chrome Web Store</a> and test on a demo account before real money. The free Demo plan includes 10 Martingale trades; Basic is $69 one-time; Pro is $119 one-time or $29/month (a recurring subscription) &mdash; see <a href="https://avalisabot.vercel.app/pricing">pricing</a>.</p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <span>© Avalisa PO Bot</span>
+      <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a>
+    </div>
+  </footer>
+</body>
+</html>
