@@ -214,7 +214,7 @@ export default function Pricing() {
       href: appendCheckoutEmail(WHOP_PRO_CHECKOUT_URL, email),
       paypalPlan: 'lifetime',
       external: true,
-      features: ['Unlimited trades', 'Martingale mode', 'Avalisa Bot mode', 'Affiliate users get this plan'],
+      features: ['Unlimited trades', 'Martingale mode', 'Avalisa Bot mode', 'Free via our Pocket Option link (once confirmed)'],
     },
   ];
 
@@ -268,7 +268,7 @@ export default function Pricing() {
           <img src={AVALISA_CHARACTER_IMAGE} alt="Avalisa, the Avalisa PO Bot brand ambassador" />
           <div>
             <strong>Want Pro through Pocket Option?</strong>
-            <p>Register through Avalisa, then submit your PO UID in the dashboard to request Pro access.</p>
+            <p>Register through our Pocket Option link, then link that Pocket Option ID in your Avalisa dashboard settings to claim Pro.</p>
             <a href={AFFILIATE_LINK} target="_blank" rel="noreferrer">Open Pocket Option</a>
           </div>
         </aside>
@@ -285,7 +285,7 @@ export default function Pricing() {
       </section>
 
       <p className="lux-risk-note lux-shell">
-        Trading involves risk. Avalisa does not guarantee profits. Use demo mode first and trade responsibly.
+        Trading involves risk. Avalisa does not guarantee profits. Martingale raises the stake after each loss, so a losing streak can empty a balance. Use demo mode first and only trade money you can afford to lose.
       </p>
 
       {selectedPaymentPlan && (
