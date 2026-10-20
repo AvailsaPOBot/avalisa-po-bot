@@ -134,8 +134,8 @@ function MascotHero() {
           </h1>
         </div>
         <p className="mascot-hero__sr">
-          Run Pocket Option strategies on desktop or mobile with visible settings,
-          account-mode checks, and controls before execution.
+          Start free: the Demo plan runs 10 Martingale trades on a Pocket Option demo
+          account, on desktop or mobile, with every setting visible before you go real.
         </p>
 
         <Link className="mascot-hero__hotspot mascot-hero__hotspot--logo" to="/" aria-label="Avalisa PO Bot home" />
@@ -171,7 +171,7 @@ function MascotHero() {
           <>
             <Link className="mascot-hero__hotspot mascot-hero__hotspot--login" to="/login" aria-label="Log in" />
             <Link className="mascot-hero__hotspot mascot-hero__hotspot--register-nav" to="/register" aria-label="Register for Free Access" />
-            <Link className="mascot-hero__hotspot mascot-hero__hotspot--register-hero" to="/register" aria-label="Register for Free Access" />
+            <Link className="mascot-hero__hotspot mascot-hero__hotspot--register-hero" to="/register" aria-label="Start free with 10 Demo trades" />
           </>
         )}
         <Link className="mascot-hero__hotspot mascot-hero__hotspot--learn" to="/pricing" aria-label="Learn more about affiliate-confirmed Pro access" />
@@ -218,14 +218,14 @@ function MascotHero() {
             <span className="mascot-hero__title-line mascot-hero__title-line--light">Pocket Option <PocketOptionMark /></span>
           </h1>
           <p>
-            Run Pocket Option strategies on desktop or mobile—with visible settings,
-            account-mode checks, and controls before execution.
+            Start free: the Demo plan runs 10 Martingale trades on a Pocket Option demo
+            account, on desktop or mobile, with every setting visible before you go real.
           </p>
           {user ? (
             <TradeButton className="avalisa-button avalisa-button--gold" label="Open the bot" />
           ) : (
             <Link to="/register" className="avalisa-button avalisa-button--gold">
-              Register for Free Access <ArrowRight size={17} />
+              Start free with 10 Demo trades <ArrowRight size={17} />
             </Link>
           )}
           <small>Start in Demo. Trading involves risk. Profits are never guaranteed.</small>
