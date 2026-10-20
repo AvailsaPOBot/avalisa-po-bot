@@ -80,6 +80,8 @@ describe('advertised billing options', () => {
   // would have reported.
   test('the Pro card advertises the monthly option', async () => {
     render(<Pricing />);
-    expect(await screen.findByText(/\$29\s*\/\s*month/i)).toBeTruthy();
+    // Scope to the price card: the pricing FAQ also mentions $29/month.
+    const alt = await screen.findByText(/\$29\s*\/\s*month/i, { selector: '.lux-price__alt' });
+    expect(alt).toBeTruthy();
   });
 });
