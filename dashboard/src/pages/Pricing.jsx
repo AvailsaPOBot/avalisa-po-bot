@@ -53,6 +53,35 @@ export function trackPricingView() {
   }
 }
 
+// Answers checked against the plan cards above and the support fact sheet.
+// Keep the $29/month line explicit: it is the only option that renews.
+const PRICING_FAQ = [
+  {
+    q: 'What is the difference between Basic and Pro?',
+    a: 'Basic ($69) unlocks unlimited Martingale trading, cloud settings sync and trade history. Pro adds Avalisa Bot mode, the rule-based signal mode, alongside Martingale. Choose Basic if Martingale is all you need, Pro if you want both modes.',
+  },
+  {
+    q: 'Is it a subscription?',
+    a: 'Basic is a one-time $69 payment and never renews. For Pro you choose at checkout: $119 one-time, which also never renews, or $29/month, which is a recurring subscription that renews monthly until you cancel. Both Pro options unlock the same features.',
+  },
+  {
+    q: 'What can I test with the free Demo plan?',
+    a: 'Demo includes 10 Martingale trades, webapp bot access, the dashboard, all supported timeframes and basic trade history. Run it on a Pocket Option demo account first to see how the bot behaves before you pay.',
+  },
+  {
+    q: 'How do I get Pro through Pocket Option?',
+    a: 'Register a new Pocket Option account through our link (we earn a commission from Pocket Option when you do), then link that Pocket Option ID in your Avalisa dashboard under Settings. If Pocket Option has already confirmed the registration came through our link, Pro is granted straight away; otherwise the request waits for a manual review. Pro granted this way does not expire.',
+  },
+  {
+    q: 'Does it work on a phone?',
+    a: 'Yes. On a computer Avalisa is a Chrome extension; on an iPhone or Android phone it runs through a free bookmark you save from avalisabot.vercel.app/webapp, which opens the Avalisa panel on the Pocket Option trading page.',
+  },
+  {
+    q: 'Does it work on real accounts or only demo?',
+    a: 'Both. The extension places trades the same way on a demo or a real Pocket Option account. Start on demo, and remember Martingale raises the stake after each loss, so a losing streak can empty a balance.',
+  },
+];
+
 export default function Pricing() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -243,6 +272,16 @@ export default function Pricing() {
             <a href={AFFILIATE_LINK} target="_blank" rel="noreferrer">Open Pocket Option</a>
           </div>
         </aside>
+      </section>
+
+      <section className="lux-price-faq lux-shell" aria-labelledby="pricing-faq-title">
+        <h2 id="pricing-faq-title">Pricing questions</h2>
+        {PRICING_FAQ.map(({ q, a }) => (
+          <details key={q}>
+            <summary>{q}</summary>
+            <p>{a}</p>
+          </details>
+        ))}
       </section>
 
       <p className="lux-risk-note lux-shell">

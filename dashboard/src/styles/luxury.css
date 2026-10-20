@@ -2941,6 +2941,12 @@
   font-size: 0.82rem;
 }
 
+.lux-price-faq { margin-top: 2.5rem; }
+.lux-price-faq h2 { font-size: 1.4rem; margin-bottom: 1rem; }
+.lux-price-faq details { border-top: 1px solid rgba(245, 239, 228, 0.12); padding: 0.9rem 0; }
+.lux-price-faq summary { cursor: pointer; font-weight: 600; }
+.lux-price-faq details p { margin-top: 0.6rem; color: var(--lux-muted); line-height: 1.6; }
+
 .lux-topic-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
