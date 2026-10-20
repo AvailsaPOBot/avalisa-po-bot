@@ -469,6 +469,18 @@ export default function Guide() {
             </a>.
           </p>
           <p>
+            Found one bot repo on GitHub? Read{' '}
+            <a href="/guide/pocket-option-bot-on-github-checklist.html">
+              the checklist before you run it
+            </a>.
+          </p>
+          <p>
+            Saw a named bot like Lyra or Neuro in an ad? Read{' '}
+            <a href="/guide/named-pocket-option-bots-lyra-neuro-gemini.html">
+              what a bot name does and does not tell you
+            </a>.
+          </p>
+          <p>
             Thinking of building your own? Read{' '}
             <a href="/guide/making-your-own-pocket-option-bot.html">
               what making your own bot takes
