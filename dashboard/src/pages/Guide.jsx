@@ -481,6 +481,12 @@ export default function Guide() {
             </a>.
           </p>
           <p>
+            Not sure if &ldquo;live&rdquo; means real money? Read{' '}
+            <a href="/guide/what-a-live-pocket-option-bot-means.html">
+              live account vs a running session
+            </a>.
+          </p>
+          <p>
             Thinking of building your own? Read{' '}
             <a href="/guide/making-your-own-pocket-option-bot.html">
               what making your own bot takes

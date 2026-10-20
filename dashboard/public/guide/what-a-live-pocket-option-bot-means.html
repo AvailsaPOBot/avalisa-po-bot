@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>What a &quot;Live&quot; Pocket Option Bot Means: Live Account vs a Running Session</title>
+  <meta name="description" content="&ldquo;Live&rdquo; can mean a Real Pocket Option account or a bot session that is running right now. How the two differ, how a session starts and stops, and what to check before switching to Real.">
+  <meta property="og:title" content="What a &quot;Live&quot; Pocket Option Bot Means: Live Account vs a Running Session">
+  <meta property="og:description" content="&ldquo;Live&rdquo; can mean a Real Pocket Option account or a bot session that is running right now. How the two differ, how a session starts and stops, and what to check before switching to Real.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://avalisabot.vercel.app/guide/what-a-live-pocket-option-bot-means.html">
+  <link rel="canonical" href="https://avalisabot.vercel.app/guide/what-a-live-pocket-option-bot-means.html">
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root {
+      --bg: #060606;
+      --surface: #0e1216;
+      --surface-deep: #07090b;
+      --text: #f3eee6;
+      --muted: rgba(243, 238, 230, 0.7);
+      --gold: #d8a24a;
+      --gold-light: #f1c878;
+      --line: rgba(216, 162, 74, 0.24);
+      --jade: #4a9b7e;
+      --display: Georgia, 'Times New Roman', serif;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 78% 3%, rgba(216, 162, 74, 0.18), transparent 26rem),
+        radial-gradient(circle at 5% 22%, rgba(74, 155, 126, 0.12), transparent 30rem),
+        linear-gradient(180deg, var(--bg), #090c0e 48%, #040404);
+      color: var(--text);
+      font: 16px/1.7 var(--sans);
+    }
+    a { color: var(--gold-light); text-underline-offset: 0.2em; }
+    a:hover { color: #ffe1a8; }
+    a:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 4px; }
+    .shell { width: min(calc(100% - 2rem), 860px); margin: 0 auto; }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: rgba(6, 6, 6, 0.88);
+    }
+    nav {
+      display: flex;
+      min-height: 4.35rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand img { display: block; width: auto; height: 3.1rem; }
+    .nav-link { color: var(--muted); font-size: 0.86rem; font-weight: 700; text-decoration: none; }
+    .hero { padding: clamp(3.5rem, 8vw, 6.5rem) 0 clamp(2rem, 5vw, 4rem); }
+    .kicker {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    h1, h2 { font-family: var(--display); font-weight: 500; line-height: 1.08; }
+    h1 { max-width: 820px; margin: 0.75rem 0 1.25rem; font-size: clamp(2.5rem, 7vw, 5rem); }
+    h2 { margin: 0 0 1rem; font-size: clamp(1.8rem, 4vw, 2.55rem); }
+    h3 { margin: 1.75rem 0 0.35rem; color: var(--gold-light); font-size: 1.05rem; }
+    p, li { color: var(--muted); }
+    .lede { max-width: 740px; margin: 0; font-size: clamp(1.05rem, 2.5vw, 1.24rem); }
+    .quick-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.6rem; }
+    .button {
+      display: inline-flex;
+      min-height: 2.8rem;
+      align-items: center;
+      border: 1px solid rgba(241, 200, 120, 0.55);
+      border-radius: 0.48rem;
+      padding: 0.7rem 1rem;
+      background: linear-gradient(180deg, #f1c878, #d0933c 52%, #9c6423);
+      color: #130d05;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .button.secondary { background: rgba(10, 10, 15, 0.6); color: var(--gold-light); }
+    .toc, article section, .risk, .final-cta {
+      border: 1px solid var(--line);
+      border-radius: 0.7rem;
+      background:
+        radial-gradient(circle at 92% 0%, rgba(216, 162, 74, 0.08), transparent 15rem),
+        linear-gradient(180deg, rgba(14, 18, 22, 0.92), rgba(7, 9, 11, 0.94));
+    }
+    .toc { margin-bottom: 1rem; padding: 1.35rem clamp(1.1rem, 3vw, 1.8rem); }
+    .toc strong { font-family: var(--display); font-size: 1.2rem; }
+    .toc ol { columns: 2; margin-bottom: 0; padding-left: 1.25rem; }
+    .toc li { break-inside: avoid; margin: 0.25rem 0; }
+    article { display: grid; gap: 1rem; padding-bottom: 4rem; }
+    article section { padding: clamp(1.3rem, 4vw, 2.2rem); scroll-margin-top: 1rem; }
+    article section > :last-child { margin-bottom: 0; }
+    ol, ul { padding-left: 1.45rem; }
+    li + li { margin-top: 0.5rem; }
+    strong { color: var(--text); }
+    .risk { border-color: rgba(241, 200, 120, 0.42); }
+    .risk h2 { color: var(--gold-light); }
+    .final-cta { text-align: left; }
+    footer { border-top: 1px solid var(--line); padding: 2rem 0; color: var(--muted); font-size: 0.86rem; }
+    footer .shell { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 1.5rem; }
+    @media (max-width: 620px) {
+      .toc ol { columns: 1; }
+      .brand img { height: 2.7rem; }
+      .nav-link { font-size: 0.78rem; }
+    }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+    th, td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); text-align: left; color: var(--muted); }
+    th { color: var(--text); }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="shell" aria-label="Primary navigation">
+      <a class="brand" href="/" aria-label="Avalisa PO Bot home">
+        <img src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot">
+      </a>
+      <a class="nav-link" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+    </nav>
+  </header>
+
+    <main>
+    <div class="hero shell">
+      <p class="kicker">Live account or live session</p>
+      <h1>What a &ldquo;Live&rdquo; Pocket Option Bot Means: Live Account vs a Running Session</h1>
+      <p class="lede">&ldquo;Live&rdquo; can mean your Pocket Option account holds real money, or that the bot is trading right now. They are two different things, and you can have one without the other.</p>
+      <div class="quick-links">
+        <a class="button" href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Add to Chrome</a>
+        <a class="button secondary" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+      </div>
+    </div>
+    <div class="shell">
+      <aside class="toc" aria-label="On this page"><strong>On this page</strong><ol><li><a href="#the-two-meanings-of-live">The two meanings of &ldquo;live&rdquo;</a></li><li><a href="#a-session-from-start-to-stop">A session from start to stop</a></li><li><a href="#demo-vs-real-in-avalisa">Demo vs Real in Avalisa</a></li><li><a href="#before-you-switch-to-real">What to check before switching the active account to Real</a></li><li><a href="#frequently-asked-questions">Frequently asked questions</a></li><li><a href="#risk">Risk statement</a></li></ol></aside>
+      <article>
+<section id="about"><p>This page untangles the two meanings of &ldquo;live&rdquo;. For when to end a session see <a href="/guide/when-to-stop-automated-trading-session.html">when to stop</a>; for moving accounts see <a href="/guide/pocket-option-demo-to-real-account.html">demo to real</a>.</p></section>
+<section id="the-two-meanings-of-live"><h2>The two meanings of &ldquo;live&rdquo;</h2><ul><li><strong>A live account</strong> is a Real Pocket Option account with your own money in it, as opposed to a Demo account.</li><li><strong>A live session</strong> means the bot is running right now and placing trades on the tab you started it on.</li></ul><p>You can have one without the other: a session running on a Demo account (live session, no real money), or a Real account with no session running (live account, no trades being placed by the bot). Before you assume either, check which account is active on the tab.</p></section>
+<section id="a-session-from-start-to-stop"><h2>A session from start to stop</h2><ol><li><strong>You start it</strong> yourself, on your own Pocket Option tab, with the settings you chose.</li><li><strong>It runs in that tab.</strong> Keep the tab open and visible: a background or minimised tab can delay trade-result detection. See <a href="/guide/why-the-trading-tab-must-stay-open.html">why the trading tab must stay open</a>.</li><li><strong>It pauses on its own</strong> if the next stake would exceed the account balance.</li><li><strong>You stop it</strong> when you decide to. See <a href="/guide/how-to-stop-or-remove-the-bot-safely.html">how to stop or remove the bot safely</a> and <a href="/guide/when-to-stop-automated-trading-session.html">when to stop an automated trading session</a>.</li></ol></section>
+<section id="demo-vs-real-in-avalisa"><h2>Demo vs Real in Avalisa</h2><p>Avalisa works on both Demo and Real Pocket Option accounts. The extension places trades the same way on whichever account is active; it does not run different logic for the two. We can only speak for our own extension, not for Pocket Option&rsquo;s servers. Start on Demo and move to Real only once you know exactly what your settings do &mdash; see <a href="/guide/pocket-option-demo-to-real-account.html">moving from demo to a real account</a>.</p></section>
+<section id="before-you-switch-to-real"><h2>What to check before switching the active account to Real</h2><ul><li><strong>Steps cap.</strong> If you use Martingale, set a finite Martingale Steps value. Limiting Steps is the real way to cap a losing streak; there is no separate stop-loss or daily-loss-limit setting. Steps N allows N+1 trades in a losing cycle, so at 2x, Steps 2 risks up to 7x your start amount and Steps 3 up to 15x. More in <a href="/guide/martingale-risk-explained.html">Martingale risk explained</a> and the <a href="/guide/settings-guide.html">settings guide</a>.</li><li><strong>Stake.</strong> Choose a start amount small enough that the full worst-case cycle fits inside your balance.</li><li><strong>A written stop rule.</strong> Write down, before the session, the condition under which you will stop it yourself. See <a href="/guide/bankroll-rules-automation.html">bankroll rules for automation</a>.</li></ul></section>
+<section id="frequently-asked-questions"><h2>Frequently asked questions</h2><h3>Does &ldquo;live&rdquo; mean the bot is using real money?</h3><p>Not necessarily. It can mean a Real account, or only that a session is running. Check which account is active on the tab.</p><h3>If I close the tab, does the bot keep trading?</h3><p>No. The bot runs in the tab you started it on, so keep that tab open and visible for the whole session.</p><h3>Is there a built-in stop-loss that ends a losing streak?</h3><p>No separate stop-loss or daily-loss-limit setting exists. Limiting Martingale Steps caps a losing streak, and the bot pauses when the next stake would exceed the balance.</p></section>
+<section id="risk" class="risk"><h2>Risk statement</h2><p>Martingale raises the stake after every loss, and a losing streak can wipe out a balance. Binary options are <strong>high risk</strong>. Use only money you can afford to lose. Trading involves risk. Avalisa does not guarantee profits. Start on a demo account.</p></section>
+<section id="start" class="final-cta"><h2>Try it on demo first</h2><p>Install Avalisa PO Bot from the <a href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Chrome Web Store</a> and test on a demo account before real money. The free Demo plan includes 10 Martingale trades; Basic is $69 one-time; Pro is $119 one-time or $29/month (a recurring subscription) &mdash; see <a href="https://avalisabot.vercel.app/pricing">pricing</a>.</p></section>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <span>© Avalisa PO Bot</span>
+      <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a>
+    </div>
+  </footer>
+</body>
+</html>
