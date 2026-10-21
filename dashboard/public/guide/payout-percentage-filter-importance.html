@@ -231,6 +231,7 @@
           <p><strong>How this maps to the Avalisa panel:</strong> the <em>Martingale Steps</em> setting counts recovery steps after the first trade, so Steps&nbsp;=&nbsp;N allows N&nbsp;+&nbsp;1 trades in a losing cycle. At 2x: Steps&nbsp;3 = 4 trades (15&times;), Steps&nbsp;4 = 5 trades (31&times;), Steps&nbsp;5 = 6 trades (63&times;).</p>
           </div>
           <p>A cycle that costs 364&times; the base stake is a very different animal from one that costs 3&times;. Every percentage point of payout below your floor makes each of those multipliers harder to offset. This is not a theoretical concern: with a measured result distribution around 43&ndash;44% across recent samples, a low-payout pair plus an uncapped losing streak is the fastest route to a wiped balance.</p>
+          <p>Payout also decides whether a Martingale &ldquo;win&rdquo; actually recovers. Example at 2x with a base stake of 1: lose 1, lose 2, then win on a stake of 4. At a 92% payout the win pays 3.68, so the cycle ends +0.68. At a 70% payout it pays 2.80, so the cycle ends &minus;0.20 &mdash; money lost even though the cycle ended on a win.</p>
           <p>The practical consequence is two settings used together &mdash; the payout floor, and a hard limit on <strong>Martingale Steps</strong>. Limiting steps is the real way to cap a losing streak; there is no separate stop-loss or daily-loss-limit setting in the bot, and when the next stake would exceed the balance it pauses.</p>
         </section>
 
@@ -250,6 +251,9 @@
 
           <h3>Why do payouts differ between pairs and times?</h3>
           <p>That is broker-side configuration, not something we set or can speak to. What we can say is that the number differs in practice, which is why the filter exists at all &mdash; compare before you commit.</p>
+
+          <h3>What does the bot do when the payout is below my minimum?</h3>
+          <p>With the <em>Minimum payout %</em> switch on (it is on by default, at 90), the bot does not trade a pair below your minimum. You pick what happens instead: <strong>Auto-switch favorite</strong> moves to the highest-payout pair in your Pocket Option favourites that meets the minimum; <strong>Stop bot</strong> stops the bot. If no favourite meets the minimum, or Pair Scan is set to <em>Current pair only</em>, the bot stops and shows the reason. With the switch off, payout is not checked.</p>
 
           <h3>Is a higher minimum payout always better?</h3>
           <p>A higher floor means fewer tradable pairs. Very restrictive floors leave the bot idle more often. The point is not maximising the number; it is refusing pairs whose economics you cannot defend in arithmetic.</p>
