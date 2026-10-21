@@ -1,7 +1,7 @@
 /**
  * Registration must NEVER take a Pocket Option UID from the request body.
  *
- * It used to. Nothing legitimate sent it — dashboard/src/hooks/useAuth.js posts
+ * It used to. Nothing legitimate sent it — dashboard/src/hooks/useAuth.jsx posts
  * { email, password } and is the only caller — so it was input surface only an attacker
  * would use, and the damage is quiet: poUserId is @unique and first-come-first-served, so
  * registering with a UID you do not own PERMANENTLY BLOCKS the real owner from linking it,
@@ -46,7 +46,7 @@ test('the guarded linking route still exists and still rejects a taken UID', () 
 
 test('the only caller of /register sends no poUserId', () => {
   const client = fs.readFileSync(
-    path.resolve(__dirname, '../../dashboard/src/hooks/useAuth.js'), 'utf8');
+    path.resolve(__dirname, '../../dashboard/src/hooks/useAuth.jsx'), 'utf8');
   const call = client.split("'/api/auth/register'")[1].split(';')[0];
   assert.doesNotMatch(call, /poUserId/,
     'if a client ever starts sending it, this fix needs revisiting rather than silently ignoring it');
