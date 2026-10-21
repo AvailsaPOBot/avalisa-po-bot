@@ -84,5 +84,5 @@ test('every dashboard affiliate consumer resolves the shared URL', async () => {
     return Promise.resolve({ data: {} });
   });
   render(<Dashboard />);
-  expectAffiliateHref(await screen.findByRole('link', { name: 'Register' }));
+  expectAffiliateHref(await screen.findByRole('link', { name: 'Register a NEW account' }));
 });

@@ -664,22 +664,22 @@ export default function Dashboard() {
         <div className="card mt-6">
           <h2 className="text-lg font-semibold text-white mb-1">Link Your Pocket Option Account</h2>
           <p className="text-gray-400 text-sm mb-4">
-            Registered via our affiliate link? Submit your PO UID to claim Pro access.
+            Created a NEW Pocket Option account through our link? Enter its numeric ID (shown on your Pocket Option profile) to claim free Pro.
           </p>
 
           {claimStatus === 'pending' ? (
             <div className="text-sm px-3 py-3 rounded-lg bg-yellow-900/30 border border-yellow-700/50 text-yellow-300">
-              ⏳ Waiting for Pocket Option to confirm your registration. Pro unlocks automatically and we email you when it does.
+              ⏳ Your ID is in. Pro turns on once Pocket Option confirms the account was registered through our link — sometimes that needs a manual check, so there is no fixed timeframe. We email you when it's done.
             </div>
           ) : claimStatus === 'rejected' ? (
             <div className="space-y-3">
               <div className="text-sm px-3 py-3 rounded-lg bg-red-900/30 border border-red-700/50 text-red-400">
-                ❌ {claimNotice?.message || 'PO UID not found. Register with the Avalisa Pocket Option link, or make payment to activate your account.'}
+                ❌ {claimNotice?.message || 'We could not match that ID to a new registration through our link. Free Pro only covers accounts created through the link — if this account already existed, a paid plan unlocks it straight away.'}
               </div>
               <div className="flex gap-3">
                 <a href={AFFILIATE_LINK}
                   target="_blank" rel="noreferrer" className="btn-primary text-sm py-2 px-4">
-                  Register
+                  Register a NEW account
                 </a>
                 <Link to={claimNotice?.pricingUrl?.replace('https://avalisabot.vercel.app', '') || '/pricing'} className="btn-outline text-sm py-2 px-4">Make Payment</Link>
               </div>
