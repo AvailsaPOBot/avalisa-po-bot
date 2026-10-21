@@ -104,9 +104,25 @@ const EXTRA_WHOP_PRICES_TO_PLAN = {
   2900: PLAN_IDS.PRO, // Pro, billed monthly
 };
 
+// Whop plan IDs, read from Whop -> Checkout links on 2026-10-21. Version-controlled on
+// purpose (like the checkout URLs): Whop's current webhooks carry only the plan id — no
+// price, no name — and WHOP_PLAN_ID_* pointed at products deleted on 2026-08-27, so two
+// real Basic purchases on 2026-10-21 were paid and never activated (no_plan_match).
+const WHOP_PLAN_IDS_TO_PLAN = {
+  plan_1LhtddKS4Of4Z: PLAN_IDS.BASIC, // Basic $69 one-time (2026-08-27)
+  plan_7TS0m5lXOcgBd: PLAN_IDS.BASIC, // Basic Plan $69 one-time (2026-04-08)
+  plan_Q1ZYGwVvBg3E0: PLAN_IDS.PRO, // Pro $119 one-time (2026-08-27)
+  plan_GpuDizsiFQ0l9: PLAN_IDS.PRO, // Pro Plan $119 one-time (2026-04-08)
+  plan_fOVwXMLBMl0g9: PLAN_IDS.PRO, // Pro $29/month — RECURRING
+};
+const WHOP_RECURRING_PLAN_IDS = new Set(['plan_fOVwXMLBMl0g9']);
+
 function getPaidPlanFromWhop({ planId = '', priceInCents = 0, planName = '' }) {
   const normalizedPlanId = String(planId || '');
   const normalizedName = String(planName || '').toLowerCase();
+
+  const known = WHOP_PLAN_IDS_TO_PLAN[normalizedPlanId];
+  if (known) return known;
 
   const extra = EXTRA_WHOP_PRICES_TO_PLAN[Number(priceInCents)];
   if (extra) return extra;
@@ -134,6 +150,8 @@ function getPaidPlanFromWhop({ planId = '', priceInCents = 0, planName = '' }) {
 
 module.exports = {
   EXTRA_WHOP_PRICES_TO_PLAN,
+  WHOP_PLAN_IDS_TO_PLAN,
+  WHOP_RECURRING_PLAN_IDS,
   shouldRevokeLicense,
   PLAN_IDS,
   BASIC_AI_LEGACY_CUTOFF,

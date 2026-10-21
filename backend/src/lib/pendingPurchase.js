@@ -10,20 +10,29 @@
 // as permanent — and rows stored before the recurrence fields existed are left
 // for a manual grant.
 
-const { getPaidPlanFromWhop, getPlanEntitlements, getAiTradesAllowanceForPlan } = require('./plans');
+const { getPaidPlanFromWhop, getPlanEntitlements, getAiTradesAllowanceForPlan, WHOP_RECURRING_PLAN_IDS } = require('./plans');
 
 const LOOKBACK_DAYS = 90;
 
-function whopRecurrence(data) {
+// A recurring purchase whose payload names no renewal end still gets a non-null expiresAt:
+// expiresAt only marks the licence as revocable by a later cancel event (licence checks do
+// not read it), and null would make a $29/month buyer permanent.
+const RECURRING_FALLBACK_DAYS = 31;
+
+function whopRecurrence(data, now = new Date()) {
   const renewalEnd =
     data?.renewal_period_end ?? data?.plan?.renewal_period_end ?? data?.current_period_end ?? null;
+  const planId = String(data?.plan?.id || data?.plan_id || data?.checkout?.plan?.id || data?.product?.plan_id || '');
   const isRecurring = Boolean(
     data?.plan?.billing_period ||
     data?.plan?.plan_type === 'renewal' ||
     data?.billing_period ||
-    renewalEnd
+    renewalEnd ||
+    WHOP_RECURRING_PLAN_IDS.has(planId)
   );
-  const expiresAt = isRecurring && renewalEnd ? new Date(Number(renewalEnd) * 1000 || renewalEnd) : null;
+  let expiresAt = null;
+  if (isRecurring && renewalEnd) expiresAt = new Date(Number(renewalEnd) * 1000 || renewalEnd);
+  else if (isRecurring) expiresAt = new Date(now.getTime() + RECURRING_FALLBACK_DAYS * 24 * 60 * 60 * 1000);
   return { isRecurring, renewalEnd, expiresAt };
 }
 
