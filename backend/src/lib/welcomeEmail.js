@@ -8,13 +8,13 @@ const PRICING_URL = 'https://avalisabot.vercel.app/pricing';
 const SUPPORT_EMAIL = 'avalisapobot@gmail.com';
 
 const LINES = [
-  'New accounts start on the free Demo plan: 10 trades to try the bot. If you already bought Basic or Pro and your dashboard does not show it, reply to this email.',
+  'New accounts start on the free Demo plan: 10 Martingale trades to try the bot. If you bought Basic or Pro and your dashboard does not show it, reply to this email.',
   `Install the Chrome extension: ${STORE_URL} — then sign in to the extension with this same email.`,
-  `On a phone (iPhone or Android): open ${WEBAPP_URL} for the steps.`,
+  `No computer? On a phone (iPhone or Android), open ${WEBAPP_URL} and sign in with this same email.`,
   `Setup guide: ${GUIDE_URL}`,
-  'Start on your Pocket Option DEMO balance first and watch what it does. Press Stop any time.',
-  `Plans: Basic $69 one-time, Pro $119 one-time or $29/month — ${PRICING_URL}`,
-  'No bot or setting guarantees profit — only trade money you can afford to lose.',
+  'Start on your Pocket Option DEMO balance (not real money), keep the Pocket Option tab visible, and watch what it does. Press Stop any time.',
+  `Plans: Basic $69 one-time; Pro $119 one-time or $29/month (a recurring subscription that renews monthly until cancelled) — ${PRICING_URL}`,
+  'Martingale multiplies the stake after each loss, so a losing streak grows fast. Set a Martingale Steps limit (the default is Infinite). No bot or setting guarantees profit — only trade money you can afford to lose.',
   `Questions: reply to ${SUPPORT_EMAIL}.`,
 ];
 

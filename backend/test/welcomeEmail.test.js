@@ -108,6 +108,9 @@ test('content has the store link, /webapp, no dead domain, no profit promises', 
       assert.match(body, /avalisabot\.vercel\.app\/guide/);
       assert.match(body, /avalisabot\.vercel\.app\/pricing/);
       assert.match(body, /No bot or setting guarantees profit/);
+      assert.match(body, /recurring subscription/);
+      assert.match(body, /Martingale Steps limit/);
+      assert.match(body, /tab visible/);
       assert.doesNotMatch(body, /AvalisaPOBot\.com/i);
       assert.doesNotMatch(body, /passive income|\bAI\b/i);
       const stripped = body.replace('No bot or setting guarantees profit', '');

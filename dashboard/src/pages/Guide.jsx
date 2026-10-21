@@ -136,15 +136,15 @@ export default function Guide() {
       content: [
         {
           subtitle: 'Switch Pocket Option to its demo balance first',
-          text: 'Do this before anything else. Pocket Option\'s demo balance is not real money, so you can watch exactly what the bot does with no financial risk. Everything below behaves identically on demo and on real.',
+          text: 'Do this before you press Start. Pocket Option\'s demo balance is not real money, so you can watch exactly what the bot does with no financial risk. The bot places trades the same way on demo and on real; only the balance differs. The free Demo plan includes 10 trades, so the bot stops after the tenth — that is the trial limit, not a fault.',
         },
         {
           subtitle: 'Open a pair, then open the Avalisa panel',
           text: 'The panel appears on the Pocket Option trading page. It reads the chart and the trade controls that are already on screen.',
         },
         {
-          subtitle: 'Press Start, and watch one full cycle',
-          text: 'Let it place a few trades before you change anything. Press "Stop bot" at any time — it halts immediately and places nothing further.',
+          subtitle: 'Set a step limit, press Start, and watch one full cycle',
+          text: 'Martingale Steps defaults to Infinite, so set a limit before your first Start (see Martingale Steps below). Then let it place a few trades before you change anything. Press "Stop bot" at any time — it halts immediately and places nothing further.',
         },
       ],
     },
@@ -228,7 +228,7 @@ export default function Guide() {
         },
         {
           subtitle: 'Pro — $119 one-time, or $29 per month',
-          text: 'Everything in Basic plus Avalisa Bot mode. The one-time and monthly options are both offered at checkout; pick whichever suits you.',
+          text: 'Everything in Basic plus Avalisa Bot mode. Both options are offered at checkout: $119 one-time, or $29/month, which is a recurring subscription that renews every month until you cancel it.',
         },
       ],
     },
@@ -241,7 +241,7 @@ export default function Guide() {
         },
         {
           subtitle: 'Can I leave it running unattended?',
-          text: 'We do not recommend it. Watch it, especially on a real balance, and use a step limit rather than Infinite.',
+          text: 'We do not recommend it. Start on a demo balance and watch it; if you later use a real balance, keep watching and use a step limit rather than Infinite.',
         },
         {
           subtitle: 'Does it work on the Pocket Option mobile app?',
