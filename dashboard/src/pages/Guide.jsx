@@ -589,6 +589,12 @@ export default function Guide() {
               1-minute vs 5-minute, and why noise hurts trading bots
             </a>.
           </p>
+          <p>
+            Want a ready setup to watch first? Read{' '}
+            <a href="/guide/pocket-option-bot-demo-setups.html">
+              three Martingale setups to test on a demo account
+            </a>.
+          </p>
         </div>
         <aside>
           <BookOpen size={34} />
