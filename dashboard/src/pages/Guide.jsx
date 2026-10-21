@@ -61,7 +61,7 @@ function LicenceCheck() {
       <div className="lux-privacy-card__body">
         <p>
           If you have paid and the bot still looks locked, check here before buying anything a
-          second time. Enter the Pocket Option account ID you use for trading.
+          second time. Enter the numeric account ID shown on your Pocket Option profile.
         </p>
         <form onSubmit={check}>
           <input
@@ -100,7 +100,8 @@ function LicenceCheck() {
             We have no paid licence linked to that ID. If you have paid for Avalisa, email{' '}
             <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a> with that ID and we
             will sort it out — do not buy a second time. Otherwise the free demo needs no payment,
-            and the plans are on the <Link to="/pricing">pricing page</Link>.
+            and the plans are on the <Link to="/pricing">pricing page</Link>. Free Pro is only for a
+            NEW Pocket Option account registered through our link, then linked in your dashboard.
           </p>
         )}
         <p>
