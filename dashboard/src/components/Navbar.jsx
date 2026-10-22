@@ -6,12 +6,11 @@ import { AFFILIATE_LINK } from '../lib/affiliate';
 import AccountMenu, { TradeButton } from './AccountMenu';
 
 const navItems = [
-  { label: 'Webapp Bot', href: '/webapp' },
-  { label: 'Features', href: '/#features' },
-  { label: 'Avalisa Bot', href: '/#ai' },
+  { label: 'How It Works', href: '/#how-it-works' },
+  { label: 'Controls', href: '/#controls' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'Setup Guide', href: '/guide' },
-  { label: 'Support', href: '/support' },
+  { label: 'Phone Setup', href: '/webapp' },
 ];
 
 function Brand() {
@@ -20,9 +19,7 @@ function Brand() {
       <span className="site-brand__primary">
         <img className="brand-signature brand-signature--nav" src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot" />
       </span>
-      <span className="site-brand__partner" aria-label="Pocket Option partner">
-        <img src="/images/PO_Logo.png" alt="" />
-      </span>
+      <span className="site-brand__badge">PO Bot</span>
     </Link>
   );
 }
@@ -42,7 +39,7 @@ export default function Navbar() {
   }
 
   return (
-    <header className="site-nav">
+    <header className="site-nav site-nav--glass">
       <div className="site-nav__inner">
         <Brand />
 
@@ -57,8 +54,8 @@ export default function Navbar() {
             <AccountMenu />
           ) : (
             <>
-              <Link to="/login">Login</Link>
-              <Link to="/register" className="site-nav__cta">Sign up Avalisa</Link>
+              <Link to="/login">Log In</Link>
+              <Link to="/register" className="site-nav__cta">Start 10 Free Demo Trades</Link>
               <a href={AFFILIATE_LINK} className="site-nav__po" target="_blank" rel="noreferrer">Pocket Option</a>
             </>
           )}
@@ -88,8 +85,8 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <Link to="/login" onClick={() => setMenuOpen(false)}>Login</Link>
-              <Link to="/register" className="site-nav__cta" onClick={() => setMenuOpen(false)}>Sign up Avalisa</Link>
+              <Link to="/login" onClick={() => setMenuOpen(false)}>Log In</Link>
+              <Link to="/register" className="site-nav__cta" onClick={() => setMenuOpen(false)}>Start 10 Free Demo Trades</Link>
               <a href={AFFILIATE_LINK} className="site-nav__po" target="_blank" rel="noreferrer" onClick={() => setMenuOpen(false)}>Pocket Option</a>
             </>
           )}

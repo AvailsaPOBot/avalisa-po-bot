@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './hooks/useAuth';
@@ -8,20 +8,20 @@ import AdminRoute from './components/AdminRoute';
 
 import Landing from './pages/Landing';
 import FloatingChat from './components/FloatingChat';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import AuthCallback from './pages/AuthCallback';
-import Dashboard from './pages/Dashboard';
-import Pricing from './pages/Pricing';
-import Support from './pages/Support';
-import Privacy from './pages/Privacy';
-import Guide from './pages/Guide';
-import NotFound from './pages/NotFound';
-import Webapp from './pages/Webapp';
-import WebappBotConnect from './pages/WebappBotConnect';
-import Admin from './pages/Admin';
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+const AuthCallback = lazy(() => import('./pages/AuthCallback'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Pricing = lazy(() => import('./pages/Pricing'));
+const Support = lazy(() => import('./pages/Support'));
+const Privacy = lazy(() => import('./pages/Privacy'));
+const Guide = lazy(() => import('./pages/Guide'));
+const NotFound = lazy(() => import('./pages/NotFound'));
+const Webapp = lazy(() => import('./pages/Webapp'));
+const WebappBotConnect = lazy(() => import('./pages/WebappBotConnect'));
+const Admin = lazy(() => import('./pages/Admin'));
 
 function AppShell() {
   const location = useLocation();
@@ -60,6 +60,7 @@ function AppShell() {
   return (
     <>
       {!isLanding && <Navbar />}
+      <Suspense fallback={<div className="route-loading" role="status">Loading…</div>}>
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
@@ -81,6 +82,7 @@ function AppShell() {
         <Route path="/webapp-bot/connect" element={<WebappBotConnect />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      </Suspense>
       {isLanding && <FloatingChat deferUntilScroll />}
     </>
   );

@@ -137,6 +137,17 @@
 
 @layer utilities {
   :root {
+    --bg-obsidian: #090807;
+    --bg-stage: #12100e;
+    --bg-glass: rgba(24, 20, 17, 0.78);
+    --text-ivory: #f5efe6;
+    --text-sand: #b9ad9e;
+    --text-muted: #7d7265;
+    --gold-champagne: #c9a46c;
+    --gold-bright: #dfc08e;
+    --emerald-live: #2ec486;
+    --amber-warn: #e5a93c;
+    --coral-stop: #e05a47;
     --bg-base: #0a0a0f;
     --bg-surface: #14141d;
     --bg-elevated: #1c1c28;
@@ -159,10 +170,17 @@
     scroll-behavior: smooth;
   }
 
+  h1, h2, h3 { text-wrap: balance; }
+  p, li, blockquote { text-wrap: pretty; }
+  .tabular-nums { font-variant-numeric: tabular-nums; }
+  .content-section { content-visibility: auto; contain-intrinsic-size: auto none auto 680px; }
+
   * {
     box-sizing: border-box;
   }
 }
+
+.route-loading { min-height: 40vh; display: grid; place-items: center; color: var(--text-sand, #b9ad9e); }
 
 @layer base {
   body {

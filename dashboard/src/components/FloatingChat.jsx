@@ -59,7 +59,7 @@ export default function FloatingChat({ deferUntilScroll = false }) {
             <img src="/images/landing/generated/avalisa-avatar.png" alt="" />
             <div>
               <strong>Talk to Avalisa</strong>
-              <span>AI support assistant</span>
+              <span>Support assistant</span>
             </div>
             <button type="button" onClick={() => setOpen(false)} aria-label="Close chat"><X size={18} /></button>
           </header>
