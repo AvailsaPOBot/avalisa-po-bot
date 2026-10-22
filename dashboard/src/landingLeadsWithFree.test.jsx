@@ -11,11 +11,15 @@ const landing = fs.readFileSync(
 );
 
 const heroBlock = landing.slice(
-  landing.indexOf('const heroHighlights'),
-  landing.indexOf('const deviceLinks')
+  landing.indexOf('const HERO = {'),
+  landing.indexOf('// hero-copy-end')
 );
 
 describe('landing hero', () => {
+  test('the guarded hero block exists', () => {
+    expect(heroBlock.length).toBeGreaterThan(40);
+  });
+
   test('leads with the free demo', () => {
     expect(heroBlock).toMatch(/free/i);
     expect(heroBlock).toMatch(/demo/i);

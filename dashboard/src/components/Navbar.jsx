@@ -6,7 +6,7 @@ import { AFFILIATE_LINK } from '../lib/affiliate';
 import AccountMenu, { TradeButton } from './AccountMenu';
 
 const navItems = [
-  { label: 'How It Works', href: '/#how-it-works' },
+  { label: 'How It Works', href: '/#how' },
   { label: 'Controls', href: '/#controls' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'Setup Guide', href: '/guide' },
