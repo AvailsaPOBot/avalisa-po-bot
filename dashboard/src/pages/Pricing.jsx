@@ -82,6 +82,14 @@ const PRICING_FAQ = [
     q: 'Does it work on real accounts or only demo?',
     a: 'Both. The extension places trades the same way on a demo or a real Pocket Option account. Start on demo, and remember Martingale raises the stake after each loss, so a losing streak can empty a balance.',
   },
+  {
+    q: 'How do I cancel the $29/month Pro?',
+    a: 'Cancel the subscription in Whop, where you bought it. When it ends, your licence returns to the free Demo plan; your account, settings and trade history are kept, and subscribing again upgrades it again. Basic and the $119 Pro option never renew, so there is nothing to cancel.',
+  },
+  {
+    q: 'Does Avalisa need my Pocket Option password?',
+    a: 'No. You log in to Pocket Option yourself, and Avalisa works on the Pocket Option page already open in your own browser, logged in as you. It does not move accounts or funds. Only ever type your Pocket Option password on Pocket Option\'s own site.',
+  },
 ];
 
 export default function Pricing() {
