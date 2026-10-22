@@ -116,7 +116,7 @@ function MascotHero() {
   const { user, logout } = useAuth();
 
   return (
-    <section className="mascot-hero" id="top" aria-label="Meet Avalisa PO Bot, AI Trading Bot for Pocket Option">
+    <section className="mascot-hero" id="top" aria-label="Meet Avalisa PO Bot, a Trading Bot for Pocket Option">
       <div className="mascot-hero__desktop">
         <img
           className="mascot-hero__art"
@@ -129,7 +129,7 @@ function MascotHero() {
         <div className="mascot-hero__desktop-copy">
           <h1>
             <span className="mascot-hero__title-line mascot-hero__title-line--light">Meet Avalisa PO Bot,</span>
-            <span className="mascot-hero__title-line">AI Trading Bot for</span>
+            <span className="mascot-hero__title-line">Trading Bot for</span>
             <span className="mascot-hero__title-line mascot-hero__title-line--light">Pocket Option <PocketOptionMark /></span>
           </h1>
         </div>
@@ -214,7 +214,7 @@ function MascotHero() {
         <div className="mascot-mobile-copy">
           <h1>
             <span className="mascot-hero__title-line mascot-hero__title-line--light">Meet Avalisa PO Bot,</span>
-            <span className="mascot-hero__title-line">AI Trading Bot for</span>
+            <span className="mascot-hero__title-line">Trading Bot for</span>
             <span className="mascot-hero__title-line mascot-hero__title-line--light">Pocket Option <PocketOptionMark /></span>
           </h1>
           <p>
@@ -335,7 +335,7 @@ export default function Landing() {
             </ul>
             <div className="avalisa-inline-actions">
               <SmartLink to="/pricing#basic" className="avalisa-button avalisa-button--dark">
-                See AI Plans <ArrowRight size={17} />
+                See Plans <ArrowRight size={17} />
               </SmartLink>
               <SmartLink to="/support" className="avalisa-text-link">
                 Ask Avalisa support
