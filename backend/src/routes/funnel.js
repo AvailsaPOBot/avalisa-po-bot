@@ -5,6 +5,14 @@ const { recordFunnelEvent } = require('../lib/funnel');
 const router = express.Router();
 const CHECKOUT_PLANS = new Set(['basic', 'pro']);
 
+// The site sends these beacons with navigator.sendBeacon (no-cors when there is no body),
+// so helmet's default Cross-Origin-Resource-Policy: same-origin makes the browser log
+// ERR_BLOCKED_BY_RESPONSE.NotSameOrigin. The event is already recorded; allow the response.
+router.use((req, res, next) => {
+  res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+});
+
 // POST /api/funnel/checkout-click — public, asynchronous purchase-intent signal.
 router.post('/checkout-click', (req, res) => {
   const plan = req.body?.plan;

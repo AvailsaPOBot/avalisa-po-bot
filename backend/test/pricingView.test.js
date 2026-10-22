@@ -97,3 +97,18 @@ test('pricing view ignores a posted body and records only the fixed event', asyn
     restore();
   }
 });
+
+test('funnel responses allow cross-origin beacons (no NotSameOrigin console error)', () => {
+  const { router, restore } = loadFunnelRouter();
+
+  try {
+    const headers = {};
+    let nextCalled = false;
+    const middleware = router.stack.find((layer) => !layer.route).handle;
+    middleware({}, { set(name, value) { headers[name] = value; } }, () => { nextCalled = true; });
+    assert.equal(headers['Cross-Origin-Resource-Policy'], 'cross-origin');
+    assert.equal(nextCalled, true);
+  } finally {
+    restore();
+  }
+});
