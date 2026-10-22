@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Check, CreditCard } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, CreditCard, Minus, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../hooks/useAuth';
 import api from '../lib/api';
 import '../styles/luxury.css';
-import { AVALISA_CHARACTER_IMAGE } from '../lib/brandAssets';
+import '../styles/landing-v3.css';
+import '../styles/pages-v3.css';
+import PageHead, { PageLabel } from '../components/v3/PageHead';
 import {
   appendCheckoutEmail,
   WHOP_BASIC_CHECKOUT_URL,
@@ -215,137 +217,184 @@ export default function Pricing() {
     },
   ];
 
+
   const selectedPaymentPlan = plans.find((plan) => plan.id === selectedPlan);
+  const planTags = { demo: 'START HERE', basic: 'MARTINGALE ONLY', pro: 'FOR ANY POCKET OPTION ACCOUNT' };
 
   return (
-    <main className="lux-pricing-page">
-      <section className="lux-price-hero lux-shell">
-        <div>
-          <p className="lux-kicker">Pricing</p>
-          <h1>Simple, transparent pricing.</h1>
-          <p>Every Avalisa account starts with 10 free Demo trades. No card required.</p>
+    <main className="v3 v3p v3p-pricing">
+      <PageHead
+        id="pricing-title"
+        eyebrow="Pricing · Demo · Basic · Pro"
+        title={<>Simple, <em>transparent</em> pricing.</>}
+        sub="Every Avalisa account starts with 10 free Demo trades. No card required."
+        aside={(
+          <figure className="v3p-portrait v3p-portrait--small">
+            <img src="/assets/v3/avalisa-final.webp" alt="Avalisa, the Avalisa PO Bot mascot" width="1122" height="1402" decoding="async" />
+            <figcaption className="v3-hud">Avalisa · your rule runner</figcaption>
+          </figure>
+        )}
+      >
+        <div className="v3-glass v3p-strip">
+          <span><strong>New here?</strong> Start with 10 Free Demo Trades. No card required.</span>
+          <Link className="v3-textlink" to="/register">Start free Demo <ArrowRight size={15} aria-hidden="true" /></Link>
+        </div>
+      </PageHead>
+
+      <section className="v3p-sec v3p-plans" aria-label="Plans">
+        <div className="v3-wrap">
+          <PageLabel index="01" total="04">Plans</PageLabel>
+          <div className="v3p-plan-grid">
+            {plans.map((plan, index) => {
+              const current = currentPlan === plan.id || (currentPlan === 'free' && plan.id === 'demo') || (currentPlan === 'lifetime' && plan.id === 'pro');
+              const targeted = location.hash === `#${plan.id}`;
+              return (
+                <article
+                  aria-current={current ? 'true' : undefined}
+                  className={`v3p-plan ${plan.featured ? 'is-featured' : ''} ${targeted ? 'is-targeted' : ''}`}
+                  id={plan.id}
+                  key={plan.id}
+                >
+                  <div className="v3p-plan__top">
+                    <span className="v3-hud">{`Plan 0${index + 1}`}</span>
+                    {plan.featured && <b className="v3p-plan__badge">MOST POPULAR</b>}
+                  </div>
+                  <small className="v3-hud v3-gold v3p-plan__tag">{planTags[plan.id]}</small>
+                  <h2 className="v3p-plan__name">{plan.name}</h2>
+                  <p className="v3p-plan__price">{plan.price}<small>{plan.period}</small></p>
+                  {plan.id === 'pro' && <div className="v3p-billing" role="group" aria-label="Pro billing option">
+                    <button type="button" aria-pressed={proBilling === 'one-time'} className={proBilling === 'one-time' ? 'is-selected' : ''} onClick={() => setProBilling('one-time')}>$119 One-Time</button>
+                    <button type="button" aria-pressed={proBilling === 'monthly'} className={proBilling === 'monthly' ? 'is-selected' : ''} onClick={() => setProBilling('monthly')}>$29/month · recurring</button>
+                  </div>}
+                  {plan.id === 'pro' && <p className="lux-price__alt v3p-plan__alt">$119 one-time or $29 / month recurring subscription</p>}
+                  <p className="v3p-plan__desc">{plan.description}</p>
+                  <ul className="v3p-plan__features">
+                    {plan.features.map((item) => {
+                      const excluded = item.startsWith('No ');
+                      return (
+                        <li key={item} className={excluded ? 'is-excluded' : undefined}>
+                          {excluded ? <Minus size={14} aria-hidden="true" /> : <Check size={14} aria-hidden="true" />} {item}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  {(plan.id === 'basic' || plan.id === 'pro') && <p className="v3p-plan__tip">Use the same email on Whop as your Avalisa account so the licence can match automatically.</p>}
+                  <div className="v3p-plan__cta">
+                    {current ? (
+                      <button type="button" className="v3p-btn-line" disabled>Current Plan</button>
+                    ) : plan.external ? (
+                      plan.paypalPlan ? (
+                        <button type="button" className={plan.featured ? 'v3-btn v3p-btn-block' : 'v3p-btn-line'} aria-label={`${plan.cta} · Choose payment method`} onClick={() => setSelectedPlan(plan.id)}>{plan.cta}</button>
+                      ) : (
+                        plan.href ? (
+                          <a className="v3p-btn-line" href={plan.href} target="_blank" rel="noreferrer">{plan.cta}</a>
+                        ) : (
+                          <button type="button" className="v3p-btn-line" disabled>Checkout temporarily unavailable</button>
+                        )
+                      )
+                    ) : plan.id === 'basic' || plan.id === 'pro' ? (
+                      <button type="button" className="v3p-btn-line" onClick={() => setSelectedPlan(plan.id)}>{plan.cta}</button>
+                    ) : (
+                      <Link className="v3p-btn-line" to={plan.href}>{plan.cta}</Link>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
         </div>
       </section>
 
-      <section className="lux-shell pricing-demo-banner">
-        <span><strong>New here?</strong> Start with 10 Free Demo Trades. No card required.</span>
-        <Link to="/register">Start free Demo <span aria-hidden="true">→</span></Link>
-      </section>
-
-      <section className="lux-shell lux-pricing-grid lux-pricing-grid--page">
-        {plans.map((plan) => {
-          const current = currentPlan === plan.id || (currentPlan === 'free' && plan.id === 'demo') || (currentPlan === 'lifetime' && plan.id === 'pro');
-          const targeted = location.hash === `#${plan.id}`;
-          return (
-            <article
-              aria-current={current ? 'true' : undefined}
-              className={`lux-price ${plan.featured ? 'is-featured' : ''} ${targeted ? 'is-targeted' : ''}`}
-              id={plan.id}
-              key={plan.id}
-            >
-              {plan.featured && <b>MOST POPULAR</b>}
-              <small className="pricing-plan-tag">{plan.id === 'demo' ? 'START HERE' : plan.id === 'basic' ? 'MARTINGALE ONLY' : 'FOR ANY POCKET OPTION ACCOUNT'}</small>
-              <span>{plan.name}</span>
-              <h3>{plan.price}<small>{plan.period}</small></h3>
-              {plan.id === 'pro' && <div className="pricing-billing" role="group" aria-label="Pro billing option">
-                <button type="button" aria-pressed={proBilling === 'one-time'} className={proBilling === 'one-time' ? 'is-selected' : ''} onClick={() => setProBilling('one-time')}>$119 One-Time</button>
-                <button type="button" aria-pressed={proBilling === 'monthly'} className={proBilling === 'monthly' ? 'is-selected' : ''} onClick={() => setProBilling('monthly')}>$29/month · recurring</button>
-              </div>}
-              {plan.id === 'pro' && <p className="lux-price__alt">$119 one-time or $29 / month recurring subscription</p>}
-              <p>{plan.description}</p>
-              <ul>{plan.features.map((item) => <li key={item}><Check size={14} /> {item}</li>)}</ul>
-              {(plan.id === 'basic' || plan.id === 'pro') && <p className="pricing-email-tip">Use the same email on Whop as your Avalisa account so the licence can match automatically.</p>}
-              {current ? (
-                <button type="button" disabled>Current Plan</button>
-              ) : plan.external ? (
-                plan.paypalPlan ? (
-                  <button type="button" aria-label={`${plan.cta} · Choose payment method`} onClick={() => setSelectedPlan(plan.id)}>{plan.cta}</button>
-                ) : (
-                  plan.href ? (
-                    <a href={plan.href} target="_blank" rel="noreferrer">{plan.cta}</a>
-                  ) : (
-                    <button type="button" disabled>Checkout temporarily unavailable</button>
-                  )
-                )
-              ) : plan.id === 'basic' || plan.id === 'pro' ? (
-                <button type="button" onClick={() => setSelectedPlan(plan.id)}>{plan.cta}</button>
-              ) : (
-                <Link to={plan.href}>{plan.cta}</Link>
-              )}
-            </article>
-          );
-        })}
-      </section>
-
-      <section className="lux-shell pricing-partner-card" aria-labelledby="partner-pro-title">
-        <div>
-          <p className="lux-kicker">For new Pocket Option accounts</p>
-          <h2 id="partner-pro-title">Get Pro at no charge through our partner link</h2>
-          <ol>
-            <li>Register a <strong>new</strong> Pocket Option account through our link.</li>
-            <li>Link its numeric Pocket Option ID in Avalisa Dashboard → Settings.</li>
-            <li>If the partner system confirms the referral, Pro unlocks instantly; otherwise it is queued for admin verification.</li>
-          </ol>
-          <p>Pro granted this way does not expire.</p>
-          <a className="pricing-partner-link" href={AFFILIATE_LINK} target="_blank" rel="noreferrer">Open Pocket Option to register <span aria-hidden="true">→</span></a>
-          <small>We may earn a commission when you register through this link.</small>
+      <section className="v3p-sec v3p-partner" aria-labelledby="partner-pro-title">
+        <span className="v3-num" aria-hidden="true">02</span>
+        <div className="v3-wrap v3p-split">
+          <div>
+            <PageLabel index="02" total="04">For new Pocket Option accounts</PageLabel>
+            <h2 className="v3-h3" id="partner-pro-title">Get Pro at no charge through our <em>partner</em> link</h2>
+            <p className="v3-lede v3p-partner__lede">Pro granted this way does not expire.</p>
+          </div>
+          <div className="v3-glass v3p-partner__panel">
+            <ol className="v3p-numbered">
+              <li><span aria-hidden="true">01</span><p>Register a <strong>new</strong> Pocket Option account through our link.</p></li>
+              <li><span aria-hidden="true">02</span><p>Link its numeric Pocket Option ID in Avalisa Dashboard → Settings.</p></li>
+              <li><span aria-hidden="true">03</span><p>If the partner system confirms the referral, Pro unlocks instantly; otherwise it is queued for admin verification.</p></li>
+            </ol>
+            <a className="v3-btn" href={AFFILIATE_LINK} target="_blank" rel="noreferrer">Open Pocket Option to register<span className="v3-btn__icon" aria-hidden="true"><ArrowUpRight size={17} /></span></a>
+            <small>We may earn a commission when you register through this link.</small>
+          </div>
         </div>
-        <img src={AVALISA_CHARACTER_IMAGE} alt="Avalisa brand character" loading="lazy" />
       </section>
 
-      <section className="lux-shell pricing-comparison" aria-labelledby="plan-comparison-title">
-        <p className="lux-kicker">Compare plans</p><h2 id="plan-comparison-title">What each plan includes</h2>
-        <div className="pricing-table-wrap"><table><thead><tr><th>Feature</th><th>Demo plan<br/><small>$0</small></th><th>Basic plan<br/><small>$69 one-time</small></th><th>Pro plan<br/><small>$119 once or $29/month recurring</small></th><th>Partner Pro<br/><small>$0 with new account</small></th></tr></thead><tbody>
-          <tr><th>Trade limit</th><td>10 trades</td><td>Unlimited</td><td>Unlimited</td><td>Unlimited</td></tr>
-          <tr><th>Martingale step cap</th><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
-          <tr><th>Minimum payout filter</th><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
-          <tr><th>Avalisa Bot 4-rule mode</th><td>—</td><td>—</td><td>✓</td><td>✓</td></tr>
-          <tr><th>Desktop Chrome + phone /webapp</th><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
-          <tr><th>Licence expiry</th><td>Demo allowance</td><td>Never</td><td>Never once / active while subscribed</td><td>Never</td></tr>
-        </tbody></table></div>
+      <section className="v3p-sec v3p-compare" aria-labelledby="plan-comparison-title">
+        <div className="v3-wrap">
+          <PageLabel index="03" total="04">Compare plans</PageLabel>
+          <h2 className="v3-h3" id="plan-comparison-title">What each plan <em>includes</em></h2>
+          <p className="v3-hud v3p-swipe" aria-hidden="true">Swipe to compare all plans →</p>
+          <div className="v3p-table-wrap" role="region" aria-label="Plan comparison table" tabIndex={0}>
+            <table className="v3p-table v3p-table--compare">
+              <thead><tr><th scope="col">Feature</th><th scope="col">Demo plan<br/><small>$0</small></th><th scope="col">Basic plan<br/><small>$69 one-time</small></th><th scope="col" className="is-pro">Pro plan<br/><small>$119 once or $29/month recurring</small></th><th scope="col">Partner Pro<br/><small>$0 with new account</small></th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Trade limit</th><td>10 trades</td><td>Unlimited</td><td className="is-pro">Unlimited</td><td>Unlimited</td></tr>
+                <tr><th scope="row">Martingale step cap</th><td className="is-yes">✓</td><td className="is-yes">✓</td><td className="is-pro is-yes">✓</td><td className="is-yes">✓</td></tr>
+                <tr><th scope="row">Minimum payout filter</th><td className="is-yes">✓</td><td className="is-yes">✓</td><td className="is-pro is-yes">✓</td><td className="is-yes">✓</td></tr>
+                <tr><th scope="row">Avalisa Bot 4-rule mode</th><td className="is-no">—</td><td className="is-no">—</td><td className="is-pro is-yes">✓</td><td className="is-yes">✓</td></tr>
+                <tr><th scope="row">Desktop Chrome + phone /webapp</th><td className="is-yes">✓</td><td className="is-yes">✓</td><td className="is-pro is-yes">✓</td><td className="is-yes">✓</td></tr>
+                <tr><th scope="row">Licence expiry</th><td>Demo allowance</td><td>Never</td><td className="is-pro">Never once / active while subscribed</td><td>Never</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
-      <section className="lux-price-faq lux-shell" aria-labelledby="pricing-faq-title">
-        <h2 id="pricing-faq-title">Pricing questions</h2>
-        {PRICING_FAQ.map(({ q, a }) => (
-          <details key={q}>
-            <summary>{q}</summary>
-            <p>{a}</p>
-          </details>
-        ))}
+      <section className="v3p-sec v3p-faq" aria-labelledby="pricing-faq-title">
+        <div className="v3-wrap v3p-split">
+          <div>
+            <PageLabel index="04" total="04">Common questions</PageLabel>
+            <h2 className="v3-h3" id="pricing-faq-title">Pricing <em>questions</em></h2>
+          </div>
+          <div className="v3-faq__list">
+            {PRICING_FAQ.map(({ q, a }) => (
+              <details key={q}>
+                <summary>{q}</summary>
+                <p>{a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
       </section>
 
-      <p className="lux-risk-note lux-shell">
-        Trading involves risk; Martingale raises the stake after losses. Start on Demo.
-      </p>
+      <div className="v3-wrap v3p-riskline">
+        <p className="v3-risk">Trading involves risk; Martingale raises the stake after losses. Start on Demo.</p>
+      </div>
 
       {selectedPaymentPlan && (
-        <div className="lux-payment-modal" role="dialog" aria-modal="true" aria-labelledby="payment-choice-title">
-          <button type="button" className="lux-payment-modal__backdrop" aria-label="Close payment choices" onClick={() => setSelectedPlan(null)} />
-          <section className="lux-payment-modal__panel">
-            <button type="button" className="lux-payment-modal__close" onClick={() => setSelectedPlan(null)}>Close</button>
-            <p className="lux-kicker">Payment Method</p>
+        <div className="v3p-modal" role="dialog" aria-modal="true" aria-labelledby="payment-choice-title">
+          <button type="button" className="v3p-modal__backdrop" aria-label="Close payment choices" onClick={() => setSelectedPlan(null)} />
+          <section className="v3p-modal__panel v3-glass">
+            <button type="button" className="v3p-modal__close" onClick={() => setSelectedPlan(null)}><X size={14} aria-hidden="true" />Close</button>
+            <p className="v3-hud v3-gold">Payment Method</p>
             <h2 id="payment-choice-title">{selectedPaymentPlan.name} {selectedPaymentPlan.price}</h2>
-            {selectedPaymentPlan.id === 'pro' && <p className="lux-payment-modal__alt">{proBilling === 'monthly' ? '$29/month is a recurring subscription.' : '$119 is a one-time payment.'} Both options unlock the same Pro features.</p>}
-            <p className="lux-payment-modal__copy">Choose the checkout provider you prefer. Your Avalisa license activates after payment confirmation.</p>
-            <div className="lux-payment-choice-grid">
+            {selectedPaymentPlan.id === 'pro' && <p className="v3p-modal__alt">{proBilling === 'monthly' ? '$29/month is a recurring subscription.' : '$119 is a one-time payment.'} Both options unlock the same Pro features.</p>}
+            <p className="v3p-modal__copy">Choose the checkout provider you prefer. Your Avalisa license activates after payment confirmation.</p>
+            <div className="v3p-modal__choices">
               {selectedPaymentPlan.href ? (
                 <a
                   href={selectedPaymentPlan.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="lux-payment-choice"
+                  className="v3p-choice"
                   onClick={() => trackCheckoutClick(selectedPaymentPlan.id)}
                 >
                   <strong>Whop</strong>
                   <span>Current checkout path</span>
+                  <ArrowUpRight size={18} aria-hidden="true" />
                 </a>
               ) : (
                 /* No Whop URL configured -> say so, exactly as the PayPal option does.
                    Previously this rendered href="#", so the button looked live and did
                    nothing; before that it pointed at a removed product and sent buyers
                    to Whop's "Product not found" page. Both lie to a paying customer. */
-                <div className="lux-payment-choice lux-payment-choice--disabled" aria-disabled="true">
+                <div className="v3p-choice is-disabled" aria-disabled="true">
                   <strong>Whop</strong>
                   <span>Whop checkout is temporarily unavailable</span>
                 </div>
@@ -356,13 +405,13 @@ export default function Pricing() {
               {paypalEnabled && (
                 <button
                   type="button"
-                  className="lux-payment-choice lux-payment-choice--paypal"
+                  className="v3p-choice v3p-choice--paypal"
                   disabled={paypalBusyPlan === selectedPaymentPlan.paypalPlan}
                   onClick={() => startPayPalCheckout(selectedPaymentPlan.paypalPlan)}
                 >
-                  <CreditCard size={16} />
-                  <strong>PayPal</strong>
+                  <strong><CreditCard size={16} aria-hidden="true" /> PayPal</strong>
                   <span>Pay with PayPal account or supported card</span>
+                  <ArrowUpRight size={18} aria-hidden="true" />
                 </button>
               )}
             </div>

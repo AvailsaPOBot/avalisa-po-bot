@@ -36,3 +36,14 @@ test('email registration validates confirmation and redirects to dashboard after
   await waitFor(() => expect(registerMock).toHaveBeenCalledWith('buyer@example.com', 'password123'));
   expect(navigateMock).toHaveBeenCalledWith('/dashboard');
 });
+
+test('the sign-up form comes first in the page, so phones show it directly under the header', () => {
+  const { container } = render(<Register />);
+  const form = container.querySelector('form');
+  const heading = screen.getByRole('heading', { name: 'Start with a free Demo.' });
+  expect(form).not.toBeNull();
+  // DOCUMENT_POSITION_FOLLOWING: the editorial heading is after the form in DOM order.
+  expect(form.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  expect(form.querySelector('input[type="email"]')).not.toBeNull();
+  expect(screen.getByRole('button', { name: /show password/i })).toBeInTheDocument();
+});

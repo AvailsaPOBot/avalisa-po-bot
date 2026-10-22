@@ -1,8 +1,11 @@
 import { useState } from 'react';
-import { BookOpen, Mail } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, BookOpen, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { API_BASE } from '../lib/api';
 import '../styles/luxury.css';
+import '../styles/landing-v3.css';
+import '../styles/pages-v3.css';
+import PageHead, { PageLabel } from '../components/v3/PageHead';
 
 const STORE_URL =
   'https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa';
@@ -113,60 +116,70 @@ function LicenceCheck() {
   const paid = result.status === 'done' && result.linked && Boolean(label);
 
   return (
-    <article className="lux-privacy-card">
-      <h2>Already bought? Check your Pocket Option ID</h2>
-      <div className="lux-privacy-card__body">
-        <p>
-          If you have paid and the bot still looks locked, check here before buying anything a
-          second time. Enter the numeric account ID shown on your Pocket Option profile.
-        </p>
-        <form onSubmit={check}>
-          <input
-            type="text"
-            inputMode="numeric"
-            value={uid}
-            onChange={e => setUid(e.target.value)}
-            aria-label="Pocket Option ID"
-            placeholder="e.g. 5131350"
-          />{' '}
-          <button className="lux-button lux-button--gold" type="submit" disabled={result.status === 'loading'}>
-            {result.status === 'loading' ? 'Checking…' : 'Check'}
-          </button>
-        </form>
+    <section className="v3p-sec v3p-licence">
+      <div className="v3-wrap">
+        <div className="v3-glass v3p-licence__panel">
+          <div className="v3p-licence__head">
+            <p className="v3-hud v3-gold">Licence lookup</p>
+            <h2 id="licence-check-title">Already bought? Check your Pocket Option ID</h2>
+            <p>
+              If you have paid and the bot still looks locked, check here before buying anything a
+              second time. Enter the numeric account ID shown on your Pocket Option profile.
+            </p>
+          </div>
+          <div className="v3p-licence__body">
+            <form className="v3p-licence__form" onSubmit={check}>
+              <input
+                type="text"
+                inputMode="numeric"
+                autoComplete="off"
+                value={uid}
+                onChange={e => setUid(e.target.value)}
+                aria-label="Pocket Option ID"
+                placeholder="e.g. 5131350"
+              />
+              <button className="v3-btn" type="submit" disabled={result.status === 'loading'}>
+                {result.status === 'loading' ? 'Checking…' : 'Check'}
+              </button>
+            </form>
 
-        {result.status === 'invalid' && (
-          <p>Enter the numeric Pocket Option account ID — digits only, no email address.</p>
-        )}
-        {result.status === 'unreachable' && (
-          <p>
-            We could not reach our server just now, so this is not an answer either way. Please
-            try again in a moment, or email us and we will check it by hand.
-          </p>
-        )}
-        {paid && (
-          <p>
-            <strong>That account already has {label}.</strong> You do not need to buy anything.
-            Open Chrome&apos;s extensions page and press Update so you are on the current version,
-            then open Pocket Option signed in to this account — the panel unlocks on its own.
-            Automatic unlocking arrived in August, so an older copy of the extension cannot see it.
-            If it still looks locked, email us and say what the panel status line reads.
-          </p>
-        )}
-        {result.status === 'done' && !paid && (
-          <p>
-            We have no paid licence linked to that ID. If you have paid for Avalisa, email{' '}
-            <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a> with that ID and we
-            will sort it out — do not buy a second time. Otherwise the free demo needs no payment,
-            and the plans are on the <Link to="/pricing">pricing page</Link>. Free Pro is only for a
-            NEW Pocket Option account registered through our link, then linked in your dashboard.
-          </p>
-        )}
-        <p>
-          This only reports whether a licence is attached to that ID. It shows no personal details,
-          and it does not sign you in to anything.
-        </p>
+            <div className="v3p-licence__result" aria-live="polite">
+              {result.status === 'invalid' && (
+                <p className="is-warn">Enter the numeric Pocket Option account ID — digits only, no email address.</p>
+              )}
+              {result.status === 'unreachable' && (
+                <p className="is-warn">
+                  We could not reach our server just now, so this is not an answer either way. Please
+                  try again in a moment, or email us and we will check it by hand.
+                </p>
+              )}
+              {paid && (
+                <p className="is-ok">
+                  <strong>That account already has {label}.</strong> You do not need to buy anything.
+                  Open Chrome&apos;s extensions page and press Update so you are on the current version,
+                  then open Pocket Option signed in to this account — the panel unlocks on its own.
+                  Automatic unlocking arrived in August, so an older copy of the extension cannot see it.
+                  If it still looks locked, email us and say what the panel status line reads.
+                </p>
+              )}
+              {result.status === 'done' && !paid && (
+                <p className="is-gold">
+                  We have no paid licence linked to that ID. If you have paid for Avalisa, email{' '}
+                  <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a> with that ID and we
+                  will sort it out — do not buy a second time. Otherwise the free demo needs no payment,
+                  and the plans are on the <Link to="/pricing">pricing page</Link>. Free Pro is only for a
+                  NEW Pocket Option account registered through our link, then linked in your dashboard.
+                </p>
+              )}
+            </div>
+            <p className="v3p-licence__fine">
+              This only reports whether a licence is attached to that ID. It shows no personal details,
+              and it does not sign you in to anything.
+            </p>
+          </div>
+        </div>
       </div>
-    </article>
+    </section>
   );
 }
 
@@ -174,7 +187,7 @@ export default function Guide() {
   const [setupMode, setSetupMode] = useState('desktop');
   const sections = [
     {
-      title: '1. Install and sign in',
+      title: 'Install and sign in',
       content: [
         {
           subtitle: 'Add the extension',
@@ -191,7 +204,7 @@ export default function Guide() {
       ],
     },
     {
-      title: '2. Your first run — use the demo balance',
+      title: 'Your first run — use the demo balance',
       content: [
         {
           subtitle: 'Switch Pocket Option to its demo balance first',
@@ -208,7 +221,7 @@ export default function Guide() {
       ],
     },
     {
-      title: '3. Every setting, explained',
+      title: 'Every setting, explained',
       content: [
         {
           subtitle: 'Strategy — Martingale or Avalisa Bot',
@@ -241,7 +254,7 @@ export default function Guide() {
       ],
     },
     {
-      title: '4. Avalisa Bot mode, and why it says "Loading"',
+      title: 'Avalisa Bot mode, and why it says "Loading"',
       content: [
         {
           subtitle: 'Intensity is an agreement threshold',
@@ -258,7 +271,7 @@ export default function Guide() {
       ],
     },
     {
-      title: '5. What the status messages mean',
+      title: 'What the status messages mean',
       content: [
         {
           subtitle: '"Avalisa stopped safely — Pocket Option changed or page error"',
@@ -275,7 +288,7 @@ export default function Guide() {
       ],
     },
     {
-      title: '6. Free demo versus paid plans',
+      title: 'Free demo versus paid plans',
       content: [
         {
           subtitle: 'Free demo — 10 trades, no payment and no card',
@@ -292,7 +305,7 @@ export default function Guide() {
       ],
     },
     {
-      title: '7. Common questions',
+      title: 'Common questions',
       content: [
         {
           subtitle: 'Will this make me money?',
@@ -308,7 +321,7 @@ export default function Guide() {
         },
         {
           subtitle: 'Does it work on the Pocket Option mobile app?',
-          text: 'No. It is a Chrome extension and runs on the Pocket Option website in a desktop Chrome browser.',
+          text: 'Not inside the app. On a computer Avalisa is a Chrome extension; on an iPhone or Android phone it runs on the Pocket Option website in your browser, through the free bookmark from the phone setup page at /webapp.',
         },
         {
           subtitle: 'Is my licence tied to one computer?',
@@ -323,72 +336,113 @@ export default function Guide() {
     },
   ];
 
+  const exposureRows = [[1, 2, '3×'], [2, 3, '7×'], [3, 4, '15×'], [4, 5, '31×'], [5, 6, '63×'], [6, 7, '127×']];
+
   return (
-    <main className="lux-privacy-page">
-      <section className="lux-privacy-hero lux-shell">
-        <div>
-          <p className="lux-kicker">Setup Guide</p>
-          <h1>How to set up Avalisa PO Bot</h1>
-          <p className="lux-privacy-updated">Written for the current version</p>
-          <p>
-            A complete walkthrough: installing, your first run on a demo balance, what every
-            setting actually does, and what to do when something looks wrong. Start on the free
-            demo — it needs no payment and no card.
-          </p>
-          <div className="guide-setup-switch" aria-label="Choose setup instructions">
-            <button type="button" aria-pressed={setupMode === 'phone'} className={setupMode === 'phone' ? 'is-active' : ''} onClick={() => setSetupMode('phone')}>Phone / Tablet · 2 min</button>
-            <button type="button" aria-pressed={setupMode === 'desktop'} className={setupMode === 'desktop' ? 'is-active' : ''} onClick={() => setSetupMode('desktop')}>Desktop Chrome · 3 min</button>
-          </div>
-          <div className="guide-setup-summary" aria-live="polite">
-            {setupMode === 'phone' ? <><strong>Phone or tablet</strong><p>Open <Link to="/webapp">/webapp</Link> in Safari on iPhone or Chrome on Android, save the free Avalisa bookmark, then open Pocket Option on its Demo balance and run the bookmark there. No app to install.</p><Link className="lux-button lux-button--gold" to="/webapp">Open phone setup →</Link></> : <><strong>Desktop Chrome</strong><p>Install the Chrome extension, sign in to your Avalisa account in the panel, open Pocket Option, switch to its Demo balance and set a Martingale step cap before you press Start.</p><a className="lux-button lux-button--gold" href={STORE_URL} target="_blank" rel="noreferrer">Install the extension →</a></>}
-          </div>
-          <div className="guide-step-exposure">
-            <div><p className="lux-kicker">Before you trade</p><h2>Set a Martingale step cap</h2><p>Each extra recovery step grows the total stake in a losing cycle. At 2×, the panel’s step setting allows one extra trade beyond the setting number.</p></div>
-            <div className="guide-exposure-table"><table><thead><tr><th>Panel Steps</th><th>Trades in cycle</th><th>Total stake</th></tr></thead><tbody>{[[1,2,'3×'],[2,3,'7×'],[3,4,'15×'],[4,5,'31×'],[5,6,'63×'],[6,7,'127×']].map(([step,trades,multiple])=><tr key={step}><th>{step}</th><td>{trades}</td><td>{multiple}</td></tr>)}</tbody></table></div>
-          </div>
-          <p>
-            <a className="lux-button lux-button--gold" href={STORE_URL} target="_blank" rel="noreferrer">
-              Get the extension
-            </a>{' '}
-            <Link className="lux-button lux-button--ghost" to="/pricing">See pricing</Link>
-          </p>
-          <p className="guide-quick-links">New here? <a href="/guide/how-to-install-avalisa-po-bot.html">Read the install walkthrough</a>. On a phone? <Link to="/webapp">Open phone setup</Link>. Want to check a plan? <Link to="/pricing">Compare plans</Link>.</p>
-          <details className="guide-static-index"><summary>Browse all {STATIC_GUIDES.length} guides</summary><ul>{STATIC_GUIDES.map(page => <li key={page.href}><a href={page.href}>{page.title}</a></li>)}</ul></details>
-        </div>
-        <aside>
-          <BookOpen size={34} />
-          <strong>Try it on demo money first.</strong>
-          <span>
-            Pocket Option&apos;s demo balance costs nothing and behaves the same. Watch a full
-            cycle there before any real money is involved.
-          </span>
-        </aside>
-      </section>
+    <main className="v3 v3p v3p-guide">
+      <PageHead
+        id="guide-title"
+        eyebrow="Setup guide · Phone · Desktop Chrome"
+        title={<>How to set up <em>Avalisa</em> PO Bot</>}
+        aside={(
+          <aside className="v3-glass v3p-callout">
+            <BookOpen size={26} aria-hidden="true" />
+            <strong>Try it on demo money first.</strong>
+            <span>
+              Pocket Option&apos;s demo balance costs nothing and behaves the same. Watch a full
+              cycle there before any real money is involved.
+            </span>
+          </aside>
+        )}
+      >
+        <p className="v3-hud v3p-updated">Written for the current version</p>
+        <p className="v3p-sub">
+          A complete walkthrough: installing, your first run on a demo balance, what every
+          setting actually does, and what to do when something looks wrong. Start on the free
+          demo — it needs no payment and no card.
+        </p>
+      </PageHead>
 
-      <section className="lux-privacy-content lux-shell">
-        <LicenceCheck />
-        {sections.map(section => (
-          <article key={section.title} className="lux-privacy-card">
-            <h2>{section.title}</h2>
-            <div className="lux-privacy-card__body">
-              {section.content.map((item, i) => (
-                <div key={i}>
-                  {item.subtitle && <h3>{item.subtitle}</h3>}
-                  <p>{item.text}</p>
-                </div>
-              ))}
-              {section.contact && (
-                <a href="mailto:avalisapobot@gmail.com" className="lux-privacy-email">
-                  <Mail size={15} />
-                  avalisapobot@gmail.com
-                </a>
-              )}
+      <section className="v3p-sec v3p-quick" aria-labelledby="quick-start-title">
+        <div className="v3-wrap">
+          <PageLabel index="01" total="04">Quick start</PageLabel>
+          <h2 className="v3p-visually-hidden" id="quick-start-title">Quick start</h2>
+          <div className="v3p-quick__grid">
+            <div className="v3p-quick__start">
+              <div className="v3p-switch" role="group" aria-label="Choose setup instructions">
+                <button type="button" aria-pressed={setupMode === 'phone'} className={setupMode === 'phone' ? 'is-active' : ''} onClick={() => setSetupMode('phone')}>Phone / Tablet · 2 min</button>
+                <button type="button" aria-pressed={setupMode === 'desktop'} className={setupMode === 'desktop' ? 'is-active' : ''} onClick={() => setSetupMode('desktop')}>Desktop Chrome · 3 min</button>
+              </div>
+              <div className="v3-glass v3p-quick__summary" aria-live="polite">
+                {setupMode === 'phone' ? <><span className="v3-hud v3-gold">Phone or tablet</span><p>Open <Link to="/webapp">/webapp</Link> in Safari on iPhone or Chrome on Android, save the free Avalisa bookmark, then open Pocket Option on its Demo balance and run the bookmark there. No app to install.</p><Link className="v3-btn" to="/webapp">Open phone setup<span className="v3-btn__icon" aria-hidden="true"><ArrowRight size={17} /></span></Link></> : <><span className="v3-hud v3-gold">Desktop Chrome</span><p>Install the Chrome extension, sign in to your Avalisa account in the panel, open Pocket Option, switch to its Demo balance and set a Martingale step cap before you press Start.</p><a className="v3-btn" href={STORE_URL} target="_blank" rel="noreferrer">Install the extension<span className="v3-btn__icon" aria-hidden="true"><ArrowUpRight size={17} /></span></a></>}
+              </div>
+              <div className="v3p-quick__links">
+                <a className="v3-textlink" href={STORE_URL} target="_blank" rel="noreferrer">Get the extension <ArrowUpRight size={15} aria-hidden="true" /></a>
+                <Link className="v3-textlink" to="/pricing">See pricing <ArrowRight size={15} aria-hidden="true" /></Link>
+              </div>
+              <p className="v3p-quick__more">New here? <a href="/guide/how-to-install-avalisa-po-bot.html">Read the install walkthrough</a>. On a phone? <Link to="/webapp">Open phone setup</Link>. Want to check a plan? <Link to="/pricing">Compare plans</Link>.</p>
             </div>
-          </article>
-        ))}
-
-        <aside className="lux-privacy-risk">Trading involves risk. Avalisa does not guarantee profits or predict the market. Start on Demo and set a Martingale step cap.</aside>
+            <div className="v3p-quick__cap">
+              <p className="v3-hud v3-gold">Before you trade</p>
+              <h2 className="v3-h3">Set a Martingale <em>step cap</em></h2>
+              <p className="v3p-quick__capcopy">Each extra recovery step grows the total stake in a losing cycle. At 2×, the panel’s step setting allows one extra trade beyond the setting number.</p>
+              <div className="v3p-table-wrap">
+                <table className="v3p-table v3p-table--steps"><thead><tr><th scope="col">Panel Steps</th><th scope="col">Trades in cycle</th><th scope="col">Total stake</th></tr></thead><tbody>{exposureRows.map(([step, trades, multiple]) => <tr key={step}><th scope="row">{step}</th><td>{trades}</td><td className="is-gold">{multiple}</td></tr>)}</tbody></table>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
+
+      <LicenceCheck />
+
+      <section className="v3p-sec v3p-steps" aria-labelledby="guide-steps-title">
+        <div className="v3-wrap">
+          <PageLabel index="02" total="04">The full walkthrough</PageLabel>
+          <h2 className="v3-h2" id="guide-steps-title">From install to <em>every</em> setting.</h2>
+          <div className="v3p-gsecs">
+            {sections.map((section, index) => (
+              <article key={section.title} className="v3p-gsec">
+                <span className="v3p-gsec__num" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                <div className="v3p-gsec__body">
+                  <span className="v3-hud">{`Part ${String(index + 1).padStart(2, '0')} / ${String(sections.length).padStart(2, '0')}`}</span>
+                  <h2>{section.title}</h2>
+                  <div className="v3p-gsec__items">
+                    {section.content.map((item, i) => (
+                      <div key={i}>
+                        {item.subtitle && <h3>{item.subtitle}</h3>}
+                        <p>{item.text}</p>
+                      </div>
+                    ))}
+                  </div>
+                  {section.contact && (
+                    <a href="mailto:avalisapobot@gmail.com" className="v3-textlink v3p-gsec__mail">
+                      <Mail size={15} aria-hidden="true" />
+                      avalisapobot@gmail.com
+                    </a>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="v3p-sec v3p-library" aria-labelledby="guide-library-title">
+        <div className="v3-wrap">
+          <PageLabel index="03" total="04">Guide library</PageLabel>
+          <h2 className="v3-h3" id="guide-library-title">Every question, <em>answered</em> in depth.</h2>
+          <details className="v3p-library__index">
+            <summary>Browse all {STATIC_GUIDES.length} guides</summary>
+            <ol>{STATIC_GUIDES.map((page, index) => <li key={page.href}><span className="v3-hud" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><a href={page.href}>{page.title}</a></li>)}</ol>
+          </details>
+        </div>
+      </section>
+
+      <div className="v3-wrap v3p-riskline">
+        <PageLabel index="04" total="04">Risk</PageLabel>
+        <p className="v3p-riskline__copy">Trading involves risk. Avalisa does not guarantee profits or predict the market. Start on Demo and set a Martingale step cap.</p>
+      </div>
     </main>
   );
 }
