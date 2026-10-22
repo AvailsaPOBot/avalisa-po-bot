@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './hooks/useAuth';
 import Navbar from './components/Navbar';
@@ -83,6 +83,7 @@ function AppShell() {
         <Route path="*" element={<NotFound />} />
       </Routes>
       </Suspense>
+      <footer className="home-footer site-shared-footer"><span>© Avalisa PO Bot</span><Link to="/pricing">Pricing</Link><Link to="/guide">Setup guide</Link><Link to="/privacy">Privacy</Link></footer>
       {isLanding && <FloatingChat deferUntilScroll />}
     </>
   );

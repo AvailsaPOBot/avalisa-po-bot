@@ -198,7 +198,6 @@ export default function Landing() {
 
       <section className="home-final content-section"><div><span className="home-eyebrow">START ON DEMO</span><h2>Try the controls at your own pace.</h2><p>Start with 10 free Martingale trades on a practice balance.</p><Link className="home-button" to={user?'/dashboard':'/register'}>Start free Demo <ArrowRight/></Link></div><img src="/images/landing/generated/avalisa-girl-cutout.png" alt="Avalisa mascot" width="1024" height="1536" loading="lazy"/><span className="risk-note">Trading involves risk. Start on a demo account.</span></section>
     </main>
-    <footer className="home-footer"><span>© Avalisa PO Bot</span><Link to="/pricing">Pricing</Link><Link to="/guide">Setup guide</Link><Link to="/privacy">Privacy</Link></footer>
     {showSticky&&<div className="home-sticky"><span>10 Free Demo Trades · No Card</span><Link to={user?'/dashboard':'/register'}>Start Free Demo <ArrowRight size={16}/></Link></div>}
   </div>;
 }

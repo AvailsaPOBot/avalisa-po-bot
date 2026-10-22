@@ -90,6 +90,7 @@ export default function Pricing() {
   const [paypalEnabled, setPaypalEnabled] = useState(false);
   const [paypalBusyPlan, setPaypalBusyPlan] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const [proBilling, setProBilling] = useState('one-time');
   const captureStarted = useRef(false);
   const pricingViewSent = useRef(false);
 
@@ -179,12 +180,11 @@ export default function Pricing() {
     {
       id: 'demo',
       name: 'Demo',
-      price: '10',
-      period: 'trades',
-      description: 'Existing users can test the workflow before upgrading.',
-      cta: 'Open Pocket Option',
-      href: AFFILIATE_LINK,
-      external: true,
+      price: '$0',
+      period: 'free',
+      description: 'Try the workflow before choosing a paid plan.',
+      cta: 'Create free account',
+      href: '/register',
       features: ['10 Martingale trades', 'Webapp Bot access', 'Dashboard access', 'All supported timeframes', 'Basic trade history'],
     },
     {
@@ -197,24 +197,21 @@ export default function Pricing() {
       href: appendCheckoutEmail(WHOP_BASIC_CHECKOUT_URL, email),
       paypalPlan: 'basic',
       external: true,
-      featured: true,
-      features: ['Unlimited Martingale', 'Cloud settings sync', 'Trade history'],
+      featured: false,
+      features: ['Unlimited Martingale', 'Step cap and payout filter', 'Cloud settings sync', 'Desktop + phone /webapp', 'No Avalisa Bot mode', 'No credit toward Pro later'],
     },
     {
       id: 'pro',
       name: 'Pro',
       price: '$119',
       period: 'one-time',
-      // Whop sells Pro at BOTH $119 once and $29/month (added 2026-08-27). The buyer
-      // picks at checkout ("Choose your plan"). The site showed only $119, so nobody
-      // learned the cheaper entry point existed — a silent conversion loss.
-      altBilling: 'or $29 / month',
-      description: 'Unlock Martingale and Avalisa Bot with no trade limit.',
-      cta: 'Buy Pro — $119',
+      description: 'Both trading modes with no trade limit.',
+      cta: proBilling === 'one-time' ? 'Buy Pro — $119 one-time' : 'Subscribe to Pro — $29/month',
       href: appendCheckoutEmail(WHOP_PRO_CHECKOUT_URL, email),
       paypalPlan: 'lifetime',
       external: true,
-      features: ['Unlimited trades', 'Martingale mode', 'Avalisa Bot mode', 'Free via our Pocket Option link (once confirmed)'],
+      featured: true,
+      features: ['Unlimited Martingale', 'Avalisa Bot: Low 2/4, Mid 3/4, High 4/4 rules', 'Step cap and payout filter', 'Desktop + phone /webapp'],
     },
   ];
 
@@ -226,7 +223,13 @@ export default function Pricing() {
         <div>
           <p className="lux-kicker">Pricing</p>
           <h1>Simple, transparent pricing.</h1>
+          <p>Every Avalisa account starts with 10 free Demo trades. No card required.</p>
         </div>
+      </section>
+
+      <section className="lux-shell pricing-demo-banner">
+        <span><strong>New here?</strong> Start with 10 Free Demo Trades. No card required.</span>
+        <Link to="/register">Start free Demo <span aria-hidden="true">→</span></Link>
       </section>
 
       <section className="lux-shell lux-pricing-grid lux-pricing-grid--page">
@@ -241,16 +244,22 @@ export default function Pricing() {
               key={plan.id}
             >
               {plan.featured && <b>MOST POPULAR</b>}
+              <small className="pricing-plan-tag">{plan.id === 'demo' ? 'START HERE' : plan.id === 'basic' ? 'MARTINGALE ONLY' : 'FOR ANY POCKET OPTION ACCOUNT'}</small>
               <span>{plan.name}</span>
               <h3>{plan.price}<small>{plan.period}</small></h3>
-              {plan.altBilling && <p className="lux-price__alt">{plan.altBilling}</p>}
+              {plan.id === 'pro' && <div className="pricing-billing" role="group" aria-label="Pro billing option">
+                <button type="button" aria-pressed={proBilling === 'one-time'} className={proBilling === 'one-time' ? 'is-selected' : ''} onClick={() => setProBilling('one-time')}>$119 One-Time</button>
+                <button type="button" aria-pressed={proBilling === 'monthly'} className={proBilling === 'monthly' ? 'is-selected' : ''} onClick={() => setProBilling('monthly')}>$29/month · recurring</button>
+              </div>}
+              {plan.id === 'pro' && <p className="lux-price__alt">$119 one-time or $29 / month recurring subscription</p>}
               <p>{plan.description}</p>
               <ul>{plan.features.map((item) => <li key={item}><Check size={14} /> {item}</li>)}</ul>
+              {(plan.id === 'basic' || plan.id === 'pro') && <p className="pricing-email-tip">Use the same email on Whop as your Avalisa account so the licence can match automatically.</p>}
               {current ? (
                 <button type="button" disabled>Current Plan</button>
               ) : plan.external ? (
                 plan.paypalPlan ? (
-                  <button type="button" onClick={() => setSelectedPlan(plan.id)}>Choose payment method</button>
+                  <button type="button" aria-label={`${plan.cta} · Choose payment method`} onClick={() => setSelectedPlan(plan.id)}>{plan.cta}</button>
                 ) : (
                   plan.href ? (
                     <a href={plan.href} target="_blank" rel="noreferrer">{plan.cta}</a>
@@ -258,20 +267,42 @@ export default function Pricing() {
                     <button type="button" disabled>Checkout temporarily unavailable</button>
                   )
                 )
+              ) : plan.id === 'basic' || plan.id === 'pro' ? (
+                <button type="button" onClick={() => setSelectedPlan(plan.id)}>{plan.cta}</button>
               ) : (
                 <Link to={plan.href}>{plan.cta}</Link>
               )}
             </article>
           );
         })}
-        <aside className="lux-price-guide lux-price-guide--page">
-          <img src={AVALISA_CHARACTER_IMAGE} alt="Avalisa, the Avalisa PO Bot brand ambassador" />
-          <div>
-            <strong>Want Pro through Pocket Option?</strong>
-            <p>Register through our Pocket Option link, then link that Pocket Option ID in your Avalisa dashboard settings to claim Pro.</p>
-            <a href={AFFILIATE_LINK} target="_blank" rel="noreferrer">Open Pocket Option</a>
-          </div>
-        </aside>
+      </section>
+
+      <section className="lux-shell pricing-partner-card" aria-labelledby="partner-pro-title">
+        <div>
+          <p className="lux-kicker">For new Pocket Option accounts</p>
+          <h2 id="partner-pro-title">Get Pro at no charge through our partner link</h2>
+          <ol>
+            <li>Register a <strong>new</strong> Pocket Option account through our link.</li>
+            <li>Link its numeric Pocket Option ID in Avalisa Dashboard → Settings.</li>
+            <li>If the partner system confirms the referral, Pro unlocks instantly; otherwise it is queued for admin verification.</li>
+          </ol>
+          <p>Pro granted this way does not expire.</p>
+          <a className="pricing-partner-link" href={AFFILIATE_LINK} target="_blank" rel="noreferrer">Open Pocket Option to register <span aria-hidden="true">→</span></a>
+          <small>We may earn a commission when you register through this link.</small>
+        </div>
+        <img src={AVALISA_CHARACTER_IMAGE} alt="Avalisa brand character" loading="lazy" />
+      </section>
+
+      <section className="lux-shell pricing-comparison" aria-labelledby="plan-comparison-title">
+        <p className="lux-kicker">Compare plans</p><h2 id="plan-comparison-title">What each plan includes</h2>
+        <div className="pricing-table-wrap"><table><thead><tr><th>Feature</th><th>Demo plan<br/><small>$0</small></th><th>Basic plan<br/><small>$69 one-time</small></th><th>Pro plan<br/><small>$119 once or $29/month recurring</small></th><th>Partner Pro<br/><small>$0 with new account</small></th></tr></thead><tbody>
+          <tr><th>Trade limit</th><td>10 trades</td><td>Unlimited</td><td>Unlimited</td><td>Unlimited</td></tr>
+          <tr><th>Martingale step cap</th><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+          <tr><th>Minimum payout filter</th><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+          <tr><th>Avalisa Bot 4-rule mode</th><td>—</td><td>—</td><td>✓</td><td>✓</td></tr>
+          <tr><th>Desktop Chrome + phone /webapp</th><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+          <tr><th>Licence expiry</th><td>Demo allowance</td><td>Never</td><td>Never once / active while subscribed</td><td>Never</td></tr>
+        </tbody></table></div>
       </section>
 
       <section className="lux-price-faq lux-shell" aria-labelledby="pricing-faq-title">
@@ -285,7 +316,7 @@ export default function Pricing() {
       </section>
 
       <p className="lux-risk-note lux-shell">
-        Trading involves risk. Avalisa does not guarantee profits. Martingale raises the stake after each loss, so a losing streak can empty a balance. Use demo mode first and only trade money you can afford to lose.
+        Trading involves risk; Martingale raises the stake after losses. Start on Demo.
       </p>
 
       {selectedPaymentPlan && (
@@ -295,11 +326,7 @@ export default function Pricing() {
             <button type="button" className="lux-payment-modal__close" onClick={() => setSelectedPlan(null)}>Close</button>
             <p className="lux-kicker">Payment Method</p>
             <h2 id="payment-choice-title">{selectedPaymentPlan.name} {selectedPaymentPlan.price}</h2>
-            {selectedPaymentPlan.altBilling && (
-              // Say it here too: the buyer chooses one-time vs monthly on Whop's page,
-              // so the modal must not imply $119 is the only option.
-              <p className="lux-payment-modal__alt">{selectedPaymentPlan.altBilling} — choose at checkout</p>
-            )}
+            {selectedPaymentPlan.id === 'pro' && <p className="lux-payment-modal__alt">{proBilling === 'monthly' ? '$29/month is a recurring subscription.' : '$119 is a one-time payment.'} Both options unlock the same Pro features.</p>}
             <p className="lux-payment-modal__copy">Choose the checkout provider you prefer. Your Avalisa license activates after payment confirmation.</p>
             <div className="lux-payment-choice-grid">
               {selectedPaymentPlan.href ? (

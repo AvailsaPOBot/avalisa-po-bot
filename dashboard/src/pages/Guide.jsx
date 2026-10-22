@@ -20,6 +20,63 @@ const STORE_URL =
 // so this box cannot leak anyone's personal data and cannot sign anybody in.
 const PLAN_LABELS = { lifetime: 'Pro', basic: 'Basic' };
 
+const STATIC_GUIDES = [
+  { href: '/guide/bankroll-rules-automation.html', title: 'Bankroll Rules for Automated Binary-Options Trading' },
+  { href: '/guide/basic-vs-pro.html', title: 'Basic vs Pro: Which Avalisa PO Bot Plan Fits How You Trade' },
+  { href: '/guide/best-pocket-option-bot-settings.html', title: 'Best Pocket Option Bot Settings: What We Measured and Where to Start' },
+  { href: '/guide/best-timeframe-for-pocket-option-automation.html', title: 'Best Timeframe for Pocket Option Automation: 1-Minute vs 5-Minute' },
+  { href: '/guide/binary-options-vs-forex-automation.html', title: 'Automating Binary Options vs Forex: Why the Maths Is Not the Same' },
+  { href: '/guide/bot-not-placing-trades.html', title: 'Avalisa PO Bot Not Placing Trades? A Six-Check Troubleshooting Guide' },
+  { href: '/guide/browser-extension-vs-telegram-bots.html', title: 'Chrome Extension Bots vs. Telegram Signal Bots: How Each One Actually Works' },
+  { href: '/guide/buying-a-pocket-option-bot-from-a-seller.html', title: 'Buying a Pocket Option Bot From a Freelancer or Seller: Questions to Ask First' },
+  { href: '/guide/can-chatgpt-write-a-binary-options-bot.html', title: 'Can ChatGPT Write a Binary Options Bot? What It Gets Wrong' },
+  { href: '/guide/can-you-get-banned-for-using-a-bot.html', title: 'Can Your Pocket Option Account Be Banned for Using a Bot?' },
+  { href: '/guide/can-you-withdraw-funds-after-bot-trading.html', title: 'Pocket Option Withdrawals: Does Using a Trading Bot Affect Them?' },
+  { href: '/guide/check-a-chrome-web-store-trading-bot-listing.html', title: 'How to Check a Pocket Option Bot Listing on the Chrome Web Store' },
+  { href: '/guide/does-pocket-option-allow-bots-account-safety.html', title: 'Does Pocket Option Allow Trading Bots? Platform Rules and Account Safety, Explained' },
+  { href: '/guide/execution-delay-in-a-browser-trading-bot.html', title: 'Execution Delay in a Browser Trading Bot: What It Is and When It Matters' },
+  { href: '/guide/free-pro-with-new-account.html', title: 'Free Pro Access When You Open a New Pocket Option Account Through Our Link' },
+  { href: '/guide/github-python-bots-vs-chrome-extension.html', title: 'Pocket Option Bots on GitHub and Python Scripts vs a Chrome Extension' },
+  { href: '/guide/honest-win-rate-break-even.html', title: 'Do Pocket Option Bots Make Money? Win Rate, Payout and the 52.1% Break-Even' },
+  { href: '/guide/how-browser-extensions-automate-trading.html', title: 'How a Chrome Extension Automates Pocket Option Trading' },
+  { href: '/guide/how-to-choose-a-pocket-option-bot.html', title: 'How to Choose a Pocket Option Bot: A Checklist That Filters Out the Junk' },
+  { href: '/guide/how-to-install-avalisa-po-bot.html', title: 'How to Install Avalisa PO Bot on Chrome and Connect It to Pocket Option (Step by Step)' },
+  { href: '/guide/how-to-read-binary-options-bot-reviews.html', title: 'How to Read Binary Options Bot Reviews and Reddit Threads' },
+  { href: '/guide/how-to-stop-or-remove-the-bot-safely.html', title: 'How to Stop, Disable or Uninstall Avalisa PO Bot Safely' },
+  { href: '/guide/is-a-pocket-option-bot-safe-or-scam.html', title: 'Is a Pocket Option Bot Safe or a Scam? Eight Things to Check' },
+  { href: '/guide/is-there-a-free-pocket-option-bot.html', title: 'Is There a Free Pocket Option Bot? What Is Free and What Costs Money' },
+  { href: '/guide/is-there-a-pocket-option-bot-app-or-apk.html', title: 'Is There a Pocket Option Bot App or APK? How to Run Avalisa on a Phone' },
+  { href: '/guide/is-there-an-official-pocket-option-bot.html', title: 'Is There an Official Pocket Option Bot?' },
+  { href: '/guide/making-your-own-pocket-option-bot.html', title: 'Making Your Own Pocket Option Bot: What It Actually Takes' },
+  { href: '/guide/martingale-bots-mt5-crypto-pocket-option.html', title: "Martingale Bots on MT5, Crypto and Pocket Option: What Changes and What Doesn't" },
+  { href: '/guide/martingale-calculator.html', title: 'Pocket Option Martingale Calculator: Stake and Worst-Case Cost per Step' },
+  { href: '/guide/martingale-risk-explained.html', title: 'Martingale Explained: Why It Can Wipe Out a Balance, and How to Set Limits' },
+  { href: '/guide/named-pocket-option-bots-lyra-neuro-gemini.html', title: 'Lyra, Neuro, Gemini: What Named Pocket Option Bots Really Are' },
+  { href: '/guide/payout-percentage-filter-importance.html', title: 'Why a Payout-Percentage Filter Matters for Automated Trading Math' },
+  { href: '/guide/pocket-option-bot-demo-setups.html', title: 'Three Pocket Option Bot Setups to Test on a Demo Account' },
+  { href: '/guide/pocket-option-bot-on-github-checklist.html', title: 'Found a Pocket Option Bot on GitHub? A Checklist Before You Run It' },
+  { href: '/guide/pocket-option-bot-otc-trading-guide.html', title: 'Automating OTC Markets on Pocket Option: Weekend Trading Guide' },
+  { href: '/guide/pocket-option-bot-pc-exe-vs-extension.html', title: 'Pocket Option Bots for PC: .exe Programs vs a Browser Extension' },
+  { href: '/guide/pocket-option-candle-streak-pin-bar.html', title: 'Candle Streak and Pin-Bar Strategies: What They Assume' },
+  { href: '/guide/pocket-option-copy-trading-vs-bot.html', title: 'Pocket Option Copy Trading vs a Rules-Based Bot' },
+  { href: '/guide/pocket-option-demo-to-real-account.html', title: 'Pocket Option Demo to Real Account: Moving a Bot to Live' },
+  { href: '/guide/pocket-option-insider-bot-offers.html', title: 'Pocket Option "Insider Bot" Offers: Telegram, APK and Free-Download Warning Signs' },
+  { href: '/guide/pocket-option-signal-and-prediction-bots.html', title: 'Pocket Option Signal and Prediction Bots: How a Signal Becomes a Trade' },
+  { href: '/guide/rsi-macd-stochastic-plain-english.html', title: 'RSI, MACD and Stochastic in Plain English (and Which One Avalisa Uses)' },
+  { href: '/guide/settings-guide.html', title: 'Avalisa PO Bot Settings Guide: Timeframe, Starting Amount and Martingale Steps' },
+  { href: '/guide/test-a-trading-bot-on-demo.html', title: 'How to Test a Trading Bot on a Demo Account Before Risking Money' },
+  { href: '/guide/trading-journal-for-bot-sessions.html', title: 'Trading Journal for Bot Sessions: What to Record' },
+  { href: '/guide/trading-without-martingale-flat-staking.html', title: 'Trading Without Martingale: Flat Staking vs Martingale' },
+  { href: '/guide/what-a-live-pocket-option-bot-means.html', title: 'What a "Live" Pocket Option Bot Means: Live Account vs a Running Session' },
+  { href: '/guide/what-ai-in-a-trading-bot-actually-means.html', title: 'How automated trading systems use signal rules' },
+  { href: '/guide/what-automation-cannot-do.html', title: 'What a Trading Bot Can and Cannot Do for You' },
+  { href: '/guide/what-is-a-binary-options-bot.html', title: 'What a Binary Options Bot Is (and What One Can and Cannot Do)' },
+  { href: '/guide/when-to-stop-automated-trading-session.html', title: 'When to Stop: Setting an End Point for an Automated Trading Session' },
+  { href: '/guide/why-a-bot-trades-one-at-a-time.html', title: 'Why a Pocket Option Bot Should Hold One Trade at a Time' },
+  { href: '/guide/why-bots-win-on-demo-and-lose-on-real.html', title: 'Why a Trading Bot Can Win on Demo and Struggle on a Real Account' },
+  { href: '/guide/why-the-trading-tab-must-stay-open.html', title: 'Why the Pocket Option Tab Must Stay Open and Visible While the Bot Runs' },
+];
+
 function LicenceCheck() {
   const [uid, setUid] = useState('');
   const [result, setResult] = useState({ status: 'idle' });
@@ -114,6 +171,7 @@ function LicenceCheck() {
 }
 
 export default function Guide() {
+  const [setupMode, setSetupMode] = useState('desktop');
   const sections = [
     {
       title: '1. Install and sign in',
@@ -241,6 +299,10 @@ export default function Guide() {
           text: 'No. It automates the strategy and the settings you choose. It does not predict the market, and no automated strategy removes risk. A Martingale sequence can lose several trades in a row.',
         },
         {
+          subtitle: 'How does free Pro through Pocket Option work?',
+          text: 'It is only for a new Pocket Option account registered through our link. Then submit that account’s numeric ID in Avalisa Dashboard → Settings. If Pocket Option’s partner system has confirmed the referral, Pro unlocks immediately; otherwise the request is queued for admin verification. This Pro grant does not expire.',
+        },
+        {
           subtitle: 'Can I leave it running unattended?',
           text: 'We do not recommend it. Start on a demo balance and watch it; if you later use a real balance, keep watching and use a step limit rather than Infinite.',
         },
@@ -273,328 +335,25 @@ export default function Guide() {
             setting actually does, and what to do when something looks wrong. Start on the free
             demo — it needs no payment and no card.
           </p>
+          <div className="guide-setup-switch" aria-label="Choose setup instructions">
+            <button type="button" aria-pressed={setupMode === 'phone'} className={setupMode === 'phone' ? 'is-active' : ''} onClick={() => setSetupMode('phone')}>Phone / Tablet · 2 min</button>
+            <button type="button" aria-pressed={setupMode === 'desktop'} className={setupMode === 'desktop' ? 'is-active' : ''} onClick={() => setSetupMode('desktop')}>Desktop Chrome · 3 min</button>
+          </div>
+          <div className="guide-setup-summary" aria-live="polite">
+            {setupMode === 'phone' ? <><strong>Phone or tablet</strong><p>Open <Link to="/webapp">/webapp</Link> in Safari on iPhone or Chrome on Android, save the free Avalisa bookmark, then open Pocket Option on its Demo balance and run the bookmark there. No app to install.</p><Link className="lux-button lux-button--gold" to="/webapp">Open phone setup →</Link></> : <><strong>Desktop Chrome</strong><p>Install the Chrome extension, sign in to your Avalisa account in the panel, open Pocket Option, switch to its Demo balance and set a Martingale step cap before you press Start.</p><a className="lux-button lux-button--gold" href={STORE_URL} target="_blank" rel="noreferrer">Install the extension →</a></>}
+          </div>
+          <div className="guide-step-exposure">
+            <div><p className="lux-kicker">Before you trade</p><h2>Set a Martingale step cap</h2><p>Each extra recovery step grows the total stake in a losing cycle. At 2×, the panel’s step setting allows one extra trade beyond the setting number.</p></div>
+            <div className="guide-exposure-table"><table><thead><tr><th>Panel Steps</th><th>Trades in cycle</th><th>Total stake</th></tr></thead><tbody>{[[1,2,'3×'],[2,3,'7×'],[3,4,'15×'],[4,5,'31×'],[5,6,'63×'],[6,7,'127×']].map(([step,trades,multiple])=><tr key={step}><th>{step}</th><td>{trades}</td><td>{multiple}</td></tr>)}</tbody></table></div>
+          </div>
           <p>
             <a className="lux-button lux-button--gold" href={STORE_URL} target="_blank" rel="noreferrer">
               Get the extension
             </a>{' '}
             <Link className="lux-button lux-button--ghost" to="/pricing">See pricing</Link>
           </p>
-          <p>
-            New here? Read the full{' '}
-            <a href="/guide/how-to-install-avalisa-po-bot.html">step-by-step install walkthrough</a>.
-          </p>
-          <p>
-            Wondering about the rules? Read{' '}
-            <a href="/guide/does-pocket-option-allow-bots-account-safety.html">
-              does Pocket Option allow trading bots, and how to keep your account safe
-            </a>.
-          </p>
-          <p>
-            Good on demo, bad on real? Read{' '}
-            <a href="/guide/why-bots-win-on-demo-and-lose-on-real.html">
-              why a trading bot can win on demo and struggle on a real account
-            </a>.
-          </p>
-          <p>
-            Curious how it works at all? Read{' '}
-            <a href="/guide/how-browser-extensions-automate-trading.html">
-              how a Chrome extension automates Pocket Option trading
-            </a>.
-          </p>
-          <p>
-            Comparing it with signal groups? Read{' '}
-            <a href="/guide/browser-extension-vs-telegram-bots.html">
-              Chrome extension bots vs. Telegram signal bots
-            </a>.
-          </p>
-          <p>
-            Worried it might be a scam? Read{' '}
-            <a href="/guide/is-a-pocket-option-bot-safe-or-scam.html">
-              eight things to check before you install any Pocket Option bot
-            </a>.
-          </p>
-          <p>
-            Worried about your account? Read{' '}
-            <a href="/guide/can-you-get-banned-for-using-a-bot.html">
-              can your Pocket Option account be banned for using a bot
-            </a>.
-          </p>
-          <p>
-            Want to start free? See{' '}
-            <a href="/guide/is-there-a-free-pocket-option-bot.html">
-              what is free and what costs money
-            </a>.
-          </p>
-          <p>
-            On a phone? See{' '}
-            <a href="/guide/is-there-a-pocket-option-bot-app-or-apk.html">
-              is there a Pocket Option bot app or APK
-            </a>.
-          </p>
-          <p>
-            Comparing bots? Read{' '}
-            <a href="/guide/how-to-choose-a-pocket-option-bot.html">
-              how to choose a Pocket Option bot
-            </a>{' '}or{' '}
-            <a href="/guide/github-python-bots-vs-chrome-extension.html">
-              GitHub and Python bots vs a Chrome extension
-            </a>.
-          </p>
-          <p>
-            Curious what the bot reads? See{' '}
-            <a href="/guide/rsi-macd-stochastic-plain-english.html">
-              RSI, MACD and Stochastic in plain English
-            </a>.
-          </p>
-          <p>
-            Need to stop mid-session? See{' '}
-            <a href="/guide/how-to-stop-or-remove-the-bot-safely.html">
-              how to stop or remove the bot safely
-            </a>{' '}and{' '}
-            <a href="/guide/why-the-trading-tab-must-stay-open.html">
-              why the trading tab must stay visible
-            </a>.
-          </p>
-          <p>
-            Wondering what &ldquo;AI&rdquo; means in a trading bot? Read{' '}
-            <a href="/guide/what-ai-in-a-trading-bot-actually-means.html">
-              what AI in a trading bot actually means
-            </a>.
-          </p>
-          <p>
-            Why does the bot wait for each result? Read{' '}
-            <a href="/guide/why-a-bot-trades-one-at-a-time.html">
-              why a bot should hold one trade at a time
-            </a>.
-          </p>
-          <p>
-            What does a losing streak cost at your settings? Use the{' '}
-            <a href="/guide/martingale-calculator.html">
-              Martingale calculator
-            </a>.
-          </p>
-          <p>
-            Why do entries sometimes differ from the signal? Read{' '}
-            <a href="/guide/execution-delay-in-a-browser-trading-bot.html">
-              execution delay in a browser trading bot
-            </a>.
-          </p>
-          <p>
-            Coming from forex? Read{' '}
-            <a href="/guide/binary-options-vs-forex-automation.html">
-              automating binary options vs forex
-            </a>.
-          </p>
-          <p>
-            Choosing values? Read{' '}
-            <a href="/guide/best-pocket-option-bot-settings.html">
-              the honest guide to the best bot settings
-            </a>.
-          </p>
-          <p>
-            Comparing approaches? Read{' '}
-            <a href="/guide/pocket-option-copy-trading-vs-bot.html">
-              copy trading vs a rules-based bot
-            </a>.
-          </p>
-          <p>
-            Seen an &quot;insider bot&quot; offer? Read{' '}
-            <a href="/guide/pocket-option-insider-bot-offers.html">
-              the warning signs before you pay or send anything
-            </a>.
-          </p>
-          <p>
-            Moving off demo? Read{' '}
-            <a href="/guide/pocket-option-demo-to-real-account.html">
-              the checklist before switching to a real account
-            </a>.
-          </p>
-          <p>
-            Want to review your sessions? Read{' '}
-            <a href="/guide/trading-journal-for-bot-sessions.html">
-              how to keep a trading journal for bot sessions
-            </a>.
-          </p>
-          <p>
-            Curious about candle-streak entries? Read{' '}
-            <a href="/guide/pocket-option-candle-streak-pin-bar.html">
-              what candle streak and pin-bar rules assume
-            </a>.
-          </p>
-          <p>
-            Want a written stopping plan? Read{' '}
-            <a href="/guide/when-to-stop-automated-trading-session.html">
-              when to stop an automated session
-            </a>.
-          </p>
-          <p>
-            New to bots? Read{' '}
-            <a href="/guide/what-is-a-binary-options-bot.html">
-              what a binary options bot is
-            </a>.
-          </p>
-          <p>
-            Used Martingale bots on MT5 or crypto? Read{' '}
-            <a href="/guide/martingale-bots-mt5-crypto-pocket-option.html">
-              what changes on Pocket Option
-            </a>.
-          </p>
-          <p>
-            Thinking of asking ChatGPT to write one? Read{' '}
-            <a href="/guide/can-chatgpt-write-a-binary-options-bot.html">
-              what a generated bot gets wrong
-            </a>.
-          </p>
-          <p>
-            Reading bot reviews or Reddit threads? Read{' '}
-            <a href="/guide/how-to-read-binary-options-bot-reviews.html">
-              how to tell a useful review from a plug
-            </a>.
-          </p>
-          <p>
-            Looking for an official Pocket Option bot? Read{' '}
-            <a href="/guide/is-there-an-official-pocket-option-bot.html">
-              how to tell a broker product from a third-party tool
-            </a>.
-          </p>
-          <p>
-            Paying a freelancer or seller for a bot? Read{' '}
-            <a href="/guide/buying-a-pocket-option-bot-from-a-seller.html">
-              the questions to ask first
-            </a>.
-          </p>
-          <p>
-            Comparing a PC .exe bot with an extension? Read{' '}
-            <a href="/guide/pocket-option-bot-pc-exe-vs-extension.html">
-              what each can reach on your computer
-            </a>.
-          </p>
-          <p>
-            Found one bot repo on GitHub? Read{' '}
-            <a href="/guide/pocket-option-bot-on-github-checklist.html">
-              the checklist before you run it
-            </a>.
-          </p>
-          <p>
-            Saw a named bot like Lyra or Neuro in an ad? Read{' '}
-            <a href="/guide/named-pocket-option-bots-lyra-neuro-gemini.html">
-              what a bot name does and does not tell you
-            </a>.
-          </p>
-          <p>
-            Not sure if &ldquo;live&rdquo; means real money? Read{' '}
-            <a href="/guide/what-a-live-pocket-option-bot-means.html">
-              live account vs a running session
-            </a>.
-          </p>
-          <p>
-            Thinking of building your own? Read{' '}
-            <a href="/guide/making-your-own-pocket-option-bot.html">
-              what making your own bot takes
-            </a>.
-          </p>
-          <p>
-            Checking a bot before installing? Read{' '}
-            <a href="/guide/check-a-chrome-web-store-trading-bot-listing.html">
-              how to check a Chrome Web Store listing
-            </a>.
-          </p>
-          <p>
-            Following signals? Read{' '}
-            <a href="/guide/pocket-option-signal-and-prediction-bots.html">
-              how a signal becomes a trade
-            </a>.
-          </p>
-          <p>
-            Prefer not to use Martingale? Read{' '}
-            <a href="/guide/trading-without-martingale-flat-staking.html">
-              flat staking vs Martingale
-            </a>.
-          </p>
-          <p>
-            Not ready to use real money? Read{' '}
-            <a href="/guide/test-a-trading-bot-on-demo.html">
-              how to test a trading bot on a demo account
-            </a>.
-          </p>
-          <p>
-            Using Martingale? Read{' '}
-            <a href="/guide/martingale-risk-explained.html">
-              what a full Martingale losing cycle costs, and how to cap it
-            </a>.
-          </p>
-          <p>
-            Deciding what to put in each field? Read the{' '}
-            <a href="/guide/settings-guide.html">
-              settings guide to timeframe, starting amount and Martingale steps
-            </a>.
-          </p>
-          <p>
-            Wondering if a bot makes money? Read{' '}
-            <a href="/guide/honest-win-rate-break-even.html">
-              win rate, payout and the 52.1% break-even, explained honestly
-            </a>.
-          </p>
-          <p>
-            Bot running but no trades? Read{' '}
-            <a href="/guide/bot-not-placing-trades.html">
-              the six checks to run when the bot is not placing trades
-            </a>.
-          </p>
-          <p>
-            Choosing between plans? Read{' '}
-            <a href="/guide/basic-vs-pro.html">
-              Basic vs Pro, and which one fits how you trade
-            </a>.
-          </p>
-          <p>
-            New to Pocket Option? Read{' '}
-            <a href="/guide/free-pro-with-new-account.html">
-              how free Pro access works when you open a new Pocket Option account through our link
-            </a>.
-          </p>
-          <p>
-            Sizing your stakes? Read the{' '}
-            <a href="/guide/bankroll-rules-automation.html">
-              bankroll rules for automated trading, and what a full losing cycle really costs
-            </a>.
-          </p>
-          <p>
-            Deciding whether to automate at all? Read{' '}
-            <a href="/guide/what-automation-cannot-do.html">
-              what a trading bot can and cannot do for you
-            </a>.
-          </p>
-          <p>
-            Thinking about a weekend session? Read{' '}
-            <a href="/guide/pocket-option-bot-otc-trading-guide.html">
-              what to know about OTC pairs before you automate weekend trading
-            </a>.
-          </p>
-          <p>
-            Not sure what payout floor to use? Read{' '}
-            <a href="/guide/payout-percentage-filter-importance.html">
-              why a payout-percentage filter matters for the math
-            </a>.
-          </p>
-          <p>
-            Wondering about taking money out? Read{' '}
-            <a href="/guide/can-you-withdraw-funds-after-bot-trading.html">
-              whether using a bot changes how you withdraw from Pocket Option
-            </a>.
-          </p>
-          <p>
-            Deciding on a trade expiry? Read{' '}
-            <a href="/guide/best-timeframe-for-pocket-option-automation.html">
-              1-minute vs 5-minute, and why noise hurts trading bots
-            </a>.
-          </p>
-          <p>
-            Want a ready setup to watch first? Read{' '}
-            <a href="/guide/pocket-option-bot-demo-setups.html">
-              three Martingale setups to test on a demo account
-            </a>.
-          </p>
+          <p className="guide-quick-links">New here? <a href="/guide/how-to-install-avalisa-po-bot.html">Read the install walkthrough</a>. On a phone? <Link to="/webapp">Open phone setup</Link>. Want to check a plan? <Link to="/pricing">Compare plans</Link>.</p>
+          <details className="guide-static-index"><summary>Browse all {STATIC_GUIDES.length} guides</summary><ul>{STATIC_GUIDES.map(page => <li key={page.href}><a href={page.href}>{page.title}</a></li>)}</ul></details>
         </div>
         <aside>
           <BookOpen size={34} />
@@ -628,13 +387,7 @@ export default function Guide() {
           </article>
         ))}
 
-        <aside className="lux-privacy-risk">
-          <strong>Risk Disclaimer:</strong> This automates a strategy you choose on a real-money
-          binary options account. It does not predict the market and does not guarantee profits.
-          A Martingale sequence can lose several trades in a row. Binary options are restricted or
-          banned for retail traders in some countries — check the rules where you live. Start on
-          the demo balance, use a small start amount, and set a step limit.
-        </aside>
+        <aside className="lux-privacy-risk">Trading involves risk. Avalisa does not guarantee profits or predict the market. Start on Demo and set a Martingale step cap.</aside>
       </section>
     </main>
   );

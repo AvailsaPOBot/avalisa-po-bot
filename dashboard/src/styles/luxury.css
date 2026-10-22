@@ -4872,3 +4872,103 @@
 .lux-webapp-steps--phone { margin-top: 1.25rem; }
 .lux-webapp-phone-hint { margin: 1rem 0 0; font-size: 0.9rem; }
 @media (max-width: 680px) { .lux-webapp-actions .avalisa-button { width: 100%; } }
+
+/* Shared secondary-page skin: the homepage's obsidian, champagne and jade palette. */
+.site-shared-footer { margin-top: 2rem; }
+.lux-pricing-page,
+.lux-auth-page,
+.lux-privacy-page,
+.lux-webapp-page { --page-bg: #090807; --page-card: #12100e; --page-ink: #f5efe6; --page-copy: #c1b6a7; --page-muted: #998b7b; --page-gold: #c9a46c; background: var(--page-bg); color: var(--page-ink); }
+.lux-pricing-page .lux-price-hero { padding-top: 3rem; padding-bottom: 1.25rem; }
+.lux-price-hero h1,.register-next-panel h1,.pricing-comparison h2,.pricing-partner-card h2,.guide-step-exposure h2 { color: var(--page-ink); font-family: Georgia, 'Times New Roman', serif; text-wrap: balance; letter-spacing: -.025em; }
+.lux-price-hero h1 { font-size: clamp(2.2rem, 5vw, 3.5rem); margin: .5rem 0; }
+.lux-price-hero p:not(.lux-kicker) { color: var(--page-copy); }
+.pricing-demo-banner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: 0 auto 1.25rem; padding: .9rem 1.1rem; border: 1px solid #c9a46c55; border-radius: 14px; background: linear-gradient(100deg,#c9a46c18,#12100e); color: var(--page-copy); }
+.pricing-demo-banner strong { color: var(--page-ink); }
+.pricing-demo-banner a,.pricing-partner-link { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; min-height: 44px; padding: .65rem 1rem; border-radius: 999px; background: var(--page-gold); color: #090807; font-weight: 800; text-decoration: none; white-space: nowrap; }
+.lux-pricing-grid--page { grid-template-columns: repeat(3,minmax(0,1fr)); width: min(100% - 2rem,1240px); gap: 1rem; }
+.lux-pricing-page .lux-price { gap: .72rem; padding: 1.3rem; border: 1px solid #ffffff1c; border-radius: 18px; background: linear-gradient(150deg,#171411,#0f0e0c); }
+.lux-pricing-page .lux-price.is-featured { border-color: #c9a46caa; background: linear-gradient(150deg,#211b14,#0f0e0c); box-shadow: 0 18px 55px #c9a46c15; }
+.lux-pricing-page .lux-price > span { color: var(--page-ink); font-size: 1.2rem; font-weight: 750; }
+.lux-pricing-page .lux-price h3 { margin: 0; color: #fff8ee; font-size: clamp(2rem,3vw,2.65rem); }
+.lux-pricing-page .lux-price h3 small { display: inline-block; margin-left: .4rem; font: 500 .9rem Geist,system-ui,sans-serif; }
+.lux-pricing-page .lux-price > p { color: var(--page-copy); line-height: 1.55; }
+.pricing-plan-tag { color: var(--page-gold)!important; font-size: .65rem!important; font-weight: 750; letter-spacing: .1em; }
+.lux-pricing-page .lux-price ul { display: grid; gap: .32rem; padding: 0; list-style: none; color: var(--page-copy); }
+.lux-pricing-page .lux-price li { display: flex; align-items: flex-start; gap: .4rem; padding: .28rem 0; border: 0; }
+.lux-pricing-page .lux-price li svg { flex: 0 0 auto; margin-top: .15rem; color: #2ec486; }
+.lux-pricing-page .lux-price > a,.lux-pricing-page .lux-price > button { display: flex; justify-content: center; align-items: center; width: 100%; min-height: 46px; margin-top: auto; border: 0; border-radius: 999px; background: var(--page-gold); color: #090807; font-weight: 800; text-decoration: none; cursor: pointer; }
+.lux-pricing-page .lux-price > button:disabled { opacity: .6; }
+.pricing-email-tip { padding: .7rem; border: 1px solid #c9a46c35; border-radius: 10px; color: var(--page-copy)!important; background: #c9a46c0d; font-size: .78rem; }
+.pricing-billing { display: grid; grid-template-columns: 1fr; gap: .35rem; padding: .35rem; border: 1px solid #ffffff20; border-radius: 12px; background: #090807; }
+.pricing-billing button { min-height: 40px; border: 1px solid transparent; border-radius: 9px; background: transparent; color: var(--page-copy); font: inherit; font-size: .82rem; }
+.pricing-billing button.is-selected { border-color: #c9a46c77; background: #c9a46c20; color: #fff4df; }
+.pricing-partner-card { display: grid; grid-template-columns: minmax(0,1fr) 170px; gap: 1rem; align-items: center; margin: 1.4rem auto; padding: clamp(1rem,3vw,1.5rem); border: 1px solid #c9a46c55; border-radius: 18px; background: radial-gradient(ellipse at 90% 20%,#c9a46c1c,transparent 45%),#12100e; }
+.pricing-partner-card h2,.pricing-comparison h2 { margin: .35rem 0 .8rem; font-size: clamp(1.5rem,3vw,2rem); }
+.pricing-partner-card ol { display: grid; gap: .45rem; padding-left: 1.3rem; color: var(--page-copy); line-height: 1.55; }
+.pricing-partner-card p,.pricing-partner-card small { color: var(--page-copy); line-height: 1.55; }
+.pricing-partner-card img { width: 100%; max-height: 240px; object-fit: contain; }
+.pricing-partner-card small { display: block; margin-top: .55rem; font-size: .75rem; }
+.pricing-comparison { margin: 2rem auto; }
+.pricing-table-wrap,.guide-exposure-table { overflow-x: auto; border: 1px solid #ffffff20; border-radius: 14px; background: #12100e; }
+.pricing-comparison table,.guide-exposure-table table { width: 100%; border-collapse: collapse; min-width: 700px; }
+.pricing-comparison th,.pricing-comparison td,.guide-exposure-table th,.guide-exposure-table td { padding: .8rem; border-bottom: 1px solid #ffffff12; text-align: left; color: var(--page-copy); }
+.pricing-comparison thead th { color: #fff1d5; background: #c9a46c12; }
+.pricing-comparison tbody th,.guide-exposure-table th { color: var(--page-ink); }
+.pricing-comparison small { color: var(--page-muted); font-size: .72rem; font-weight: 500; }
+.pricing-partner-card,.pricing-comparison,.lux-price-faq { scroll-margin-top: 6rem; }
+.register-layout { grid-template-columns: minmax(0,.88fr) minmax(28rem,1fr); gap: clamp(1rem,4vw,3rem); min-height: auto; padding-top: 3rem; padding-bottom: 3rem; }
+.register-next-panel { padding: clamp(1rem,3vw,2rem); border: 1px solid #ffffff18; border-radius: 18px; background: radial-gradient(ellipse at 10% 0%,#c9a46c14,transparent 55%),#12100e; }
+.register-next-panel h1 { max-width: 12ch; margin: .4rem 0 1.5rem; font-size: clamp(2rem,4.5vw,3.4rem); line-height: 1.05; }
+.register-next-panel ol { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; }
+.register-next-panel ol li { display: grid; grid-template-columns: 2.4rem 1fr; gap: .7rem; align-items: start; }
+.register-next-panel ol li>span { display: grid; place-items: center; width: 2.2rem; height: 2.2rem; border: 1px solid #c9a46c66; border-radius: 50%; color: var(--page-gold); font-size: .78rem; }
+.register-next-panel strong { color: var(--page-ink); }
+.register-next-panel p { margin: .25rem 0 0; color: var(--page-copy); line-height: 1.55; }
+.register-next-panel a { color: #dfc08e; }
+.register-security,.register-intent-note { display: flex; gap: .7rem; align-items: flex-start; margin-top: 1.3rem; padding: .8rem; border: 1px solid #2ec48640; border-radius: 12px; background: #2ec4860b; color: var(--page-copy); }
+.register-security svg { flex: 0 0 auto; color: #2ec486; }
+.register-security p { margin: 0; }
+.register-security strong { color: #fff1d5; }
+.register-intent-note { display: block; border-color: #c9a46c55; background: #c9a46c0c; }
+.lux-auth-card h2 { margin: 1.1rem 0 0; color: var(--page-ink); font-size: 1.8rem; }
+.register-password-field { grid-column: 1 / -1; display: flex; position: relative; }
+.register-password-field input { width: 100%; padding-right: 3rem; }
+.register-password-field .register-password-toggle { position: absolute; top: 0; right: 0; display: grid; place-items: center; width: 2.8rem; height: 100%; border: 0; color: var(--page-copy); background: transparent; }
+.register-risk-note { grid-column: 1 / -1; margin: 0; padding: 0; text-align: center; }
+.guide-setup-switch { display: flex; flex-wrap: wrap; gap: .45rem; margin: 1.1rem 0 .7rem; padding: .3rem; border: 1px solid #ffffff1c; border-radius: 14px; background: #12100e; }
+.guide-setup-switch button { flex: 1 1 12rem; min-height: 42px; border: 1px solid transparent; border-radius: 10px; background: transparent; color: var(--page-copy); font: inherit; }
+.guide-setup-switch button.is-active { border-color: #c9a46c66; background: #c9a46c1c; color: #fff1d5; }
+.guide-setup-summary { display: grid; justify-items: start; gap: .35rem; padding: 1rem; border: 1px solid #c9a46c40; border-radius: 14px; background: #12100e; }
+.guide-setup-summary strong { color: #fff1d5; }
+.guide-setup-summary p { margin: .15rem 0 .45rem; color: var(--page-copy); line-height: 1.55; }
+.guide-setup-summary a:not(.lux-button) { color: #dfc08e; }
+.guide-step-exposure { display: grid; grid-template-columns: minmax(0,.9fr) minmax(18rem,1.1fr); gap: 1rem; align-items: center; margin-top: 1rem; padding: 1rem; border: 1px solid #c9a46c40; border-radius: 14px; background: #12100e; }
+.guide-step-exposure h2 { margin: .25rem 0; font-size: 1.5rem; }
+.guide-step-exposure p:not(.lux-kicker) { color: var(--page-copy); line-height: 1.55; }
+.guide-exposure-table table { min-width: 0; }
+.guide-exposure-table th,.guide-exposure-table td { padding: .45rem .65rem; }
+.guide-exposure-table td:last-child { color: #dfc08e; font-weight: 750; }
+.guide-quick-links { padding: .65rem .85rem; border-left: 2px solid #c9a46c; background: #12100e; }
+.guide-static-index { margin-top: .8rem; border: 1px solid #ffffff1c; border-radius: 12px; background: #12100e; }
+.guide-static-index summary { padding: .8rem 1rem; color: #dfc08e; cursor: pointer; font-weight: 700; }
+.guide-static-index ul { columns: 2; padding: 0 1.4rem 1rem 2.2rem; }
+.guide-static-index li { padding: .2rem 0; }
+.guide-static-index a { color: var(--page-copy); }
+.lux-privacy-risk { color: var(--page-copy); font-size: .82rem; }
+@media (max-width: 760px) {
+  .lux-pricing-grid--page { grid-template-columns: 1fr; width: min(100% - 1.5rem,36rem); }
+  .pricing-demo-banner { align-items: flex-start; flex-direction: column; width: calc(100% - 1.5rem); }
+  .pricing-demo-banner a { width: 100%; }
+  .pricing-partner-card { grid-template-columns: 1fr; width: calc(100% - 1.5rem); }
+  .pricing-partner-card img { display: none; }
+  .pricing-comparison { width: calc(100% - 1.5rem); }
+  .register-layout { grid-template-columns: 1fr; width: calc(100% - 1.5rem); align-items: start; }
+  .register-layout > form { order: -1; }
+  .lux-auth-card { padding: 1.1rem; }
+  .guide-step-exposure { grid-template-columns: 1fr; }
+  .guide-static-index ul { columns: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pricing-demo-banner *, .lux-pricing-page *, .lux-auth-page *, .lux-privacy-page * { scroll-behavior: auto!important; animation: none!important; transition: none!important; }
+}
