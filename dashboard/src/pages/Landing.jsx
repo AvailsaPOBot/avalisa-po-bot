@@ -16,12 +16,6 @@ const steps = [
   ['Set your controls', 'Choose a stake, a Martingale step cap, and the minimum payout filter.'],
   ['Start on Demo', 'Try the 10 free Martingale trades on a practice balance. Stop the bot whenever you choose.'],
 ];
-const heroEase = (progress) => {
-  const cubic = (t, a, b) => 3 * (1 - t) ** 2 * t * a + 3 * (1 - t) * t ** 2 * b + t ** 3;
-  let low = 0; let high = 1; let t = progress;
-  for (let i = 0; i < 8; i += 1) { t = (low + high) / 2; if (cubic(t, .22, .36) < progress) low = t; else high = t; }
-  return cubic(t, 1, 1);
-};
 
 function ProductIllustration({ gsap }) {
   const [mode, setMode] = useState('Martingale');
@@ -116,8 +110,8 @@ export default function Landing() {
     if (!motionGsap || !homeRef.current) return undefined;
     const gsap = motionGsap;
     const context = gsap.context(() => {
-      gsap.from(gsap.utils.toArray('.home-hero-copy > *').filter((item) => !item.matches('h1')), { y: 16, autoAlpha: 0, duration: .55, stagger: .08, ease: heroEase, clearProps: 'all' });
-      gsap.from('.home-hero h1', { y: 16, duration: .55, ease: heroEase, clearProps: 'transform' });
+      // No hero-copy entrance: GSAP loads after first paint, so hiding already-painted text would make it
+      // flicker, and if animation frames are throttled the CTAs would stay invisible (CEO QC 2026-10-22).
       gsap.fromTo('.home-chart', { rotateX: 8, scale: .96, transformPerspective: 1200 }, { rotateX: 0, scale: 1, ease: 'none', scrollTrigger: { trigger: '.home-hero', start: 'top top', end: '+=280', scrub: .5 } });
       gsap.utils.toArray('.content-section:not(.how-section)').forEach((section) => gsap.from(section, { y: 16, autoAlpha: 0, duration: .65, ease: 'power2.out', scrollTrigger: { trigger: section, start: 'top 86%', once: true } }));
       if (window.matchMedia('(min-width: 1024px)').matches) {

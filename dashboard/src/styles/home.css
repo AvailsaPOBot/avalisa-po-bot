@@ -128,3 +128,8 @@
 @media(prefers-reduced-motion:reduce) { .home-page * { scroll-behavior: auto!important; animation: none!important; transition: none!important; }.home-chart { transform: none; } }
 @media(min-width:1024px) and (max-width:1250px) { .home-mascot { width: 235px; right: 0; }.product-panel { right: 47%; } }
 @media(min-width:701px) and (max-width:1023px) { .how-illustration { display: none; }.how-scrolly { grid-template-columns: 1fr; }.how-step-card { min-height: 0; }.home-mascot { width: 230px; } }
+
+/* While the homepage sticky "Start free" bar is showing, lift the chat button and its panel above it
+   so the two never overlap (Board 2026-10-22). */
+body:has(.home-sticky) .floating-chat-button { bottom: calc(76px + env(safe-area-inset-bottom)); }
+body:has(.home-sticky) .floating-chat { bottom: calc(140px + env(safe-area-inset-bottom)); }
