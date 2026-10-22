@@ -11,6 +11,7 @@ const {
   normalizeClaimRejectionReason,
 } = require('../lib/claimGuidance');
 const { notifyBoardOfClaim } = require('../lib/claimNotify');
+const { recordFunnelEvent } = require('../lib/funnel');
 
 const { approvePendingClaimForUid } = require('../lib/affiliateClaim');
 const router = express.Router();
@@ -54,6 +55,32 @@ router.post('/check', optionalAuthMiddleware, async (req, res) => {
   const { deviceFingerprint } = req.body;
   if (!deviceFingerprint) {
     return res.status(400).json({ error: 'deviceFingerprint is required' });
+  }
+
+  // A valid signed-in session may link the PO UID visible in the extension. This
+  // is deliberately best-effort: a conflict or analytics/database hiccup must
+  // never change the normal license response.
+  const poUid = typeof req.body.poUid === 'string' && /^\d{3,20}$/.test(req.body.poUid)
+    ? req.body.poUid
+    : null;
+  if (userId && poUid) {
+    try {
+      const user = await prisma.user.findUnique({ where: { id: userId }, select: { poUserId: true } });
+      if (user && user.poUserId == null) {
+        const owner = await prisma.user.findUnique({ where: { poUserId: poUid }, select: { id: true } });
+        if (!owner) {
+          const linked = await prisma.user.updateMany({
+            where: { id: userId, poUserId: null },
+            data: { poUserId: poUid },
+          });
+          if (linked.count === 1) {
+            recordFunnelEvent(prisma, 'po_uid_autolinked', { userId, meta: { userId } });
+          }
+        }
+      }
+    } catch (err) {
+      // Includes a concurrent unique-key conflict. Licensing remains available.
+    }
   }
 
   try {

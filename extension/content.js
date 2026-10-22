@@ -478,6 +478,7 @@ async function checkLicense() {
     const data = await withRetry(() => apiPost('/api/license/check', {
       userId: state.userId,
       deviceFingerprint: getDeviceFingerprint(),
+      poUid: typeof getPoUidFromDom === 'function' ? (getPoUidFromDom() || undefined) : undefined,
     }));
     state.licenseInfo = data;
     applySessionHints(data, { onExpired: handleSessionExpired });

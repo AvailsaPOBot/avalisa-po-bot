@@ -1,5 +1,6 @@
 const prisma = require('./prisma');
 const { getPlanEntitlements, getAiTradesAllowanceForPlan } = require('./plans');
+const { sendPaidActivationEmail } = require('./paidActivationEmail');
 
 async function activatePaidLicense({ userId, plan, paymentProvider, paymentId }) {
   const entitlements = getPlanEntitlements(plan);
@@ -15,7 +16,7 @@ async function activatePaidLicense({ userId, plan, paymentProvider, paymentId })
     return existing;
   }
 
-  return prisma.license.upsert({
+  const license = await prisma.license.upsert({
     where: { userId },
     update: {
       plan,
@@ -35,6 +36,15 @@ async function activatePaidLicense({ userId, plan, paymentProvider, paymentId })
       expiresAt: null,
     },
   });
+  // Email is deliberately scheduled after the licence write and cannot block or
+  // fail activation.
+  Promise.resolve().then(async () => {
+    try {
+      const user = await prisma.user.findUnique({ where: { id: userId }, select: { email: true } });
+      sendPaidActivationEmail({ to: user?.email, plan });
+    } catch (_) {}
+  }).catch(() => {});
+  return license;
 }
 
 module.exports = { activatePaidLicense };

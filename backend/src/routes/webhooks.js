@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const prisma = require('../lib/prisma');
 const { PLAN_IDS, getPaidPlanFromWhop, getPlanEntitlements, getAiTradesAllowanceForPlan, shouldRevokeLicense } = require('../lib/plans');
 const { activatePaidLicense } = require('../lib/licenseActivation');
+const { sendPaidActivationEmail } = require('../lib/paidActivationEmail');
 const { decodeCustomId, normalizeCheckoutPlan, verifyPayPalWebhook } = require('../lib/paypal');
 const { recordUnmappedPurchase } = require('../lib/purchaseAlert');
 const { whopRecurrence } = require('../lib/pendingPurchase');
@@ -396,6 +397,8 @@ async function handleWhopMembership(data, eventType) {
       expiresAt,
     },
   });
+
+  sendPaidActivationEmail({ to: user.email || customerEmail, plan });
 
   console.log(`[Whop] Activated ${plan} plan for user ${user.id} (${customerEmail})`);
 }

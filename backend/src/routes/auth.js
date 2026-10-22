@@ -409,13 +409,25 @@ router.get('/me', authMiddleware, async (req, res) => {
 
 // PUT /api/auth/po-user-id — update PO user ID from extension
 router.put('/po-user-id', authMiddleware, async (req, res) => {
-  const { poUserId } = req.body;
-  if (!poUserId) return res.status(400).json({ error: 'poUserId is required' });
+  const poUserId = typeof req.body.poUserId === 'string' ? req.body.poUserId.trim() : '';
+  if (!/^\d{3,20}$/.test(poUserId)) return res.status(400).json({ error: 'Enter a valid Pocket Option ID' });
 
   try {
-    const user = await prisma.user.update({
-      where: { id: req.userId },
+    const current = await prisma.user.findUnique({ where: { id: req.userId }, select: { poUserId: true } });
+    if (!current) return res.status(404).json({ error: 'User not found' });
+    if (current.poUserId) return res.status(400).json({ error: 'Email support to change it' });
+
+    const owner = await prisma.user.findUnique({ where: { poUserId }, select: { id: true } });
+    if (owner && owner.id !== req.userId) {
+      return res.status(409).json({ error: 'That PO User ID is already linked to another account' });
+    }
+    const updated = await prisma.user.updateMany({
+      where: { id: req.userId, poUserId: null },
       data: { poUserId },
+    });
+    if (updated.count !== 1) return res.status(400).json({ error: 'Email support to change it' });
+    const user = await prisma.user.findUnique({
+      where: { id: req.userId },
       select: { id: true, email: true, poUserId: true },
     });
     res.json(user);

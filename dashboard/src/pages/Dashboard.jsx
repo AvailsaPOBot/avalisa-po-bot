@@ -70,6 +70,10 @@ export default function Dashboard() {
   const [installStepDismissed, setInstallStepDismissed] = useState(hasDismissedInstallStep);
   const [historyType, setHistoryType] = useState('real');
   const [saving, setSaving] = useState(false);
+  const [poUid, setPoUid] = useState('');
+  const [poUidSaving, setPoUidSaving] = useState(false);
+  const [poUidError, setPoUidError] = useState('');
+  const [poUidLinked, setPoUidLinked] = useState(false);
   const [reviewAskCompleted, setReviewAskCompleted] = useState(hasCompletedReviewAsk);
   const [searchParams] = useSearchParams();
   const initialTab = VALID_TABS.includes(searchParams.get('tab')) ? searchParams.get('tab') : 'settings';
@@ -394,6 +398,21 @@ export default function Dashboard() {
     setSettings(s => ({ ...s, [key]: value }));
   }
 
+  async function linkPoUid(event) {
+    event.preventDefault();
+    setPoUidSaving(true);
+    setPoUidError('');
+    try {
+      await api.put('/api/auth/po-user-id', { poUserId: poUid.trim() });
+      setPoUidLinked(true);
+      toast.success('Pocket Option ID linked.');
+    } catch (err) {
+      setPoUidError(err.response?.data?.error || 'Failed to link Pocket Option ID');
+    } finally {
+      setPoUidSaving(false);
+    }
+  }
+
   function dismissInstallStep() {
     setInstallStepDismissed(true);
     try {
@@ -444,6 +463,31 @@ export default function Dashboard() {
           )}
         </div>
       </div>
+
+      {(plan === 'basic' || plan === 'lifetime') && !user?.poUserId && !poUidLinked && (
+        <section className="card mb-8" aria-labelledby="po-uid-heading" data-testid="po-uid-link-card">
+          <h2 id="po-uid-heading" className="text-lg font-semibold text-white mb-1">Link your Pocket Option ID</h2>
+          <p className="text-gray-400 text-sm mb-4">Link your Pocket Option ID so the bot recognises your plan even when you are not signed in to the panel.</p>
+          <form onSubmit={linkPoUid} className="flex flex-col gap-3 sm:flex-row sm:items-start">
+            <label className="flex-1 text-sm text-gray-300">
+              Pocket Option ID
+              <input
+                className="input mt-1 w-full"
+                inputMode="numeric"
+                pattern="[0-9]{3,20}"
+                value={poUid}
+                onChange={event => setPoUid(event.target.value)}
+                required
+                aria-label="Pocket Option ID"
+              />
+            </label>
+            <button type="submit" className="btn-primary text-sm py-2 px-4 sm:mt-6" disabled={poUidSaving || !/^\d{3,20}$/.test(poUid.trim())}>
+              {poUidSaving ? 'Linking...' : 'Link ID'}
+            </button>
+          </form>
+          {poUidError && <p className="text-red-400 text-sm mt-3" role="alert">{poUidError}</p>}
+        </section>
+      )}
 
       <div className="dashboard-brand-panel">
         <div>
