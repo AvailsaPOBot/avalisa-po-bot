@@ -115,6 +115,74 @@
       .nav-link { font-size: 0.78rem; }
     }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "How a Chrome Extension Automates Pocket Option Trading",
+      "description": "How a Chrome extension automates Pocket Option trades inside your own logged-in tab, why your Pocket Option password is never involved, and what it cannot do.",
+      "url": "https://avalisabot.vercel.app/guide/how-browser-extensions-automate-trading.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/how-browser-extensions-automate-trading.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/how-browser-extensions-automate-trading.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Does the extension ask for my Pocket Option password?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. You log in to Pocket Option yourself as usual; the extension works inside your existing logged-in tab and only needs your Pocket Option ID to link your account. The only password in the product is the one for your own Avalisa account, which carries your licence and settings and has nothing to do with your broker login."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will it work on my demo account?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. The bot runs on demo and real accounts, and the recommended order is demo first: the free plan's 10 automated trades exist precisely so you can verify the mechanics before real money is involved. The same choice applies to downloaded programs: see PC .exe vs browser extension."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens if I have a long losing streak?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Each step raises the next stake by your chosen multiplier, until either you hit your Martingale step limit or the next stake exceeds your balance, at which point the bot pauses. That pause behaviour is a feature: the step limit is your loss cap, and leaving it at \"Infinite\" on a real account removes your only ceiling."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does Pocket Option allow bots?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Their blog says automated strategies are fine as long as they comply with platform rules, and names market manipulation — not automation — as the explicit ban risk. That is a blog statement, not their formal terms, so treat the question as \"generally tolerated, verify yourself.\""
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is there a free way to try it?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes — install from the Chrome Web Store, link a demo Pocket Option ID, and run the free Demo plan. Basic ($69) is a one-time, permanent purchase and never renews. Pro is offered two ways: $119 one-time, or $29/month, which is a real recurring subscription that renews until you cancel — you choose which one at checkout."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

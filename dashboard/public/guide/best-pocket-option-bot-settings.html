@@ -115,6 +115,58 @@
       .nav-link { font-size: 0.78rem; }
     }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Pocket Option Bot Settings: Values and Starting Points",
+      "description": "No setting we measured beat break-even, so 'best settings' means the smallest, most controllable setup. How to choose each Avalisa panel value, demo first.",
+      "url": "https://avalisabot.vercel.app/guide/best-pocket-option-bot-settings.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/best-pocket-option-bot-settings.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/best-pocket-option-bot-settings.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is there a setting that wins?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. We found no setting combination that beat break-even over large samples. Settings shape risk, not outcomes."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why does Steps matter more than the multiplier?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Steps caps how many trades a losing cycle can contain; there is no separate stop-loss. The multiplier only changes how expensive each later trade is."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I go to a real account right away?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Only after the same configuration has run on demo and you know the cost of a full losing cycle."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

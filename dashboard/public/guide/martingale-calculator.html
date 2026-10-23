@@ -126,6 +126,66 @@
     th:first-child, td:first-child { text-align: left; }
     tr.over td { color: #e98b7a; }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Pocket Option Martingale Calculator: Stake per Step",
+      "description": "Martingale calculator for Avalisa PO Bot: enter base stake, multiplier and Martingale Steps to see every stake in a losing cycle and its worst-case total.",
+      "url": "https://avalisabot.vercel.app/guide/martingale-calculator.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/martingale-calculator.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/martingale-calculator.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Does Steps 3 mean three trades?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Steps counts recovery steps after the first trade, so Steps 3 allows four trades in a losing cycle."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Which multipliers does Avalisa PO Bot offer?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "2x, 2.2x, 2.4x, 2.6x, 2.8x and 3x, all in the calculator above."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens when my balance cannot cover the next stake?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The bot pauses instead of placing it. Choosing Steps so that a full cycle fits well inside your balance avoids reaching that point."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can the calculator tell me which setting will be profitable?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. It only adds up stakes. Our own large-sample measurements found no setting that beat break-even."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

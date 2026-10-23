@@ -119,6 +119,58 @@
     th, td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); text-align: left; color: var(--muted); }
     th { color: var(--text); }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Making Your Own Pocket Option Bot: What It Actually Takes",
+      "description": "Making your own Pocket Option bot: the six parts it needs, what breaks when the page changes, and why a long demo sample is the real work.",
+      "url": "https://avalisabot.vercel.app/guide/making-your-own-pocket-option-bot.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/making-your-own-pocket-option-bot.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/making-your-own-pocket-option-bot.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Can I make a Pocket Option bot without code?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Not really. Reading the page, placing trades and detecting results all need software. If you are weighing writing one yourself, first run the GitHub checklist for judging existing bots. What you can avoid is writing and maintaining it yourself."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I know my rule works before funding an account?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Run it on demo long enough for the sample to mean something. At a 92% payout break-even is 52.1%, so short runs cannot separate a losing rule from luck."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will Pocket Option ban me for using a bot?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Pocket Option&rsquo;s own blog says automated strategies are fine as long as they comply with platform rules, and names market manipulation &mdash; not automation itself &mdash; as the suspension risk. That is their stated position, not their formal Terms of Service, so read those before relying on it."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

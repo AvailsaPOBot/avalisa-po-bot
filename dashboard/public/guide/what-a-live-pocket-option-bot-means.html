@@ -119,6 +119,58 @@
     th, td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); text-align: left; color: var(--muted); }
     th { color: var(--text); }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "What a \"Live\" Pocket Option Bot Means: Account vs Session",
+      "description": "What a 'live' Pocket Option bot means: a Real account vs a session running now, how a session starts and stops, and checks before switching to Real.",
+      "url": "https://avalisabot.vercel.app/guide/what-a-live-pocket-option-bot-means.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/what-a-live-pocket-option-bot-means.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/what-a-live-pocket-option-bot-means.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Does &ldquo;live&rdquo; mean the bot is using real money?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Not necessarily. It can mean a Real account, or only that a session is running. Check which account is active on the tab."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "If I close the tab, does the bot keep trading?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. The bot runs in the tab you started it on, so keep that tab open and visible for the whole session."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is there a built-in stop-loss that ends a losing streak?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No separate stop-loss or daily-loss-limit setting exists. Limiting Martingale Steps caps a losing streak, and the bot pauses when the next stake would exceed the balance."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

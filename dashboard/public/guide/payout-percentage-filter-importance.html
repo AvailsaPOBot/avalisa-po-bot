@@ -145,6 +145,82 @@
       .nav-link { font-size: 0.78rem; }
     }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Payout-Percentage Filters in Automated Trading",
+      "description": "At a 92% payout, break-even is 1/(1+p) = 52.1% of trades. Why a payout floor changes the math of every automated trade, and what it costs to skip it.",
+      "url": "https://avalisabot.vercel.app/guide/payout-percentage-filter-importance.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/payout-percentage-filter-importance.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/payout-percentage-filter-importance.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Why do payouts differ between pairs and times?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "That is broker-side configuration, not something we set or can speak to. What we can say is that the number differs in practice, which is why the filter exists at all &mdash; compare before you commit."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What does the bot do when the payout is below my minimum?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "With the Minimum payout % switch on (it is on by default, at 90), the bot does not trade a pair below your minimum. You pick what happens instead: Auto-switch favorite moves to the highest-payout pair in your Pocket Option favourites that meets the minimum; Stop bot stops the bot. If no favourite meets the minimum, or Pair Scan is set to Current pair only, the bot stops and shows the reason. With the switch off, payout is not checked."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is a higher minimum payout always better?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A higher floor means fewer tradable pairs. Very restrictive floors leave the bot idle more often. The point is not maximising the number; it is refusing pairs whose economics you cannot defend in arithmetic."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does the filter eliminate the risk?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Binary options trading is high risk, and the bot does not guarantee profit &mdash; no setting does, including ours, as measured over our own samples. The filter changes which pairs enter the calculation; it does not change how markets move."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I verify the math before I trust it?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Start on demo. Run the configuration you intend to use, watch which pairs get selected at your floor, and check the payout each time a trade is placed against what you computed by hand. The extension's settings are visible in the overlay at all times."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is demo identical to real behaviour?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "For our extension, yes: it does not run separate logic per account type. We cannot speak for the broker's own backend, but on our side the trades are placed the same way either way."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

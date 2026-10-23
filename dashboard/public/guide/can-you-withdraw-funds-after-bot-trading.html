@@ -145,6 +145,74 @@
       .nav-link { font-size: 0.78rem; }
     }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Pocket Option Withdrawals: Do Trading Bots Affect Them?",
+      "description": "A bot does not change how you withdraw from Pocket Option — same account, same flow, no bot-side approval. What it changes is how much is left to withdraw.",
+      "url": "https://avalisabot.vercel.app/guide/can-you-withdraw-funds-after-bot-trading.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/can-you-withdraw-funds-after-bot-trading.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/can-you-withdraw-funds-after-bot-trading.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Will Pocket Option reject a withdrawal because I used a bot?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nothing we have verified indicates that. Withdrawals depend on your account and Pocket Option's own rules, not on how trades were placed. Their own blog treats automated strategies as fine within platform rules; we have not read their formal Terms of Service directly, so for a definitive answer, ask Pocket Option support."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is my balance in the bot separate from my Pocket Option balance?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. There is no separate balance. The extension reads and trades your active Pocket Option account; what you see to withdraw is exactly what is left after all trades, bot or manual."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does withdrawing mid-strategy break the bot?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Your account balance is what the bot checks before each trade; when the next stake would exceed the balance, it pauses. Withdrawing is therefore always available, and the bot resumes only if a stake still fits your remaining balance."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can the bot withdraw for me?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. It places trades; it does not move funds. Withdrawals stay entirely in Pocket Option's own flow."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is using a bot allowed by Pocket Option?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Their blog says automated strategies are fine as long as they comply with platform rules, and their content singles out market manipulation &mdash; not ordinary automation &mdash; as the suspension risk. That is their blog, not their formal Terms of Service, which we have not read directly; for a definitive answer on your own account, ask Pocket Option support."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

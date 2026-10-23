@@ -119,6 +119,58 @@
     th, td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); text-align: left; color: var(--muted); }
     th { color: var(--text); }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Pocket Option Bots on GitHub: A Checklist Before You Run One",
+      "description": "Pocket Option bot on GitHub: check a repo's maintenance, sign-in method, what it installs, how to remove it, then prove it on demo with a stop rule.",
+      "url": "https://avalisabot.vercel.app/guide/pocket-option-bot-on-github-checklist.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/pocket-option-bot-on-github-checklist.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/pocket-option-bot-on-github-checklist.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "The repo has thousands of stars. Can I skip the checklist?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Stars measure popularity, not whether the bot still works against the current trading page or how it handles your credentials. Run the checklist anyway."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "It is free on GitHub. What am I actually paying for?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Your time: installing dependencies, debugging a stale interface and, in the worst case, an account you did not protect. If you would rather use a maintained tool, Avalisa's Basic is $69 one-time and Pro is $119 one-time or $29/month (a recurring subscription); the two routes are compared in GitHub Python bots vs a Chrome extension."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "It won every trade in my short demo test. Can I go straight to real money?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A short sample proves almost nothing, especially before any losing streak. Extend the sample until your written stop rule has actually been tested, and judge results against break-even (52.1% at a 92% payout), not against the demo balance going up."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

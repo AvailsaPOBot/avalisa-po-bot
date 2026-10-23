@@ -119,6 +119,58 @@
     th, td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); text-align: left; color: var(--muted); }
     th { color: var(--text); }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Can ChatGPT Write a Binary Options Bot? What It Gets Wrong",
+      "description": "Can ChatGPT write a binary options bot? Why chatbot code can't see the live page or stop itself, and why break-even at a 92% payout stays at 52.1%.",
+      "url": "https://avalisabot.vercel.app/guide/can-chatgpt-write-a-binary-options-bot.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/can-chatgpt-write-a-binary-options-bot.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/can-chatgpt-write-a-binary-options-bot.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "It ran fine on demo for an hour. Is that enough?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. An hour is not a sample. Break-even at a 92% payout is a 52.1% win rate, and short runs swing far more than that. Judge a strategy on a long demo sample."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I ask the chatbot to fix it when it stops working?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You can, but the fix is another guess at a page the chatbot still cannot see. Treat any generated bot as unverified until it has been checked against the live page over many demo trades."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How is Avalisa different?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Avalisa PO Bot is a Chrome extension built for Pocket Option, works on Demo and Real accounts, and recommends starting on demo. It does not guarantee profit: no setting has been measured to beat break-even over large samples."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

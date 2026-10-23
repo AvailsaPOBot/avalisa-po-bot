@@ -145,6 +145,74 @@
       .nav-link { font-size: 0.78rem; }
     }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Pocket Option Automation: 1-Minute vs 5-Minute Timeframe",
+      "description": "Why noise hurts trading bots more than manual traders, how 1-minute and 5-minute expiries differ for automation, and how to test any timeframe on demo first.",
+      "url": "https://avalisabot.vercel.app/guide/best-timeframe-for-pocket-option-automation.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/best-timeframe-for-pocket-option-automation.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/best-timeframe-for-pocket-option-automation.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is any timeframe reliably better than the rest?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Results vary by market, payout, pair, timeframe, and settings. Test on a demo account and judge your own results."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can the bot protect my deposits?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Binary options are high risk. Use the bot's demo account first, and only risk money you can afford to lose."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why does noise hurt a bot more than a manual trader?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A bot repeats settings at high frequency, so random variation dominates the average, and martingale converts random losing streaks into large stake escalation (six straight losses at 3x cost 364x the base stake)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I use martingale safely?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Limit the steps. Step limits are the mechanism that caps a losing streak; the bot also pauses when the next stake would exceed the balance. There is no separate daily-loss-limit setting."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need to leave the browser open?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Keep the Pocket Option tab visible while the bot trades; a background or minimised tab can delay trade-result detection."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

@@ -115,6 +115,58 @@
       .nav-link { font-size: 0.78rem; }
     }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Why a Pocket Option Bot Should Hold One Trade at a Time",
+      "description": "Why a bot trades one at a time: why Avalisa PO Bot opens one trade, waits for its result, then decides the next, keeping Martingale stakes defined.",
+      "url": "https://avalisabot.vercel.app/guide/why-a-bot-trades-one-at-a-time.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/why-a-bot-trades-one-at-a-time.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/why-a-bot-trades-one-at-a-time.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is one trade at a time slower?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "In trade count, yes. But each Martingale stake is defined by the previous result, so a sequential bot gives up nothing by waiting, while parallel trades add risk without adding information."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens if I lose several in a row?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The stake grows by your chosen multiplier after each loss, up to your Steps limit. When the next stake would exceed your balance, the bot pauses instead of continuing."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between Martingale and Avalisa Bot mode?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Martingale follows a fixed direction (Always Buy, Always Sell or Alternating) and multiplies the stake after losses. Avalisa Bot mode needs Pro and trades only when enough of four chart rules agree: Low, Mid and High intensity require 2, 3 or all 4."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

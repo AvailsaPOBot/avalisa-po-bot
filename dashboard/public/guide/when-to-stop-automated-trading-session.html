@@ -119,6 +119,74 @@
     th, td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); text-align: left; color: var(--muted); }
     th { color: var(--text); }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "When to Stop an Automated Trading Session: End Points",
+      "description": "When to stop an automated trading session on Pocket Option: a Steps cap, a money cap, a clock cap and a walk-away trigger. No stop-loss setting exists.",
+      "url": "https://avalisabot.vercel.app/guide/when-to-stop-automated-trading-session.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/when-to-stop-automated-trading-session.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/when-to-stop-automated-trading-session.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How many losing trades should I allow in one session?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "There is no universal number. Ask instead: what does the whole cycle cost if every trade in it loses? Steps = N is N + 1 trades, so at 2x, Steps 3 is 4 trades and 15&times; the base stake. Choose Steps so that number is a loss you can accept calmly, then check it on demo."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does the bot have a daily loss limit?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. There is no separate stop-loss or daily-loss-limit setting. Limiting Martingale Steps caps a losing streak, and the bot pauses if the next stake would exceed your balance. Any per-session or per-day limit is one you set and enforce yourself."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Should I watch the whole time?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No, but do not hide the tab. Keep it visible so results are detected on time, and check at the end points you wrote down."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I practise my stopping rules without real money?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. The extension works on Pocket Option demo accounts the same way as on real ones, and demo is where these rules belong first."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "My session did not stop the way I set it. Who do I ask?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Email avalisapobot@gmail.com with a screenshot of your settings and what the session did."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

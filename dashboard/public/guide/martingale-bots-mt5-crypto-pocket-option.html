@@ -119,6 +119,58 @@
     th, td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); text-align: left; color: var(--muted); }
     th { color: var(--text); }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Martingale Bots on MT5, Crypto and Pocket Option",
+      "description": "Martingale bots on MT5, crypto and Pocket Option: the shared loop, and why fixed payouts let you pre-price a losing cycle (2x, Steps 3 = 15x base stake).",
+      "url": "https://avalisabot.vercel.app/guide/martingale-bots-mt5-crypto-pocket-option.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/martingale-bots-mt5-crypto-pocket-option.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/martingale-bots-mt5-crypto-pocket-option.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Does the cycle-cost table apply to my MT5 or crypto bot?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. It applies where the payout per trade is fixed in advance, as on a fixed-payout binary-options platform. Variable-outcome markets have no fixed multiple to check."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is there a stop-loss setting on Avalisa?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Limiting Martingale Steps is the only cap on a losing streak; there is no separate stop-loss or daily-loss-limit setting."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I test a capped setup before using real money?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Avalisa runs on Pocket Option Demo accounts as well as Real ones, with the same trade logic and the same Steps cap."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

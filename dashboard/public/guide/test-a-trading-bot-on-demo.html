@@ -115,6 +115,74 @@
       .nav-link { font-size: 0.78rem; }
     }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Testing a Trading Bot on a Demo Account Before Risking Money",
+      "description": "A practical routine for testing a Pocket Option trading bot on a demo account: conservative settings, capped Martingale steps, and how to read the session.",
+      "url": "https://avalisabot.vercel.app/guide/test-a-trading-bot-on-demo.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/test-a-trading-bot-on-demo.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/test-a-trading-bot-on-demo.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Does anything here — demo account or paid plan — promise that trading will pay out?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. The bot does not guarantee any result. A demo account costs nothing and shows how the bot behaves; it tells you nothing about future results."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need a paid plan to test on a demo account?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. The free Demo plan includes 10 Martingale trades on a demo account, webapp bot access, the dashboard, all supported timeframes and basic trade history."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "The Martingale doubled my stake until the balance ran out. Is the bot broken?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No — that is the strategy doing exactly what it is designed to do, uncapped. Set a finite Martingale Steps limit and watch the cap engage. That is what the limit is for."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I use the bot on a real account straight away?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, it works on real accounts. The advice, ours and the platform's implicit one, is to know the behaviour from demo sessions first."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is using a browser extension allowed on Pocket Option?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Pocket Option's own blog says users can utilise automated strategies as long as they comply with platform rules; it does not name third-party extensions, and this is not their formal Terms of Service. Treat it as a signal to keep things tidy, not as a legal answer."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

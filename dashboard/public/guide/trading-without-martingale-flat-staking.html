@@ -119,6 +119,66 @@
     th, td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); text-align: left; color: var(--muted); }
     th { color: var(--text); }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Trading Without Martingale: Flat Staking vs Martingale",
+      "description": "Trading without Martingale on Pocket Option: why flat-stake losses grow one stake at a time, a five-loss comparison, and the smallest Martingale cap.",
+      "url": "https://avalisabot.vercel.app/guide/trading-without-martingale-flat-staking.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/trading-without-martingale-flat-staking.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/trading-without-martingale-flat-staking.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Does flat staking reduce the chance of losing a trade?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. It changes the cost of a losing streak, not the trades. The streak that costs $5 flat costs $31 at 2x Martingale from a $1 base."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I run Avalisa with a flat stake?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. The multiplier always applies after a loss. Setting Martingale Steps to 1 limits a losing cycle to two trades (3&times; the base stake at 2x)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is there a stop-loss I can set instead?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No separate stop-loss or daily-loss-limit setting exists. Limiting Martingale Steps is the cap, and the bot pauses when the next stake would exceed your balance."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where should I try my settings?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "On a demo account. The extension places trades the same way on demo and real accounts."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

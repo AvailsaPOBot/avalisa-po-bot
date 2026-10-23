@@ -119,6 +119,66 @@
     th, td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); text-align: left; color: var(--muted); }
     th { color: var(--text); }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Candle Streak and Pin-Bar Strategies: What They Assume",
+      "description": "Pocket Option candle streak and pin-bar entries explained: the three assumptions behind them, why cycle cost outranks the signal, and what Avalisa does.",
+      "url": "https://avalisabot.vercel.app/guide/pocket-option-candle-streak-pin-bar.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/pocket-option-candle-streak-pin-bar.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/pocket-option-candle-streak-pin-bar.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Does a longer streak make the signal stronger?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Not automatically. A longer streak is a stricter filter, so you get fewer trades &mdash; fewer is not the same as better. Only demo history on your own pair and timeframe can answer it."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Martingale the same thing as a streak rule?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. A streak rule chooses when and which way to enter; Martingale decides the stake after each loss. Either way the multiplier sets the cycle cost, so keep Steps capped."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why demo first?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The extension places trades the same way on demo and real accounts, so demo history is a fair test of your settings before money is at stake."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where do I see what happened?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Trade history is built in. Keep the Pocket Option tab visible while the bot runs so results are detected reliably. If something looks wrong, stop, take a screenshot and email avalisapobot@gmail.com."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

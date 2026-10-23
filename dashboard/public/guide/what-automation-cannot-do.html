@@ -115,6 +115,74 @@
       .nav-link { font-size: 0.78rem; }
     }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "What a Trading Bot Can and Cannot Do for You",
+      "description": "The honest split: what a Pocket Option trading bot actually does, what no bot can do for you, and the risk questions to answer before automating a real trade.",
+      "url": "https://avalisabot.vercel.app/guide/what-automation-cannot-do.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/what-automation-cannot-do.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/what-automation-cannot-do.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Can automation make trading outcomes certain?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. The bot does not guarantee profit. It executes your chosen rules consistently; the rules themselves carry risk, and market conditions change. Anyone promising a guaranteed outcome is making a claim you should not buy."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is using a bot allowed on Pocket Option?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Pocket Option&rsquo;s blog says automated strategies are fine as long as they comply with platform rules, but this is not their formal Terms of Service, and it does not confirm or ban third-party extensions. Check the broker&rsquo;s current rules yourself."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why should I start on demo?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Because demo trades cost nothing and expose you to exactly the same cycle dynamics &mdash; including losing cycles at your real multiplier. If a setting looks fragile on demo, it is fragile live, and demo told you that for free."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I watch the bot work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. It runs in your browser on your own account; you can watch every trade and review your trade history afterward. You are never locked out of your account."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens when a losing cycle runs long?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You pay its full cost &mdash; multipliers stack, and a long cycle costs many times your base stake. That is why the affordability question above &mdash; whether you can absorb the worst case of your chosen cycle &mdash; comes before any real trade."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

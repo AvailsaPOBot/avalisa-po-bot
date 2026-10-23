@@ -115,6 +115,66 @@
       .nav-link { font-size: 0.78rem; }
     }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Binary Options vs Forex Automation: Why the Maths Differs",
+      "description": "Binary options pay a fixed percentage or lose the stake; forex wins and losses vary. Why break-even (1/(1+p)) and Martingale sizing differ, and what transfers.",
+      "url": "https://avalisabot.vercel.app/guide/binary-options-vs-forex-automation.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/binary-options-vs-forex-automation.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/binary-options-vs-forex-automation.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Does a bot tuned for forex work on Pocket Option unchanged?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Forex sizing assumes variable win and loss sizes and flexible exits; binary options have fixed payouts and a single expiry. The break-even arithmetic alone is different in kind."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What number should I check before trusting a payout?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The break-even win rate, 1/(1+p): about 52.1% at a 92% payout and about 58.8% at 70%."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Martingale more dangerous than it looks?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Cycle costs grow geometrically &mdash; at 3x, Steps 3 is 4 trades and costs 40 times the base stake. The Steps limit, not hope, is the real risk control."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I use the bot on demo before going real?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. It works on both demo and real Pocket Option accounts, and we recommend starting on demo."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

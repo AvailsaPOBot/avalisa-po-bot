@@ -145,6 +145,74 @@
       .nav-link { font-size: 0.78rem; }
     }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Avalisa PO Bot Not Placing Trades: Six-Check Troubleshooting",
+      "description": "The bot runs but no trades appear. Work through six checks: session, activation, balance, filters, tab visibility, and demo vs real, before emailing support.",
+      "url": "https://avalisabot.vercel.app/guide/bot-not-placing-trades.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/bot-not-placing-trades.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/bot-not-placing-trades.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Why did the bot trade for a while and then stop?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most commonly: the next Martingale stake exceeded your balance (the bot pauses by design), the current cycle hit its Martingale Steps limit, or the filters now reject the market. Check balance and settings in that order."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why does nothing happen on my real account but the demo seems fine?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Real-account session or activation state differs, or your real balance cannot cover the stakes. Verify your plan via &ldquo;Check my Pocket Option ID&rdquo; on the guide page and compare balances before suspecting the extension."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Did Pocket Option block the bot?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Pocket Option's own blog states users can use automated strategies as long as they comply with platform rules. If trades were previously working and now nothing happens anywhere, treat it as an account-side or session-side problem and send us the evidence above."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is it normal for the bot to idle for a long time?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Strict filters (high minimum payout, current-pair-only, an expiry the pair does not offer) can reject signals for extended periods. Loosen them on a demo account to confirm trades fire."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "I finished my free demo trades and the bot stopped. Is it broken?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Free Demo access includes 10 Martingale trades. To continue, Basic or Pro is required; prices are on the pricing page."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

@@ -124,6 +124,74 @@
       line-height: 1.5;
     }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Trading Bots: Why Demo and Real Accounts Differ",
+      "description": "Why a bot can look profitable on a Pocket Option demo and struggle on real money: sizing, Martingale streaks, result detection, and a pre-live checklist.",
+      "url": "https://avalisabot.vercel.app/guide/why-bots-win-on-demo-and-lose-on-real.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/why-bots-win-on-demo-and-lose-on-real.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/why-bots-win-on-demo-and-lose-on-real.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Why did my bot win on demo for two weeks and lose on real from day one?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most likely variance plus Martingale sizing. Two weeks of small demo stakes proves very little about expectancy, and losing streaks cost proportionally more when the stakes have grown. Shrink the stakes, cap the steps, and re-test."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does a higher payout setting make the bot safer on a real account?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Payout changes the break-even math, so a lower payout makes the same success percentage less viable. Treat any payout change as a new strategy that needs fresh demo testing rather than an automatic improvement."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is it safer to trade smaller stakes more often, or bigger stakes with caps?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Smaller entry stakes with hard caps are the safer arithmetic. The danger is not any single trade; it is the accumulated cost of an escalating sequence. Size so the capped maximum is affordable, then reduce until it is comfortably affordable."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can the bot tell when a losing streak is happening and stop?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The built-in protection is the step cap: when the sequence reaches its limit, or when the next stake would exceed your balance, escalation stops and the bot pauses. There is no separate automatic stop-loss to configure beyond that cap, which is exactly why the cap should never be “infinite” on a real account."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Should I ever trust the demo results at all?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes — as a test of settings and behavior, never as a prediction of profit. If a setting behaves badly on demo it will behave worse on real. If it behaves well on demo, it merely has not been disproved yet."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

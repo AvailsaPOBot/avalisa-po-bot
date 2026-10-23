@@ -115,6 +115,74 @@
       .nav-link { font-size: 0.78rem; }
     }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "RSI, MACD and Stochastic: Which One Avalisa Uses",
+      "description": "What RSI, MACD and the Stochastic oscillator measure, how they differ, and exactly which indicators the Avalisa Bot strategy checks before it trades.",
+      "url": "https://avalisabot.vercel.app/guide/rsi-macd-stochastic-plain-english.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/rsi-macd-stochastic-plain-english.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/rsi-macd-stochastic-plain-english.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Which of these does Avalisa use?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Straight answer: RSI, yes. MACD and Stochastic, no. Avalisa PO Bot has two strategies. Martingale does not read indicators at all: you choose the direction (Always Buy, Always Sell or Alternating) and it manages the stake after each loss. Avalisa Bot (a Pro feature) is rule-based and reads a 14-candle RSI, a 20-candle moving average, Bollinger Bands, short-term momentum and the colour of the last candle."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I add MACD or Stochastic to Avalisa Bot?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. The rules are fixed; the setting you control is Intensity (how many of the four rules must agree), plus timeframe, minimum payout and pair scan."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Which indicator is best for short timeframes?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "There is no best one. Faster indicators react sooner and give more false signals on short expiries; slower ones lag. Test on demo with your own timeframe."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need to understand the maths to use the bot?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. It helps to know what the rules mean so you can read the panel and choose an Intensity, but you do not need to calculate anything."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What does Avalisa cost?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The free Demo plan gives 10 Martingale trades plus webapp bot and dashboard access. Basic is $69 one-time. Pro, which adds Avalisa Bot, is $119 one-time or $29/month &mdash; a real recurring subscription &mdash; your choice at checkout. See /pricing."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

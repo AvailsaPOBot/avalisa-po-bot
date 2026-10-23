@@ -115,6 +115,74 @@
       .nav-link { font-size: 0.78rem; }
     }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Bankroll Rules for Automated Binary-Options Trading",
+      "description": "Stake sizing, loss budgets and hard step caps for running a Pocket Option bot — what a 7-trade Martingale cycle really costs as a share of your bankroll.",
+      "url": "https://avalisabot.vercel.app/guide/bankroll-rules-automation.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/bankroll-rules-automation.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/bankroll-rules-automation.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Can the bot promise positive outcomes or protect your balance?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Nothing we sell promises outcomes, and our own large-sample testing has not found a setting that beats break-even. The bot automates execution and enforces your caps consistently."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What limits my losses if I don&rsquo;t use Martingale?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "With a fixed stake, each loss costs exactly one stake unit, and your daily stop is just a count of trades. Martingale is where uncapped risk enters &mdash; if you use it, cap the steps."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is there a built-in stop-loss?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No separate stop-loss or daily-loss-limit setting exists. The step cap (Martingale) plus your own discipline of stopping at your loss budget is the control, and the bot pauses automatically if the next stake would exceed the balance."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you have to trade real money to test the bot?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Demo accounts work identically from our extension&rsquo;s perspective. Test everything on demo first."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is using an automated bot allowed on Pocket Option?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Pocket Option&rsquo;s own blog says users may use automated strategies as long as they comply with platform rules; it does not explicitly approve or ban third-party extensions (and that blog post is not their formal Terms of Service). We automate inside your own browser on your own account."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

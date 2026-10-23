@@ -145,6 +145,82 @@
       .nav-link { font-size: 0.78rem; }
     }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Pocket Option Bots: Break-Even Math and Payout Requirements",
+      "description": "No bot moves the break-even line: at a 92% payout you need 52.1% of trades won. The arithmetic, our measured 43-44%, and how to test any bot on demo.",
+      "url": "https://avalisabot.vercel.app/guide/honest-win-rate-break-even.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/honest-win-rate-break-even.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/honest-win-rate-break-even.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What success rate should you actually expect?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Honesty rule: success rate varies by market conditions, currency pair, timeframe, payout, and settings &mdash; which is exactly why we publish no single number on our site. Our own measurement (2026-09-11, large samples, Martingale mode) came in around 43&ndash;44%, below the break-even line for the payout levels measured. Two consequences follow:"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why can't any bot guarantee a fixed success rate?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Because the ratio between the win payout and the loss cost is fixed by the broker's payout percentage, and no execution setting changes it. Our own large-sample Martingale measurement (2026-09-11) sat around 43&ndash;44% &mdash; below break-even &mdash; and we publish that number instead of a flattering one."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is break-even at 52.1% instead of 50%?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Because the losing side costs the full stake while the winning side pays only the payout percentage. At a 92% payout you gain 0.92 per win but lose 1.00 per loss, so you need 1/(1+0.92) &asymp; 52.1% of trades won to break even. Lower payouts push the line higher still."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Martingale safer with more steps?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No &mdash; more steps means a larger maximum cycle cost (31&times; base for five straight losses at 2x, which is Martingale Steps 4; 1,093&times; for seven at 3x, which is Steps 6). Fewer steps mean smaller worst-case exposure. The bot pauses automatically when the next stake would exceed your balance."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will Pocket Option ban me for using a bot?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Pocket Option's own blog says users can utilize automated strategies as long as they comply with platform rules; it does not specifically name third-party extensions, and that statement is their blog, not their formal Terms of Service. Do not treat either &ldquo;safe&rdquo; or &ldquo;banned&rdquo; as confirmed."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I know whether my Pocket Option ID already has a plan?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Check on our setup guide at avalisabot.vercel.app/guide (&ldquo;Check my Pocket Option ID&rdquo;). Plan prices are listed at avalisabot.vercel.app/pricing."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

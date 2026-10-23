@@ -115,6 +115,74 @@
       .nav-link { font-size: 0.78rem; }
     }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Martingale: Balance Wipe-Out Risk and How to Set Limits",
+      "description": "What a full Martingale losing cycle actually costs at 2x and 3x, why a streak can empty a balance, and how to cap steps and base stake before it does.",
+      "url": "https://avalisabot.vercel.app/guide/martingale-risk-explained.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/martingale-risk-explained.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/martingale-risk-explained.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is Martingale ever &ldquo;safe&rdquo;?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Only with a hard steps cap, a small base stake, and a payout you have checked. Without a cap, a streak ends your account; that is arithmetic, not bad luck."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What should my steps cap be?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Start at 3. At 2x, Steps 3 bounds any cycle at 4 trades and 15&times; the base stake, which is survivable if the base is small. Higher caps cost 31&times; (Steps 4) or 63&times; (Steps 5) &mdash; check your balance against that number before deciding it is worth it."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Should I use a 3x multiplier instead of 2x?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "3x recovers a loss in fewer steps, but exposure grows much faster: six straight losses at 3x (Steps 5) cost 364&times; the base versus 63&times; at 2x &mdash; nearly six times worse at the same setting. Choose by total exposure budget, and cap steps either way."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens if my balance runs low mid-cycle?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The bot pauses when the next stake would exceed the available balance, rather than overcommitting. Still, a steps cap means you will rarely reach that situation."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where should a beginner start?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "On a demo account. Avalisa PO Bot's free demo access includes 10 Martingale trades &mdash; enough to watch a full losing cycle happen and confirm your caps before any real money is at stake. Load a ready-made demo setup."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

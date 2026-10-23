@@ -115,6 +115,58 @@
       .nav-link { font-size: 0.78rem; }
     }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Why the Pocket Option Tab Must Stay Open While the Bot Runs",
+      "description": "Why a background or minimised Pocket Option tab can delay trade-result detection for a browser-extension bot, and how to keep your session reliable.",
+      "url": "https://avalisabot.vercel.app/guide/why-the-trading-tab-must-stay-open.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/why-the-trading-tab-must-stay-open.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/why-the-trading-tab-must-stay-open.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Can I leave the bot running overnight?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Only if the computer stays awake with the tab visible &mdash; a sleeping or locked computer pauses the browser. If you will not be there, press Stop."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is switching tabs as bad as minimising?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Both put the page in the background, and either can delay result detection. Keep the Pocket Option tab active."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does this behave differently on demo and real accounts?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. The extension places trades the same way on both; it only reads whichever balance is active. That makes demo the right place to check your setup."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>

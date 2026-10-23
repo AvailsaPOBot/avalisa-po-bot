@@ -115,6 +115,66 @@
       .nav-link { font-size: 0.78rem; }
     }
   </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Execution Delay in a Browser Trading Bot: What It Means",
+      "description": "Signal-to-order latency, payout slippage and result-detection delay in a browser bot for Pocket Option: when they matter and the settings that bound them.",
+      "url": "https://avalisabot.vercel.app/guide/execution-delay-in-a-browser-trading-bot.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/execution-delay-in-a-browser-trading-bot.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "url": "https://avalisabot.vercel.app/guide/execution-delay-in-a-browser-trading-bot.html",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Why did a trade open at a different payout from the one I saw?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The payout can move between the signal and the order. The bot checks your Minimum payout % before each trade and switches pair or stops below it; quieter pairs and longer timeframes shrink the effect of the gap."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is delay why I lost my last streak?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Delay can make entries worse than planned, but Martingale stakes are what make a streak expensive. Check both: what you actually got, and how many Steps the cycle was allowed."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does keeping the tab visible make entries faster?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "What we have verified is its effect on result detection: a background or minimised tab can delay the bot noticing outcomes. Keep it visible either way."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is slippage the same as delay?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Delay is the time gap; slippage is what changed during it. You cannot remove the time, but the payout floor bounds what you accept inside it."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
 </head>
 <body>
   <header>
