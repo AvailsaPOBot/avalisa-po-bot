@@ -3,6 +3,7 @@ const { authMiddleware } = require('../middleware/auth');
 const { activatePaidLicense } = require('../lib/licenseActivation');
 const {
   capturePayPalOrder,
+  captureCoversPlan,
   createPayPalOrder,
   decodeCustomId,
   getCaptureFromOrder,
@@ -54,9 +55,15 @@ router.post('/paypal/orders/:orderId/capture', authMiddleware, async (req, res) 
       return res.status(400).json({ error: 'PayPal payment was not completed' });
     }
 
+    const plan = normalizeCheckoutPlan(custom.plan);
+    if (!plan || !captureCoversPlan(capture, plan)) {
+      console.warn('[PayPal] Capture amount does not cover plan:', capture.id, custom.plan, capture.amount);
+      return res.status(400).json({ error: 'PayPal payment amount does not match the plan' });
+    }
+
     const license = await activatePaidLicense({
       userId: req.userId,
-      plan: custom.plan,
+      plan,
       paymentProvider: 'paypal',
       paymentId: capture.id,
     });
