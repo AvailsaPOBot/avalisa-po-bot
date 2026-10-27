@@ -12,6 +12,7 @@ const {
 } = require('../lib/claimGuidance');
 const { notifyBoardOfClaim } = require('../lib/claimNotify');
 const { recordFunnelEvent } = require('../lib/funnel');
+const { reachedDemoLimit, sendDemoLimitEmail } = require('../lib/demoLimitEmail');
 
 const { approvePendingClaimForUid } = require('../lib/affiliateClaim');
 const router = express.Router();
@@ -171,10 +172,13 @@ router.post('/increment', optionalAuthMiddleware, async (req, res) => {
     if (userId) {
       const license = await prisma.license.findUnique({ where: { userId } });
       if (license && license.plan !== PLAN_IDS.PRO) {
-        await prisma.license.update({
+        const updated = await prisma.license.update({
           where: { userId },
           data: { tradesUsed: { increment: 1 } },
         });
+        if (updated && reachedDemoLimit(updated.plan, updated.tradesUsed)) {
+          sendDemoLimitEmail(prisma, userId);
+        }
       }
     }
 
