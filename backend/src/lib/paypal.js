@@ -184,9 +184,21 @@ function getCaptureFromOrder(order) {
     ?.find((capture) => capture.status === 'COMPLETED');
 }
 
+// The custom_id alone proves nothing about payment: anyone holding the public client ID can
+// create an order on our account with any amount and custom_id via the JS SDK. Only grant a
+// plan when the captured money covers that plan's price in USD.
+function captureCoversPlan(capture, plan) {
+  const entitlements = getPlanEntitlements(plan);
+  if (!entitlements || entitlements.priceCents <= 0) return false;
+  if (capture?.amount?.currency_code !== 'USD') return false;
+  const paidCents = Math.round(Number(capture.amount.value) * 100);
+  return Number.isFinite(paidCents) && paidCents >= entitlements.priceCents;
+}
+
 module.exports = {
   createPayPalOrder,
   capturePayPalOrder,
+  captureCoversPlan,
   decodeCustomId,
   getCaptureFromOrder,
   normalizeCheckoutPlan,

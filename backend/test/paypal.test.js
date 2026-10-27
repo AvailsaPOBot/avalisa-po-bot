@@ -2,6 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 
 const {
+  captureCoversPlan,
   decodeCustomId,
   getCaptureFromOrder,
   normalizeCheckoutPlan,
@@ -57,4 +58,15 @@ test('paypal configured requires both client id and secret', () => {
 
   if (originalSecret === undefined) delete process.env.PAYPAL_CLIENT_SECRET;
   else process.env.PAYPAL_CLIENT_SECRET = originalSecret;
+});
+
+test('paypal capture must cover the plan price in USD before a plan is granted', () => {
+  const capture = (value, currency_code = 'USD') => ({ id: 'cap', status: 'COMPLETED', amount: { value, currency_code } });
+  assert.equal(captureCoversPlan(capture('119.00'), PLAN_IDS.PRO), true);
+  assert.equal(captureCoversPlan(capture('69.00'), PLAN_IDS.BASIC), true);
+  assert.equal(captureCoversPlan(capture('0.01'), PLAN_IDS.PRO), false);
+  assert.equal(captureCoversPlan(capture('69.00'), PLAN_IDS.PRO), false);
+  assert.equal(captureCoversPlan(capture('119.00', 'THB'), PLAN_IDS.PRO), false);
+  assert.equal(captureCoversPlan({ id: 'cap', status: 'COMPLETED' }, PLAN_IDS.PRO), false);
+  assert.equal(captureCoversPlan(capture('119.00'), PLAN_IDS.DEMO), false);
 });

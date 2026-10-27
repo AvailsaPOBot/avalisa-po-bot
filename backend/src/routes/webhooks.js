@@ -4,7 +4,7 @@ const prisma = require('../lib/prisma');
 const { PLAN_IDS, getPaidPlanFromWhop, getPlanEntitlements, getAiTradesAllowanceForPlan, shouldRevokeLicense } = require('../lib/plans');
 const { activatePaidLicense } = require('../lib/licenseActivation');
 const { sendPaidActivationEmail } = require('../lib/paidActivationEmail');
-const { decodeCustomId, normalizeCheckoutPlan, verifyPayPalWebhook } = require('../lib/paypal');
+const { captureCoversPlan, decodeCustomId, normalizeCheckoutPlan, verifyPayPalWebhook } = require('../lib/paypal');
 const { recordUnmappedPurchase } = require('../lib/purchaseAlert');
 const { whopRecurrence } = require('../lib/pendingPurchase');
 
@@ -154,6 +154,20 @@ async function handlePayPalCaptureCompleted(resource) {
       eventType: 'PAYMENT.CAPTURE.COMPLETED',
     });
     console.warn('[PayPal] Capture has unsupported plan:', custom.plan);
+    return;
+  }
+
+  if (!captureCoversPlan(resource, plan)) {
+    recordUnmappedPurchase(prisma, {
+      reason: 'paypal_amount_mismatch',
+      userId: custom.userId,
+      planId: custom.plan,
+      paypalCaptureId: resource?.id,
+      amount: resource?.amount?.value,
+      currency: resource?.amount?.currency_code,
+      eventType: 'PAYMENT.CAPTURE.COMPLETED',
+    });
+    console.warn('[PayPal] Capture amount does not cover plan:', resource?.id, plan, resource?.amount);
     return;
   }
 
