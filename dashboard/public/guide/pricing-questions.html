@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Avalisa PO Bot pricing questions answered</title>
+  <meta name="description" content="Straight answers to the pricing questions behind Avalisa PO Bot: Basic is $69 one-time, Pro is $119 one-time or $29/month, and the Demo is free with 10 Martingale trades.">
+  <meta property="og:title" content="Avalisa PO Bot pricing questions answered">
+  <meta property="og:description" content="Straight answers to the pricing questions behind Avalisa PO Bot: Basic is $69 one-time, Pro is $119 one-time or $29/month, and the Demo is free with 10 Martingale trades.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://avalisabot.vercel.app/guide/pricing-questions.html">
+  <meta property="og:image" content="https://avalisabot.vercel.app/images/share-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://avalisabot.vercel.app/images/share-card.png">
+  <link rel="canonical" href="https://avalisabot.vercel.app/guide/pricing-questions.html">
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root {
+      --bg: #060606;
+      --surface: #0e1216;
+      --surface-deep: #07090b;
+      --text: #f3eee6;
+      --muted: rgba(243, 238, 230, 0.7);
+      --gold: #d8a24a;
+      --gold-light: #f1c878;
+      --line: rgba(216, 162, 74, 0.24);
+      --jade: #4a9b7e;
+      --display: Georgia, 'Times New Roman', serif;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 78% 3%, rgba(216, 162, 74, 0.18), transparent 26rem),
+        radial-gradient(circle at 5% 22%, rgba(74, 155, 126, 0.12), transparent 30rem),
+        linear-gradient(180deg, var(--bg), #090c0e 48%, #040404);
+      color: var(--text);
+      font: 16px/1.7 var(--sans);
+    }
+    a { color: var(--gold-light); text-underline-offset: 0.2em; }
+    a:hover { color: #ffe1a8; }
+    a:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 4px; }
+    .shell { width: min(calc(100% - 2rem), 860px); margin: 0 auto; }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: rgba(6, 6, 6, 0.88);
+    }
+    nav {
+      display: flex;
+      min-height: 4.35rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand img { display: block; width: auto; height: 3.1rem; }
+    .nav-link { color: var(--muted); font-size: 0.86rem; font-weight: 700; text-decoration: none; }
+    .hero { padding: clamp(3.5rem, 8vw, 6.5rem) 0 clamp(2rem, 5vw, 4rem); }
+    .kicker {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    h1, h2 { font-family: var(--display); font-weight: 500; line-height: 1.08; }
+    h1 { max-width: 820px; margin: 0.75rem 0 1.25rem; font-size: clamp(2.5rem, 7vw, 5rem); }
+    h2 { margin: 0 0 1rem; font-size: clamp(1.8rem, 4vw, 2.55rem); }
+    h3 { margin: 1.75rem 0 0.35rem; color: var(--gold-light); font-size: 1.05rem; }
+    p, li { color: var(--muted); }
+    .lede { max-width: 740px; margin: 0; font-size: clamp(1.05rem, 2.5vw, 1.24rem); }
+    .quick-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.6rem; }
+    .button {
+      display: inline-flex;
+      min-height: 2.8rem;
+      align-items: center;
+      border: 1px solid rgba(241, 200, 120, 0.55);
+      border-radius: 0.48rem;
+      padding: 0.7rem 1rem;
+      background: linear-gradient(180deg, #f1c878, #d0933c 52%, #9c6423);
+      color: #130d05;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .button.secondary { background: rgba(10, 10, 15, 0.6); color: var(--gold-light); }
+    .toc, article section, .risk, .final-cta {
+      border: 1px solid var(--line);
+      border-radius: 0.7rem;
+      background:
+        radial-gradient(circle at 92% 0%, rgba(216, 162, 74, 0.08), transparent 15rem),
+        linear-gradient(180deg, rgba(14, 18, 22, 0.92), rgba(7, 9, 11, 0.94));
+    }
+    .toc { margin-bottom: 1rem; padding: 1.35rem clamp(1.1rem, 3vw, 1.8rem); }
+    .toc strong { font-family: var(--display); font-size: 1.2rem; }
+    .toc ol { columns: 2; margin-bottom: 0; padding-left: 1.25rem; }
+    .toc li { break-inside: avoid; margin: 0.25rem 0; }
+    article { display: grid; gap: 1rem; padding-bottom: 4rem; }
+    article section { padding: clamp(1.3rem, 4vw, 2.2rem); scroll-margin-top: 1rem; }
+    article section > :last-child { margin-bottom: 0; }
+    ol, ul { padding-left: 1.45rem; }
+    li + li { margin-top: 0.5rem; }
+    strong { color: var(--text); }
+    .risk { border-color: rgba(241, 200, 120, 0.42); }
+    .risk h2 { color: var(--gold-light); }
+    .final-cta { text-align: left; }
+    footer { border-top: 1px solid var(--line); padding: 2rem 0; color: var(--muted); font-size: 0.86rem; }
+    footer .shell { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 1.5rem; }
+    @media (max-width: 620px) {
+      .toc ol { columns: 1; }
+      .brand img { height: 2.7rem; }
+      .nav-link { font-size: 0.78rem; }
+    }
+  </style>
+    <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between Basic and Pro?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Basic ($69) unlocks unlimited Martingale trading, cloud settings sync and trade history. Pro adds Avalisa Bot mode, the rule-based signal mode, alongside Martingale. Choose Basic if Martingale is all you need, Pro if you want both modes."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is it a subscription?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Basic is a one-time $69 payment and never renews. For Pro you choose at checkout: $119 one-time, which also never renews, or $29/month, which is a recurring subscription that renews monthly until you cancel. Both Pro options unlock the same features."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What can I test with the free Demo plan?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Demo includes 10 Martingale trades, webapp bot access, the dashboard, all supported timeframes and basic trade history. Run it on a Pocket Option demo account first to see how the bot behaves before you pay."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I get Pro through Pocket Option?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Register a new Pocket Option account through our link (we earn a commission from Pocket Option when you do), then link that Pocket Option ID in your Avalisa dashboard under Settings. If Pocket Option has already confirmed the registration came through our link, Pro is granted straight away; otherwise the request waits for a manual review. Pro granted this way does not expire."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does it work on a phone?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. On a computer Avalisa is a Chrome extension; on an iPhone or Android phone it runs through a free bookmark you save from avalisabot.vercel.app/webapp, which opens the Avalisa panel on the Pocket Option trading page."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does it work on real accounts or only demo?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Both. The extension places trades the same way on a demo or a real Pocket Option account. Start on demo, and remember Martingale raises the stake after each loss, so a losing streak can empty a balance."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I cancel the $29/month Pro?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Cancel the subscription in Whop, where you bought it. When it ends, your licence returns to the free Demo plan; your account, settings and trade history are kept, and subscribing again upgrades it again. Basic and the $119 Pro option never renew, so there is nothing to cancel."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Avalisa need my Pocket Option password?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. You log in to Pocket Option yourself, and Avalisa works on the Pocket Option page already open in your own browser, logged in as you. It does not move accounts or funds. Only ever type your Pocket Option password on Pocket Option's own site."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What changes from Demo to Pro?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Pro unlocks unlimited trades and both Martingale mode and Avalisa Bot mode (the rule-based signal mode, which is Pro-only)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need a card for Demo?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Signing up and the 10 free Demo trades ask for no payment details; a card (or Apple/Google Pay) is only asked at the paid-plan checkout on the pricing page."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I pay for a paid plan?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Card, Apple Pay or Google Pay, through the checkout on the pricing page."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "If I buy Basic first, do I get credit toward Pro?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. There is no credit or discount; Pro is always its full price ($119 one-time or $29/month)."
+      }
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
+</head>
+<body>
+  <header>
+    <nav class="shell" aria-label="Primary navigation">
+      <a class="brand" href="/" aria-label="Avalisa PO Bot home">
+        <img src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot">
+      </a>
+      <a class="nav-link" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+    </nav>
+  </header>
+  <main>
+    <div class="hero shell">
+      <p class="kicker">Pricing</p>
+      <h1>Avalisa PO Bot pricing questions answered</h1>
+      <p class="lede">Straight answers to the pricing questions we hear most: what each plan costs, which option renews, what the free Demo covers, and how payment and cancellation work.</p>
+      <div class="quick-links">
+        <a class="button" href="https://avalisabot.vercel.app/pricing">See plans — start with the free Demo</a>
+      </div>
+    </div>
+    <div class="shell">
+      <article>
+      <section id="faq">
+        <h2>Pricing questions, answered</h2>
+        <h3>What is the difference between Basic and Pro?</h3>
+        <p>Basic ($69) unlocks unlimited Martingale trading, cloud settings sync and trade history. Pro adds Avalisa Bot mode, the rule-based signal mode, alongside Martingale. Choose Basic if Martingale is all you need, Pro if you want both modes.</p>
+        <h3>Is it a subscription?</h3>
+        <p>Basic is a one-time $69 payment and never renews. For Pro you choose at checkout: $119 one-time, which also never renews, or $29/month, which is a recurring subscription that renews monthly until you cancel. Both Pro options unlock the same features.</p>
+        <h3>What can I test with the free Demo plan?</h3>
+        <p>Demo includes 10 Martingale trades, webapp bot access, the dashboard, all supported timeframes and basic trade history. Run it on a Pocket Option demo account first to see how the bot behaves before you pay.</p>
+        <h3>How do I get Pro through Pocket Option?</h3>
+        <p>Register a new Pocket Option account through our link (we earn a commission from Pocket Option when you do), then link that Pocket Option ID in your Avalisa dashboard under Settings. If Pocket Option has already confirmed the registration came through our link, Pro is granted straight away; otherwise the request waits for a manual review. Pro granted this way does not expire.</p>
+        <h3>Does it work on a phone?</h3>
+        <p>Yes. On a computer Avalisa is a Chrome extension; on an iPhone or Android phone it runs through a free bookmark you save from avalisabot.vercel.app/webapp, which opens the Avalisa panel on the Pocket Option trading page.</p>
+        <h3>Does it work on real accounts or only demo?</h3>
+        <p>Both. The extension places trades the same way on a demo or a real Pocket Option account. Start on demo, and remember Martingale raises the stake after each loss, so a losing streak can empty a balance.</p>
+        <h3>How do I cancel the $29/month Pro?</h3>
+        <p>Cancel the subscription in Whop, where you bought it. When it ends, your licence returns to the free Demo plan; your account, settings and trade history are kept, and subscribing again upgrades it again. Basic and the $119 Pro option never renew, so there is nothing to cancel.</p>
+        <h3>Does Avalisa need my Pocket Option password?</h3>
+        <p>No. You log in to Pocket Option yourself, and Avalisa works on the Pocket Option page already open in your own browser, logged in as you. It does not move accounts or funds. Only ever type your Pocket Option password on Pocket Option's own site.</p>
+        <h3>What changes from Demo to Pro?</h3>
+        <p>Pro unlocks unlimited trades and both Martingale mode and Avalisa Bot mode (the rule-based signal mode, which is Pro-only).</p>
+        <h3>Do I need a card for Demo?</h3>
+        <p>No. Signing up and the 10 free Demo trades ask for no payment details; a card (or Apple/Google Pay) is only asked at the paid-plan checkout on the pricing page.</p>
+        <h3>How do I pay for a paid plan?</h3>
+        <p>Card, Apple Pay or Google Pay, through the checkout on the pricing page.</p>
+        <h3>If I buy Basic first, do I get credit toward Pro?</h3>
+        <p>No. There is no credit or discount; Pro is always its full price ($119 one-time or $29/month).</p>
+      </section>
+      <section class="risk">
+        <p>Trading involves risk; never trade money you can't afford to lose.</p>
+      </section>
+      </article>
+    </div>
+  </main>
+
+<footer>
+    <div class="shell">
+      <span>© Avalisa PO Bot</span>
+      <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a>
+    </div>
+  </footer>
+</body>
+</html>
