@@ -90,6 +90,22 @@ const PRICING_FAQ = [
     q: 'Does Avalisa need my Pocket Option password?',
     a: 'No. You log in to Pocket Option yourself, and Avalisa works on the Pocket Option page already open in your own browser, logged in as you. It does not move accounts or funds. Only ever type your Pocket Option password on Pocket Option\'s own site.',
   },
+  {
+    q: 'What changes from Demo to Pro?',
+    a: 'Pro unlocks unlimited trades and both Martingale mode and Avalisa Bot mode (the rule-based signal mode, which is Pro-only).',
+  },
+  {
+    q: 'Do I need a card for Demo?',
+    a: 'No. Signing up and the 10 free Demo trades ask for no payment details; a card (or Apple/Google Pay) is only asked at the paid-plan checkout on this page.',
+  },
+  {
+    q: 'How do I pay for a paid plan?',
+    a: 'Card, Apple Pay or Google Pay, through the checkout on this page.',
+  },
+  {
+    q: 'If I buy Basic first, do I get credit toward Pro?',
+    a: 'No. There is no credit or discount; Pro is always its full price ($119 one-time or $29/month).',
+  },
 ];
 
 export default function Pricing() {
