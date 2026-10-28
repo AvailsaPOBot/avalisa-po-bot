@@ -144,6 +144,12 @@
       .brand img { height: 2.7rem; }
       .nav-link { font-size: 0.78rem; }
     }
+
+    .video-embed { position: relative; aspect-ratio: 16 / 9; margin: 1rem 0 0.6rem; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #000; }
+    .video-embed a, .video-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+    .video-embed img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
+    .video-embed .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 68px; height: 68px; border-radius: 50%; background: var(--gold); color: #060606; font-size: 1.6rem; display: grid; place-items: center; }
+    .video-note { font-size: 0.92rem; color: var(--muted); }
   </style>
   <!-- jsonld:start -->
   <script type="application/ld+json">
@@ -208,6 +214,21 @@
           }
         }
       ]
+    },
+    {
+      "@type": "VideoObject",
+      "name": "How to Use a Pocket Option Bot — Real Demo",
+      "description": "Avalisa PO Bot running on a Pocket Option demo account: set the rules, press Start, watch a step sequence, press Stop.",
+      "thumbnailUrl": "https://i.ytimg.com/vi/fCADVurXawU/hqdefault.jpg",
+      "uploadDate": "2026-10-27",
+      "duration": "PT1M45S",
+      "contentUrl": "https://www.youtube.com/watch?v=fCADVurXawU",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/fCADVurXawU",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
     }
   ]
 }
@@ -254,6 +275,18 @@
         <section id="covers">
           <h2>What this guide covers</h2>
           <p>The bot offers a Martingale strategy and, for Pro accounts, the rule-based Avalisa Bot mode. Everything below applies to Martingale mode, which every plan can use. The risk section near the end is not optional reading.</p>
+        </section>
+
+        <section id="watch">
+          <h2>Watch it on a demo account (1:45)</h2>
+          <p>The whole flow in under two minutes, recorded on a real Pocket Option demo account: set your rules, press Start, watch a step sequence play out, press Stop.</p>
+          <div class="video-embed" data-video-id="fCADVurXawU" data-video-name="How to Use a Pocket Option Bot — Real Demo" data-video-description="Avalisa PO Bot running on a Pocket Option demo account: set the rules, press Start, watch a step sequence, press Stop." data-upload-date="2026-10-27" data-duration="PT1M45S">
+            <a href="https://www.youtube.com/watch?v=fCADVurXawU" onclick="this.outerHTML='&lt;iframe src=&quot;https://www.youtube-nocookie.com/embed/fCADVurXawU?autoplay=1&quot; title=&quot;How to Use a Pocket Option Bot — Real Demo&quot; allow=&quot;autoplay; encrypted-media; picture-in-picture&quot; allowfullscreen&gt;&lt;/iframe&gt;';return false;" aria-label="Play video: How to Use a Pocket Option Bot — Real Demo">
+              <img src="https://i.ytimg.com/vi/fCADVurXawU/hqdefault.jpg" alt="Avalisa PO Bot panel on a Pocket Option demo account" loading="lazy" width="480" height="360">
+              <span class="play" aria-hidden="true">&#9654;</span>
+            </a>
+          </div>
+          <p class="video-note">Demo account, no real money. Every result in the video is one demo session; a step sequence can also lose every step, so set a Steps limit you can afford and try it on demo first.</p>
         </section>
 
         <section id="timeframe">

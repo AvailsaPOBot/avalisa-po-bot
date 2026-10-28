@@ -26,6 +26,7 @@ const PLAN_LABELS = { lifetime: 'Pro', basic: 'Basic' };
 const STATIC_GUIDES = [
   { href: '/guide/bankroll-rules-automation.html', title: 'Bankroll Rules for Automated Binary-Options Trading' },
   { href: '/guide/basic-vs-pro.html', title: 'Basic vs Pro: Which Avalisa PO Bot Plan Fits How You Trade' },
+  { href: '/guide/pricing-questions.html', title: 'Avalisa PO Bot pricing questions answered' },
   { href: '/guide/best-pocket-option-bot-settings.html', title: 'Best Pocket Option Bot Settings: What We Measured and Where to Start' },
   { href: '/guide/best-timeframe-for-pocket-option-automation.html', title: 'Best Timeframe for Pocket Option Automation: 1-Minute vs 5-Minute' },
   { href: '/guide/binary-options-vs-forex-automation.html', title: 'Automating Binary Options vs Forex: Why the Maths Is Not the Same' },

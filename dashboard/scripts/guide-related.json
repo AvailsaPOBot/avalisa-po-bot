@@ -204,6 +204,11 @@
     "basic-vs-pro.html",
     "trading-journal-for-bot-sessions.html"
   ],
+  "pricing-questions.html": [
+    "basic-vs-pro.html",
+    "free-pro-with-new-account.html",
+    "how-to-stop-or-remove-the-bot-safely.html"
+  ],
   "rsi-macd-stochastic-plain-english.html": [
     "how-to-install-avalisa-po-bot.html",
     "pocket-option-copy-trading-vs-bot.html",

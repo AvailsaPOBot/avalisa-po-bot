@@ -66,6 +66,22 @@ function buildJsonLd(html) {
       })),
     });
   }
+  // An embedded YouTube video: <div class="video-embed" data-video-id data-video-name ...>
+  const video = html.match(/<div class="video-embed" data-video-id="([^"]+)" data-video-name="([^"]+)" data-video-description="([^"]+)" data-upload-date="([^"]+)" data-duration="([^"]+)"/);
+  if (video) {
+    const [, id, name, description, uploadDate, duration] = video;
+    graph.push({
+      '@type': 'VideoObject',
+      name: text(name),
+      description: text(description),
+      thumbnailUrl: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+      uploadDate,
+      duration,
+      contentUrl: `https://www.youtube.com/watch?v=${id}`,
+      embedUrl: `https://www.youtube-nocookie.com/embed/${id}`,
+      publisher: { '@type': 'Organization', name: 'Avalisa PO Bot', url: 'https://avalisabot.vercel.app/' },
+    });
+  }
   return { '@context': 'https://schema.org', '@graph': graph };
 }
 
