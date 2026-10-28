@@ -106,6 +106,14 @@ const PRICING_FAQ = [
     q: 'If I buy Basic first, do I get credit toward Pro?',
     a: 'No. There is no credit or discount; Pro is always its full price ($119 one-time or $29/month).',
   },
+  {
+    q: 'How do I cancel the $29/month Pro subscription, and what happens after?',
+    a: "Email avalisapobot@gmail.com and we'll cancel it for you. After the subscription is cancelled or ends, your licence goes back to the free Demo plan (10 trades). Your account, settings and trade history are kept, and subscribing again upgrades it again.",
+  },
+  {
+    q: 'Do I need to deposit money to use Avalisa PO Bot?',
+    a: "No — you don't need to deposit money to use Avalisa PO Bot. The free Demo plan includes 10 Martingale trades, webapp bot access, dashboard access, and basic trade history. Signing up and using those 10 free Demo trades asks for no card or payment details. We recommend starting on a DEMO account. A real Pocket Option account is optional — the bot works on both.",
+  },
 ];
 
 export default function Pricing() {
