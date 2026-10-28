@@ -4,6 +4,11 @@
     "how-to-read-binary-options-bot-reviews.html",
     "is-there-an-official-pocket-option-bot.html"
   ],
+  "do-i-need-to-deposit.html": [
+    "pricing-questions.html",
+    "free-pro-with-new-account.html",
+    "is-there-a-pocket-option-bot-app-or-apk.html"
+  ],
   "basic-vs-pro.html": [
     "free-pro-with-new-account.html",
     "why-a-bot-trades-one-at-a-time.html",
@@ -207,7 +212,7 @@
   "pricing-questions.html": [
     "basic-vs-pro.html",
     "free-pro-with-new-account.html",
-    "how-to-stop-or-remove-the-bot-safely.html"
+    "do-i-need-to-deposit.html"
   ],
   "rsi-macd-stochastic-plain-english.html": [
     "how-to-install-avalisa-po-bot.html",
