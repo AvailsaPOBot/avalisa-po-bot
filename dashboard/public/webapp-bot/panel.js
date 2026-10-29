@@ -156,6 +156,12 @@
     '.chip.loss{background:rgba(248,113,113,.12);color:#f87171;border:1px solid rgba(248,113,113,.35)}',
     '.chip.draw{background:rgba(148,163,184,.12);color:#cbd5e1;border:1px solid #475569}',
     '.av-status.error{color:#f87171}.av-status.running{color:#34d399}',
+    '.limit-card{border:1px solid #7c3aed;border-radius:12px;padding:12px;margin:0 0 10px;background:rgba(124,58,237,.08)}',
+    '.limit-card h4{margin:0 0 6px;font-size:14px;font-weight:800;color:#e9d5ff}',
+    '.limit-card p{margin:0 0 6px;font-size:12.5px;line-height:1.5;color:#cbd5e1}',
+    '.limit-card .lc-btn{display:block;text-align:center;border-radius:10px;padding:10px 12px;margin:8px 0 0;font-size:13.5px;font-weight:700;text-decoration:none;color:#fff;background:linear-gradient(180deg,#10b981,#059669)}',
+    '.limit-card .lc-btn.pro{background:transparent;border:1px solid #7c3aed;color:#a78bfa}',
+    '.limit-card .lc-risk{font-size:11px;color:#64748b;margin:8px 0 0}',
     '.av-counter{font-size:12px;color:#64748b;text-align:right;margin-bottom:3px}',
     'details{margin-top:6px}summary{font-size:12px;color:#a78bfa;min-height:36px;display:flex;align-items:center;cursor:pointer}',
     '.grid{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:11px;padding-bottom:6px}.grid span:nth-child(odd){color:#64748b}.grid span:nth-child(even){font-family:ui-monospace,Menlo,monospace;text-align:right;color:#cbd5e1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
@@ -203,6 +209,14 @@
     '    <div class="av-controls"><button class="av-btn av-btn-green start">▶ Start</button><button class="av-btn av-btn-red stop">■ Stop</button></div>',
     '    <div class="chip result"></div>',
     '    <div class="av-status status"></div>',
+    '    <div class="limit-card" hidden>',
+    '      <h4>Your 10 free demo trades are used</h4>',
+    '      <p>You used all 10 free Demo Martingale trades.</p>',
+    '      <p>Basic ($69 one-time) adds unlimited Martingale trades. Pro ($119 one-time, or $29/month as a recurring subscription — you choose at checkout) adds unlimited trades in both Martingale and Avalisa Bot modes.</p>',
+    '      <a class="lc-btn" target="_blank" rel="noopener" href="https://avalisabot.vercel.app/pricing">See plans</a>',
+    '      <a class="lc-btn pro" target="_blank" rel="noopener" href="https://avalisabot.vercel.app/guide/free-pro-with-new-account.html">Get Pro free with a new Pocket Option account (granted once Pocket Option confirms the sign-up came through our link)</a>',
+    '      <p class="lc-risk">No plan guarantees profit; results depend on market outcomes.</p>',
+    '    </div>',
     '    <div class="av-counter plan-line"></div>',
     '    <div class="av-counter trades"></div>',
     '    <details><summary>Live readings</summary><div class="grid readings"></div></details>',
@@ -376,6 +390,9 @@
     status.textContent = 'Status: ' + message;
     var problem = !s.botRunning && !checking && (offline || s.lastBotError || s.pageState === 'login');
     status.className = 'av-status status' + (s.botRunning ? ' running' : problem ? ' error' : '');
+    // Demo trade cap: the license check says no trades remain on the free plan.
+    $('.limit-card').hidden = !(plan === 'free' && s.licenseAllowed === false
+      && s.authStatus !== 'error' && s.tradesRemaining != null && s.tradesRemaining <= 0);
     $('.plan-line').textContent = checking ? 'Plan: checking…'
       : s.authStatus === 'error' ? 'Plan: not checked yet'
       : 'Plan: ' + plan.toUpperCase() + ' · ' + allowance;
