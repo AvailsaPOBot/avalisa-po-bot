@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Real Account Go/No-Go Checklist: Decide Before You Trade Live</title>
+  <meta name="description" content="A go/no-go checklist to run before moving a Pocket Option bot from a demo to a real account: what to check, what to decide, and where each explanation lives.">
+  <meta property="og:title" content="Real Account Go/No-Go Checklist: Decide Before You Trade Live">
+  <meta property="og:description" content="A go/no-go checklist to run before moving a Pocket Option bot from a demo to a real account: what to check, what to decide, and where each explanation lives.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://avalisabot.vercel.app/guide/real-account-go-no-go-checklist.html">
+  <meta property="og:image" content="https://avalisabot.vercel.app/images/share-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://avalisabot.vercel.app/images/share-card.png">
+  <link rel="canonical" href="https://avalisabot.vercel.app/guide/real-account-go-no-go-checklist.html">
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root {
+      --bg: #060606;
+      --surface: #0e1216;
+      --surface-deep: #07090b;
+      --text: #f3eee6;
+      --muted: rgba(243, 238, 230, 0.7);
+      --gold: #d8a24a;
+      --gold-light: #f1c878;
+      --line: rgba(216, 162, 74, 0.24);
+      --jade: #4a9b7e;
+      --display: Georgia, 'Times New Roman', serif;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 78% 3%, rgba(216, 162, 74, 0.18), transparent 26rem),
+        radial-gradient(circle at 5% 22%, rgba(74, 155, 126, 0.12), transparent 30rem),
+        linear-gradient(180deg, var(--bg), #090c0e 48%, #040404);
+      color: var(--text);
+      font: 16px/1.7 var(--sans);
+    }
+    a { color: var(--gold-light); text-underline-offset: 0.2em; }
+    a:hover { color: #ffe1a8; }
+    a:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 4px; }
+    .shell { width: min(calc(100% - 2rem), 860px); margin: 0 auto; }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: rgba(6, 6, 6, 0.88);
+    }
+    nav {
+      display: flex;
+      min-height: 4.35rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand img { display: block; width: auto; height: 3.1rem; }
+    .nav-link { color: var(--muted); font-size: 0.86rem; font-weight: 700; text-decoration: none; }
+    .hero { padding: clamp(3.5rem, 8vw, 6.5rem) 0 clamp(2rem, 5vw, 4rem); }
+    .kicker {
+      margin: 0;
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    h1, h2 { font-family: var(--display); font-weight: 500; line-height: 1.08; }
+    h1 { max-width: 820px; margin: 0.75rem 0 1.25rem; font-size: clamp(2.5rem, 7vw, 5rem); }
+    h2 { margin: 0 0 1rem; font-size: clamp(1.8rem, 4vw, 2.55rem); }
+    h3 { margin: 1.75rem 0 0.35rem; color: var(--gold-light); font-size: 1.05rem; }
+    p, li { color: var(--muted); }
+    .lede { max-width: 740px; margin: 0; font-size: clamp(1.05rem, 2.5vw, 1.24rem); }
+    .risk {
+      border: 1px solid rgba(241, 200, 120, 0.42);
+      border-radius: 0.7rem;
+      padding: 1.1rem 1.25rem;
+      margin: 1.25rem 0 0;
+      background: linear-gradient(180deg, rgba(14, 18, 22, 0.92), rgba(7, 9, 11, 0.94));
+    }
+    .risk p { margin: 0; color: var(--text); font-weight: 700; }
+    article { display: grid; gap: 1rem; padding-bottom: 4rem; }
+    article section {
+      padding: clamp(1.3rem, 4vw, 2.2rem);
+      scroll-margin-top: 1rem;
+      border: 1px solid var(--line);
+      border-radius: 0.7rem;
+      background:
+        radial-gradient(circle at 92% 0%, rgba(216, 162, 74, 0.08), transparent 15rem),
+        linear-gradient(180deg, rgba(14, 18, 22, 0.92), rgba(7, 9, 11, 0.94));
+    }
+    article section > :last-child { margin-bottom: 0; }
+    ol, ul { padding-left: 1.45rem; }
+    li + li { margin-top: 0.5rem; }
+    strong { color: var(--text); }
+    .checklist { list-style: none; margin: 0; padding: 0; }
+    .checklist li {
+      display: grid;
+      grid-template-columns: 1.35rem 1fr;
+      gap: 0.9rem;
+      align-items: start;
+      padding: 1.1rem 0;
+      border-top: 1px solid var(--line);
+    }
+    .checklist li:first-child { border-top: 0; padding-top: 0; }
+    .checklist input[type="checkbox"] {
+      appearance: none;
+      width: 1.35rem;
+      height: 1.35rem;
+      margin-top: 0.2rem;
+      border: 1.5px solid var(--gold);
+      border-radius: 0.3rem;
+      background: rgba(7, 9, 11, 0.7);
+      cursor: pointer;
+    }
+    .checklist input[type="checkbox"]:checked {
+      background: linear-gradient(180deg, #f1c878, #d0933c 52%, #9c6423);
+      border-color: #f1c878;
+    }
+    .checklist input[type="checkbox"]:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 3px; }
+    .checklist .item-title { display: block; color: var(--text); font-weight: 700; }
+    .checklist .item-note { display: block; margin-top: 0.2rem; }
+    .next-reads { margin: 0; font-size: 0.9rem; }
+    .final-cta { text-align: left; }
+    .button {
+      display: inline-flex;
+      min-height: 2.8rem;
+      align-items: center;
+      border: 1px solid rgba(241, 200, 120, 0.55);
+      border-radius: 0.48rem;
+      padding: 0.7rem 1rem;
+      background: linear-gradient(180deg, #f1c878, #d0933c 52%, #9c6423);
+      color: #130d05;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .button.secondary { background: rgba(10, 10, 15, 0.6); color: var(--gold-light); }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.1rem; }
+    footer { border-top: 1px solid var(--line); padding: 2rem 0; color: var(--muted); font-size: 0.86rem; }
+    footer .shell { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 1.5rem; }
+    @media (max-width: 620px) {
+      .brand img { height: 2.7rem; }
+      .nav-link { font-size: 0.78rem; }
+    }
+  </style>
+  <!-- jsonld:start -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Real Account Go/No-Go Checklist: Decide Before You Trade Live",
+      "description": "A go/no-go checklist to run before moving a Pocket Option bot from a demo to a real account: what to check, what to decide, and where each explanation lives.",
+      "url": "https://avalisabot.vercel.app/guide/real-account-go-no-go-checklist.html",
+      "mainEntityOfPage": "https://avalisabot.vercel.app/guide/real-account-go-no-go-checklist.html",
+      "image": "https://avalisabot.vercel.app/images/share-card.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
+    }
+  ]
+}
+  </script>
+  <!-- jsonld:end -->
+</head>
+<body>
+  <header>
+    <nav class="shell" aria-label="Primary navigation">
+      <a class="brand" href="/" aria-label="Avalisa PO Bot home">
+        <img src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot">
+      </a>
+      <a class="nav-link" href="https://avalisabot.vercel.app/guide">Setup guide</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero shell">
+      <p class="kicker">Before real money</p>
+      <h1>Real Account Go/No-Go Checklist</h1>
+      <p class="lede">Twelve checks to run before you move a bot from a demo account to a real one. Tick each one as you complete it; any unchecked box is a reason to stay on demo.</p>
+      <div class="risk">
+        <p>Trading involves risk. Only use money you can afford to lose.</p>
+      </div>
+    </div>
+
+    <div class="shell">
+      <article>
+        <section id="checklist">
+          <h2>The checklist</h2>
+          <ul class="checklist">
+            <li>
+              <input type="checkbox" id="c1">
+              <label for="c1">
+                <span class="item-title">I have run this exact setup on a demo account first</span>
+                <span class="item-note">Demo accounts exist for a reason: practise the switch before real money is involved. <a href="/guide/pocket-option-demo-to-real-account.html">Why start on demo</a>.</span>
+              </label>
+            </li>
+            <li>
+              <input type="checkbox" id="c2">
+              <label for="c2">
+                <span class="item-title">I understand the extension behaves the same on a real account</span>
+                <span class="item-note">There is no separate demo or real configuration; the same extension and settings work on whichever account is active. <a href="/guide/pocket-option-demo-to-real-account.html">What stays the same</a>.</span>
+              </label>
+            </li>
+            <li>
+              <input type="checkbox" id="c3">
+              <label for="c3">
+                <span class="item-title">I know what changes when the money becomes real</span>
+                <span class="item-note">Demo results say nothing about live behaviour; losing streaks hit differently once stakes are real. <a href="/guide/why-bots-win-on-demo-and-lose-on-real.html">Why demo and real differ</a>.</span>
+              </label>
+            </li>
+            <li>
+              <input type="checkbox" id="c4">
+              <label for="c4">
+                <span class="item-title">I have checked the real-account payout and my Minimum payout % setting</span>
+                <span class="item-note">A lower payout raises the win rate needed to break even (break-even at payout p is 1&nbsp;/&nbsp;(1&nbsp;+&nbsp;p)). Verify the payout shown on the pair before trading it. <a href="/guide/payout-percentage-filter-importance.html">Why the payout filter matters</a>.</span>
+              </label>
+            </li>
+            <li>
+              <input type="checkbox" id="c5">
+              <label for="c5">
+                <span class="item-title">My Martingale Steps is a finite number, not Infinite</span>
+                <span class="item-note">Limiting Steps is the real way to cap a losing streak &mdash; there is no separate stop-loss or daily-loss-limit setting. Martingale doubles the stake after each loss, and a losing streak can wipe out a balance. <a href="/guide/martingale-risk-explained.html">Martingale risk, explained</a>.</span>
+              </label>
+            </li>
+            <li>
+              <input type="checkbox" id="c6">
+              <label for="c6">
+                <span class="item-title">I have written my session end point before opening the platform</span>
+                <span class="item-note">Decide in advance when a session ends. The bot has no built-in daily-loss limit, so the end point is yours to set and enforce. <a href="/guide/when-to-stop-automated-trading-session.html">When to stop a session</a>.</span>
+              </label>
+            </li>
+            <li>
+              <input type="checkbox" id="c7">
+              <label for="c7">
+                <span class="item-title">I will keep the Pocket Option tab visible while the bot trades</span>
+                <span class="item-note">A background or minimised tab can delay trade-result detection. Decide now how you will keep the tab visible. <a href="/guide/why-the-trading-tab-must-stay-open.html">Why the tab must stay open</a>.</span>
+              </label>
+            </li>
+            <li>
+              <input type="checkbox" id="c8">
+              <label for="c8">
+                <span class="item-title">I will log in to Pocket Option myself and never type the password anywhere else</span>
+                <span class="item-note">The bot operates the Pocket Option page already open in your own browser, logged in as you, and does not move accounts or funds. <a href="/guide/how-to-install-avalisa-po-bot.html">Install and login</a>.</span>
+              </label>
+            </li>
+            <li>
+              <input type="checkbox" id="c9">
+              <label for="c9">
+                <span class="item-title">I have confirmed which plan my Pocket Option ID has</span>
+                <span class="item-note">Anyone can check whether a Pocket Option ID already has a plan on the setup guide (&ldquo;Check my Pocket Option ID&rdquo;). Know what you are running before you run it. <a href="/guide/pocket-option-demo-to-real-account.html">Plans and accounts</a>.</span>
+              </label>
+            </li>
+            <li>
+              <input type="checkbox" id="c10">
+              <label for="c10">
+                <span class="item-title">I understand withdrawals are Pocket Option&rsquo;s own flow</span>
+                <span class="item-note">Withdrawals go through Pocket Option&rsquo;s own normal flow, the same whether trades were placed by hand or by the extension. <a href="/guide/can-you-withdraw-funds-after-bot-trading.html">Withdrawals after bot trading</a>.</span>
+              </label>
+            </li>
+            <li>
+              <input type="checkbox" id="c11">
+              <label for="c11">
+                <span class="item-title">I know Pocket Option&rsquo;s stated position on bots</span>
+                <span class="item-note">Pocket Option&rsquo;s own blog says automated strategies are fine as long as they comply with platform rules, and names market manipulation &mdash; not automation &mdash; as the explicit ban risk. That is their blog, not their formal Terms of Service, which we have not read directly; for a definitive answer on your own account, ask Pocket Option support. <a href="/guide/can-you-withdraw-funds-after-bot-trading.html">What Pocket Option says about bots</a>.</span>
+              </label>
+            </li>
+            <li>
+              <input type="checkbox" id="c12">
+              <label for="c12">
+                <span class="item-title">I have decided: go, or stay on demo</span>
+                <span class="item-note">Whether to fund a real account is your decision; if you do, only use money you can afford to lose. If any box is unticked, keep practising on demo until it is. <a href="/guide/pocket-option-demo-to-real-account.html">How to switch accounts</a>.</span>
+              </label>
+            </li>
+          </ul>
+        </section>
+        <section id="start" class="final-cta">
+          <h2>Practise the switch on demo first</h2>
+          <p>Install Avalisa PO Bot from the <a href="https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa">Chrome Web Store</a>, follow the <a href="https://avalisabot.vercel.app/guide">setup guide</a>, and run it on a Pocket Option demo account first. The free Demo plan includes 10 Martingale trades.</p>
+          <p class="cta-row"><a class="button" href="/register">Try the free demo</a> <a class="button secondary" href="/pricing">See plans</a></p>
+        </section>
+        <p class="next-reads"><strong>Next reads:</strong> <a href="/guide/pocket-option-demo-to-real-account.html">From Demo to a Real Account</a> &middot; <a href="/guide/why-bots-win-on-demo-and-lose-on-real.html">Why a Bot Can Win on Demo and Struggle on Real</a> &middot; <a href="/guide/when-to-stop-automated-trading-session.html">When to Stop an Automated Session</a></p>
+        <!-- related:start -->
+        <p class="next-reads"><strong>Related guides:</strong> <a href="/guide/martingale-risk-explained.html">Martingale: Balance Wipe-Out Risk and How to Set Limits</a> &middot; <a href="/guide/payout-percentage-filter-importance.html">Payout-Percentage Filters in Automated Trading</a> &middot; <a href="/guide/do-i-need-to-deposit.html">Do I Need to Deposit Money to Use Avalisa PO Bot?</a></p>
+        <!-- related:end -->
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <span>© Avalisa PO Bot</span>
+      <a href="mailto:avalisapobot@gmail.com">avalisapobot@gmail.com</a>
+    </div>
+  </footer>
+</body>
+</html>
