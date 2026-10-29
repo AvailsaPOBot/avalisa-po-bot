@@ -15,7 +15,7 @@ test('guide setup switcher and static index cover the phone path and every stati
   expect(screen.getByRole('heading', { name: /set a martingale step cap/i })).toBeInTheDocument();
   expect(screen.getByLabelText(/pocket option id/i)).toBeInTheDocument();
 
-  const summary = screen.getByText(/browse all 57 guides/i);
+  const summary = screen.getByText(/browse all 58 guides/i);
   fireEvent.click(summary);
   const publicGuides = path.resolve(__dirname, '../../public/guide');
   const staticFiles = fs.readdirSync(publicGuides).filter((file) => file.endsWith('.html'));

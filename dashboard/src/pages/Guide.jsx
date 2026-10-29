@@ -66,6 +66,7 @@ const STATIC_GUIDES = [
   { href: '/guide/pocket-option-candle-streak-pin-bar.html', title: 'Candle Streak and Pin-Bar Strategies: What They Assume' },
   { href: '/guide/pocket-option-copy-trading-vs-bot.html', title: 'Pocket Option Copy Trading vs a Rules-Based Bot' },
   { href: '/guide/pocket-option-demo-to-real-account.html', title: 'Pocket Option Demo to Real Account: Moving a Bot to Live' },
+  { href: '/guide/real-account-go-no-go-checklist.html', title: 'Real Account Go/No-Go Checklist: Decide Before You Trade Live' },
   { href: '/guide/pocket-option-insider-bot-offers.html', title: 'Pocket Option "Insider Bot" Offers: Telegram, APK and Free-Download Warning Signs' },
   { href: '/guide/pocket-option-signal-and-prediction-bots.html', title: 'Pocket Option Signal and Prediction Bots: How a Signal Becomes a Trade' },
   { href: '/guide/rsi-macd-stochastic-plain-english.html', title: 'RSI, MACD and Stochastic in Plain English (and Which One Avalisa Uses)' },
