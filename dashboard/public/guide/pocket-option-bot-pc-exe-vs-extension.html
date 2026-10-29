@@ -118,6 +118,10 @@
     table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
     th, td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); text-align: left; color: var(--muted); }
     th { color: var(--text); }
+    .video-embed { position: relative; aspect-ratio: 16 / 9; margin: 1rem 0 0.6rem; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #000; }
+    .video-embed a, .video-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+    .video-embed img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
+    .video-embed .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 68px; height: 68px; border-radius: 50%; background: var(--gold); color: #060606; font-size: 1.6rem; display: grid; place-items: center; }
   </style>
   <!-- jsonld:start -->
   <script type="application/ld+json">
@@ -166,6 +170,21 @@
           }
         }
       ]
+    },
+    {
+      "@type": "VideoObject",
+      "name": "How to Use a Pocket Option Bot — Real Demo",
+      "description": "Avalisa PO Bot running on a Pocket Option demo account: set the rules, press Start, watch a step sequence, press Stop.",
+      "thumbnailUrl": "https://i.ytimg.com/vi/fCADVurXawU/hqdefault.jpg",
+      "uploadDate": "2026-10-27",
+      "duration": "PT1M45S",
+      "contentUrl": "https://www.youtube.com/watch?v=fCADVurXawU",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/fCADVurXawU",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
     }
   ]
 }
@@ -198,7 +217,16 @@
 <section id="what-a-downloaded-exe-can-reach-that-a-b"><h2>What a downloaded .exe can reach that a browser extension cannot</h2><p>A browser extension runs inside one browser and, at most, one site's page. A program you download and install runs as its own process on your whole computer: it can open its own windows, read and write files, run in the background after you close its window, and reach things outside any single tab. That wider reach is why you should know exactly what you are installing and how to remove it later.</p></section>
 <section id="how-it-gets-into-your-trading-account"><h2>How it gets into your trading account</h2><p>Many desktop bots ask you to type your Pocket Option login into the program itself, and then store it &mdash; in a config file or inside the program's own data &mdash; so it can sign in on its own. Your credentials then live on your computer outside your browser. A browser extension does not need your stored login: it works on the tab where you are already signed in, so the account session stays in your browser as usual.</p></section>
 <section id="updates-and-removal"><h2>Updates and removal</h2><p>A downloaded program usually arrives as an installer, may start background processes, and leaves files and settings behind after you close it. Removing it means running the uninstaller (or removing it from Windows' installed-apps list) and checking that no background process keeps running. With a browser extension, removal is the Remove button in your browser's extensions list &mdash; no uninstaller and nothing left running outside the browser. See <a href="/guide/how-to-stop-or-remove-the-bot-safely.html">how to stop or remove the bot safely</a> for the full removal checklist.</p></section>
-<section id="how-avalisa-runs"><h2>How Avalisa runs</h2><p>Avalisa is a Chrome extension that runs on your own signed-in Pocket Option tab &mdash; it does not ask for your Pocket Option password, and there is no separate program to install on your computer. It works on Pocket Option's web interface, including the demo account, where you can try it before using a real account. Basic is $69 one-time; Pro is $119 one-time OR $29/month (a real recurring subscription) &mdash; you choose at checkout.</p></section>
+<section id="how-avalisa-runs"><h2>How Avalisa runs</h2><p>Avalisa is a Chrome extension that runs on your own signed-in Pocket Option tab &mdash; it does not ask for your Pocket Option password, and there is no separate program to install on your computer. It works on Pocket Option's web interface, including the demo account, where you can try it before using a real account. Basic is $69 one-time; Pro is $119 one-time OR $29/month (a real recurring subscription) &mdash; you choose at checkout.</p>
+<p>This clip shows the extension running in the trading tab on a demo account with virtual money: rules are set, Start is pressed, a step sequence plays, and Stop is pressed.</p>
+<div class="video-embed" data-video-id="fCADVurXawU" data-video-name="How to Use a Pocket Option Bot — Real Demo" data-video-description="Avalisa PO Bot running on a Pocket Option demo account: set the rules, press Start, watch a step sequence, press Stop." data-upload-date="2026-10-27" data-duration="PT1M45S">
+  <a href="https://www.youtube.com/watch?v=fCADVurXawU" onclick="this.outerHTML='&lt;iframe src=&quot;https://www.youtube-nocookie.com/embed/fCADVurXawU?autoplay=1&quot; title=&quot;How to Use a Pocket Option Bot — Real Demo&quot; allow=&quot;autoplay; encrypted-media; picture-in-picture&quot; allowfullscreen&gt;&lt;/iframe&gt;';return false;" aria-label="Play video: How to Use a Pocket Option Bot — Real Demo">
+    <img src="https://i.ytimg.com/vi/fCADVurXawU/hqdefault.jpg" alt="Avalisa PO Bot panel on a Pocket Option demo account" loading="lazy" width="480" height="360">
+    <span class="play" aria-hidden="true">&#9654;</span>
+  </a>
+</div>
+<p class="video-note">Demo account, no real money. Every result in the video is one demo session; a step sequence can also lose every step, so set a Steps limit you can afford and try it on demo first.</p>
+</section>
 <section id="frequently-asked-questions"><h2>Frequently asked questions</h2><h3>Do I have to install anything to use a Pocket Option bot?</h3><p>Not a separate program. A browser extension like Avalisa is added to Chrome from the Chrome Web Store and runs on your signed-in Pocket Option tab &mdash; nothing to install outside the browser.</p><h3>Is it safer to keep my login in my browser than in a downloaded program?</h3><p>A downloaded bot that stores your login keeps your credentials on your computer outside your browser, where you have less control over them. An extension that works on your already-signed-in tab does not need to store your login at all.</p><h3>Can I try a bot before risking real money?</h3><p>Yes &mdash; run it on a Pocket Option demo account first. See <a href="/guide/test-a-trading-bot-on-demo.html">testing a trading bot on demo</a> and <a href="/guide/pocket-option-demo-to-real-account.html">moving from demo to a real account</a>.</p></section>
 <section id="risk" class="risk"><h2>Risk statement</h2><p>Martingale raises the stake after every loss, and a losing streak can wipe out a balance. Binary options are <strong>high risk</strong>. Use only money you can afford to lose. Trading involves risk. Avalisa does not guarantee profits. Start on a demo account.</p></section>
           <p class="cta-row"><a class="button" href="/register">Try the free demo</a> <a class="button secondary" href="/pricing">See plans</a></p>
