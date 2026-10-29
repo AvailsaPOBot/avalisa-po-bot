@@ -118,6 +118,10 @@
     table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
     th, td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); text-align: left; color: var(--muted); }
     th { color: var(--text); }
+    .video-embed { position: relative; aspect-ratio: 16 / 9; margin: 1rem 0 0.6rem; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #000; }
+    .video-embed a, .video-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+    .video-embed img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
+    .video-embed .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 68px; height: 68px; border-radius: 50%; background: var(--gold); color: #060606; font-size: 1.6rem; display: grid; place-items: center; }
   </style>
   <!-- jsonld:start -->
   <script type="application/ld+json">
@@ -166,6 +170,21 @@
           }
         }
       ]
+    },
+    {
+      "@type": "VideoObject",
+      "name": "How to Use a Pocket Option Bot — Real Demo",
+      "description": "Avalisa PO Bot running on a Pocket Option demo account: set the rules, press Start, watch a step sequence, press Stop.",
+      "thumbnailUrl": "https://i.ytimg.com/vi/fCADVurXawU/hqdefault.jpg",
+      "uploadDate": "2026-10-27",
+      "duration": "PT1M45S",
+      "contentUrl": "https://www.youtube.com/watch?v=fCADVurXawU",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/fCADVurXawU",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
     }
   ]
 }
@@ -197,7 +216,16 @@
       <article>
 <section id="about"><p>This page untangles the two meanings of &ldquo;live&rdquo;. For when to end a session see <a href="/guide/when-to-stop-automated-trading-session.html">when to stop</a>; for moving accounts see <a href="/guide/pocket-option-demo-to-real-account.html">demo to real</a>.</p></section>
 <section id="the-two-meanings-of-live"><h2>The two meanings of &ldquo;live&rdquo;</h2><ul><li><strong>A live account</strong> is a Real Pocket Option account with your own money in it, as opposed to a Demo account.</li><li><strong>A live session</strong> means the bot is running right now and placing trades on the tab you started it on.</li></ul><p>You can have one without the other: a session running on a Demo account (live session, no real money), or a Real account with no session running (live account, no trades being placed by the bot). Before you assume either, check which account is active on the tab.</p></section>
-<section id="a-session-from-start-to-stop"><h2>A session from start to stop</h2><ol><li><strong>You start it</strong> yourself, on your own Pocket Option tab, with the settings you chose.</li><li><strong>It runs in that tab.</strong> Keep the tab open and visible: a background or minimised tab can delay trade-result detection. See <a href="/guide/why-the-trading-tab-must-stay-open.html">why the trading tab must stay open</a>.</li><li><strong>It pauses on its own</strong> if the next stake would exceed the account balance.</li><li><strong>You stop it</strong> when you decide to. See <a href="/guide/how-to-stop-or-remove-the-bot-safely.html">how to stop or remove the bot safely</a> and <a href="/guide/when-to-stop-automated-trading-session.html">when to stop an automated trading session</a>.</li></ol></section>
+<section id="a-session-from-start-to-stop"><h2>A session from start to stop</h2><ol><li><strong>You start it</strong> yourself, on your own Pocket Option tab, with the settings you chose.</li><li><strong>It runs in that tab.</strong> Keep the tab open and visible: a background or minimised tab can delay trade-result detection. See <a href="/guide/why-the-trading-tab-must-stay-open.html">why the trading tab must stay open</a>.</li><li><strong>It pauses on its own</strong> if the next stake would exceed the account balance.</li><li><strong>You stop it</strong> when you decide to. See <a href="/guide/how-to-stop-or-remove-the-bot-safely.html">how to stop or remove the bot safely</a> and <a href="/guide/when-to-stop-automated-trading-session.html">when to stop an automated trading session</a>.</li></ol>
+          <p>This clip shows exactly that session on a demo account with virtual money: rules set, Start pressed, the step sequence playing, then Stop.</p>
+          <div class="video-embed" data-video-id="fCADVurXawU" data-video-name="How to Use a Pocket Option Bot — Real Demo" data-video-description="Avalisa PO Bot running on a Pocket Option demo account: set the rules, press Start, watch a step sequence, press Stop." data-upload-date="2026-10-27" data-duration="PT1M45S">
+            <a href="https://www.youtube.com/watch?v=fCADVurXawU" onclick="this.outerHTML='&lt;iframe src=&quot;https://www.youtube-nocookie.com/embed/fCADVurXawU?autoplay=1&quot; title=&quot;How to Use a Pocket Option Bot — Real Demo&quot; allow=&quot;autoplay; encrypted-media; picture-in-picture&quot; allowfullscreen&gt;&lt;/iframe&gt;';return false;" aria-label="Play video: How to Use a Pocket Option Bot — Real Demo">
+              <img src="https://i.ytimg.com/vi/fCADVurXawU/hqdefault.jpg" alt="Avalisa PO Bot panel on a Pocket Option demo account" loading="lazy" width="480" height="360">
+              <span class="play" aria-hidden="true">&#9654;</span>
+            </a>
+          </div>
+          <p class="video-note">Demo account, no real money. Every result in the video is one demo session; a step sequence can also lose every step, so set a Steps limit you can afford and try it on demo first.</p>
+</section>
 <section id="demo-vs-real-in-avalisa"><h2>Demo vs Real in Avalisa</h2><p>Avalisa works on both Demo and Real Pocket Option accounts. The extension places trades the same way on whichever account is active; it does not run different logic for the two. We can only speak for our own extension, not for Pocket Option&rsquo;s servers. Start on Demo and move to Real only once you know exactly what your settings do &mdash; see <a href="/guide/pocket-option-demo-to-real-account.html">moving from demo to a real account</a>.</p></section>
 <section id="before-you-switch-to-real"><h2>What to check before switching the active account to Real</h2><ul><li><strong>Steps cap.</strong> If you use Martingale, set a finite Martingale Steps value. Limiting Steps is the real way to cap a losing streak; there is no separate stop-loss or daily-loss-limit setting. Steps N allows N+1 trades in a losing cycle, so at 2x, Steps 2 risks up to 7x your start amount and Steps 3 up to 15x. More in <a href="/guide/martingale-risk-explained.html">Martingale risk explained</a> and the <a href="/guide/settings-guide.html">settings guide</a>.</li><li><strong>Stake.</strong> Choose a start amount small enough that the full worst-case cycle fits inside your balance.</li><li><strong>A written stop rule.</strong> Write down, before the session, the condition under which you will stop it yourself. See <a href="/guide/bankroll-rules-automation.html">bankroll rules for automation</a>.</li></ul></section>
 <section id="frequently-asked-questions"><h2>Frequently asked questions</h2><h3>Does &ldquo;live&rdquo; mean the bot is using real money?</h3><p>Not necessarily. It can mean a Real account, or only that a session is running. Check which account is active on the tab.</p><h3>If I close the tab, does the bot keep trading?</h3><p>No. The bot runs in the tab you started it on, so keep that tab open and visible for the whole session.</p><h3>Is there a built-in stop-loss that ends a losing streak?</h3><p>No separate stop-loss or daily-loss-limit setting exists. Limiting Martingale Steps caps a losing streak, and the bot pauses when the next stake would exceed the balance.</p></section>
