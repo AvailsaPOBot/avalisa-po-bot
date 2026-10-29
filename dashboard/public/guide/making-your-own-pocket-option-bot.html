@@ -118,6 +118,10 @@
     table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
     th, td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); text-align: left; color: var(--muted); }
     th { color: var(--text); }
+    .video-embed { position: relative; aspect-ratio: 16 / 9; margin: 1rem 0 0.6rem; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #000; }
+    .video-embed a, .video-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+    .video-embed img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
+    .video-embed .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 68px; height: 68px; border-radius: 50%; background: var(--gold); color: #060606; font-size: 1.6rem; display: grid; place-items: center; }
   </style>
   <!-- jsonld:start -->
   <script type="application/ld+json">
@@ -166,6 +170,21 @@
           }
         }
       ]
+    },
+    {
+      "@type": "VideoObject",
+      "name": "How to Use a Pocket Option Bot — Real Demo",
+      "description": "Avalisa PO Bot running on a Pocket Option demo account: set the rules, press Start, watch a step sequence, press Stop.",
+      "thumbnailUrl": "https://i.ytimg.com/vi/fCADVurXawU/hqdefault.jpg",
+      "uploadDate": "2026-10-27",
+      "duration": "PT1M45S",
+      "contentUrl": "https://www.youtube.com/watch?v=fCADVurXawU",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/fCADVurXawU",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
     }
   ]
 }
@@ -224,6 +243,14 @@
         <section id="demo">
           <h2>Why a long demo sample is the real work</h2>
           <p>At payout <em>p</em>, break-even is <strong>1 / (1 + p)</strong> &mdash; <strong>52.1%</strong> at a 92% payout. A rule that wins half its trades still loses money over time, and a short run cannot tell you which side of 52.1% your rule sits on. Run it on a demo account for a few hundred trades before trusting it. See <a href="/guide/test-a-trading-bot-on-demo.html">testing a bot on demo</a> and <a href="/guide/honest-win-rate-break-even.html">the break-even maths</a>.</p>
+          <p>The clip shows Avalisa PO Bot on a demo account with virtual money: rules are set, Start is pressed, a step sequence plays, and Stop is pressed.</p>
+          <div class="video-embed" data-video-id="fCADVurXawU" data-video-name="How to Use a Pocket Option Bot — Real Demo" data-video-description="Avalisa PO Bot running on a Pocket Option demo account: set the rules, press Start, watch a step sequence, press Stop." data-upload-date="2026-10-27" data-duration="PT1M45S">
+            <a href="https://www.youtube.com/watch?v=fCADVurXawU" onclick="this.outerHTML='&lt;iframe src=&quot;https://www.youtube-nocookie.com/embed/fCADVurXawU?autoplay=1&quot; title=&quot;How to Use a Pocket Option Bot — Real Demo&quot; allow=&quot;autoplay; encrypted-media; picture-in-picture&quot; allowfullscreen&gt;&lt;/iframe&gt;';return false;" aria-label="Play video: How to Use a Pocket Option Bot — Real Demo">
+              <img src="https://i.ytimg.com/vi/fCADVurXawU/hqdefault.jpg" alt="Avalisa PO Bot panel on a Pocket Option demo account" loading="lazy" width="480" height="360">
+              <span class="play" aria-hidden="true">&#9654;</span>
+            </a>
+          </div>
+          <p class="video-note">Demo account, no real money. Every result in the video is one demo session; a step sequence can also lose every step, so set a Steps limit you can afford and try it on demo first.</p>
         </section>
         <section id="existing">
           <h2>When an existing extension makes more sense</h2>
