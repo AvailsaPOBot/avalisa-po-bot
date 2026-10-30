@@ -55,6 +55,19 @@ test('copy is honest: both Pro options, Basic one-time, risk line, no outcome cl
   }
 });
 
+test('copy names the free affiliate Pro path honestly (new PO account, commission disclosed)', () => {
+  const { mod, restore } = load({ sendEmail: async () => {}, emailConfigured: () => true });
+  try {
+    const { text } = mod.buildDemoLimitEmail();
+    assert.match(text, /Pro for free/);
+    assert.match(text, /NEW Pocket Option account/);
+    assert.match(text, /we earn a commission/);
+    assert.match(text, /never expires/);
+  } finally {
+    restore();
+  }
+});
+
 test('sendDemoLimitEmail mails the user and swallows send failures', async () => {
   const sent = [];
   const { mod, restore } = load({

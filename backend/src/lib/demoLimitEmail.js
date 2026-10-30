@@ -10,6 +10,7 @@ const LINES = [
   `Your ${DEMO_LIMIT} free Demo trades are used up. To continue:`,
   'Basic — $69, one-time only (never renews, never billed again): unlimited Martingale trades, cloud settings sync, and trade history.',
   'Pro — choose one at checkout: $119 one-time (never renews), or $29/month (a real recurring subscription that auto-renews every month until cancelled). Both unlock unlimited trades, Martingale mode, and Avalisa Bot mode.',
+  'Or get Pro for free: register a NEW Pocket Option account through our partner link (we earn a commission from Pocket Option), then link its ID in your dashboard. Once confirmed, that Pro never expires and is never billed. Existing Pocket Option accounts do not qualify.',
   `Plans: ${PRICING_URL}`,
   `Support: ${SUPPORT_EMAIL}`,
   "Trading involves risk; never trade money you can't afford to lose.",
