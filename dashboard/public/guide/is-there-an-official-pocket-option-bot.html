@@ -118,6 +118,10 @@
     table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
     th, td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); text-align: left; color: var(--muted); }
     th { color: var(--text); }
+    .video-embed { position: relative; aspect-ratio: 16 / 9; margin: 1rem 0 0.6rem; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #000; }
+    .video-embed a, .video-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+    .video-embed img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
+    .video-embed .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 68px; height: 68px; border-radius: 50%; background: var(--gold); color: #060606; font-size: 1.6rem; display: grid; place-items: center; }
   </style>
   <!-- jsonld:start -->
   <script type="application/ld+json">
@@ -166,6 +170,21 @@
           }
         }
       ]
+    },
+    {
+      "@type": "VideoObject",
+      "name": "How to Use a Pocket Option Bot — Real Demo",
+      "description": "Avalisa PO Bot running on a Pocket Option demo account: set the rules, press Start, watch a step sequence, press Stop.",
+      "thumbnailUrl": "https://i.ytimg.com/vi/fCADVurXawU/hqdefault.jpg",
+      "uploadDate": "2026-10-27",
+      "duration": "PT1M45S",
+      "contentUrl": "https://www.youtube.com/watch?v=fCADVurXawU",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/fCADVurXawU",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Avalisa PO Bot",
+        "url": "https://avalisabot.vercel.app/"
+      }
     }
   ]
 }
@@ -199,7 +218,16 @@
 <section id="what-people-mean-by-official"><h2>What people mean by "official"</h2><p>When someone asks for an "official Pocket Option bot", they usually mean one of three things:</p><ul><li><strong>A bot made by Pocket Option itself</strong> &mdash; something the broker builds, sells and supports directly.</li><li><strong>A bot the broker recommends or endorses</strong> &mdash; a named third-party tool the broker points you to.</li><li><strong>A built-in feature of the platform</strong> &mdash; an auto-trading switch inside the Pocket Option website.</li></ul><p>The idea comes from a reasonable assumption: many platforms ship their own tools, and people assume that if a bot exists for a platform, the platform approved it. "A bot works with Pocket Option" and "Pocket Option stands behind this bot" are different claims. If a seller says their bot is official or endorsed, the only place that can confirm it is Pocket Option's own website or support &mdash; not the seller's page.</p></section>
 <section id="how-to-check-who-actually-publishes-a-to"><h2>How to check who actually publishes a tool</h2><p>Before you install or pay for any trading tool, find out who publishes it. It takes minutes:</p><ol><li><strong>Developer name.</strong> On a Chrome Web Store listing the publisher name is shown on the page. Check that it matches the name on the product's own website.</li><li><strong>The store listing itself.</strong> Read the description, the permissions it requests and the reviews. Our walk-through: <a href="/guide/check-a-chrome-web-store-trading-bot-listing.html">how to check a Chrome Web Store trading bot listing</a>.</li><li><strong>The product's website.</strong> A real developer has documentation, pricing and a contact address. A listing with no traceable developer behind it is a red flag on its own.</li><li><strong>Permissions.</strong> A trading extension needs to work on your trading site's tab. If a listing asks for far more than that, ask why.</li></ol><p>You should be able to name the company or person who made the tool you are about to install. If you cannot, you do not know who you are trusting.</p></section>
 <section id="third-party-tools-vs-broker-features"><h2>Third-party tools vs broker features</h2><ul><li><strong>Broker features</strong> are built into the platform by the broker: charts, trade buttons, account settings. You get them by using the platform; nobody sells them to you separately.</li><li><strong>Third-party tools</strong> are built by someone else and added to your own browser or computer. A Chrome extension runs in <em>your</em> browser on <em>your</em> signed-in tab; it is not part of the broker's website.</li><li><strong>A developer API</strong>, where a broker offers one, is an interface that lets third parties build tools. It does not make any particular bot "official".</li></ul><p>A useful test: if the tool has its own price, its own developer name and its own install step outside the broker's website, it is a third-party product &mdash; however well it works with the platform. Compatibility is not endorsement.</p></section>
-<section id="how-avalisa-fits"><h2>How Avalisa fits</h2><p>Avalisa PO Bot is a third-party tool, and says so:</p><ul><li>It is a <strong>Google Chrome extension</strong>, installed from the Chrome Web Store and used inside your own browser.</li><li>It automates trades <strong>on your own Pocket Option account</strong> &mdash; Demo or Real &mdash; in your own signed-in Pocket Option tab. It is not made by Pocket Option and is not a feature of the Pocket Option website.</li><li>It has two modes: Martingale mode, and Avalisa Bot mode (rule-based signals, Pro only). In Martingale mode, Steps = N allows N + 1 trades in a losing cycle before the stake resets; limiting Steps is the real way to cap a losing streak, because there is no separate stop-loss setting.</li><li>Plans: Basic is $69 one-time; Pro is $119 one-time <strong>or</strong> $29/month (a real recurring subscription) &mdash; you choose at checkout.</li><li>We recommend starting on a <strong>demo account</strong>.</li></ul></section>
+<section id="how-avalisa-fits"><h2>How Avalisa fits</h2><p>Avalisa PO Bot is a third-party tool, and says so:</p><ul><li>It is a <strong>Google Chrome extension</strong>, installed from the Chrome Web Store and used inside your own browser.</li><li>It automates trades <strong>on your own Pocket Option account</strong> &mdash; Demo or Real &mdash; in your own signed-in Pocket Option tab. It is not made by Pocket Option and is not a feature of the Pocket Option website.</li><li>It has two modes: Martingale mode, and Avalisa Bot mode (rule-based signals, Pro only). In Martingale mode, Steps = N allows N + 1 trades in a losing cycle before the stake resets; limiting Steps is the real way to cap a losing streak, because there is no separate stop-loss setting.</li><li>Plans: Basic is $69 one-time; Pro is $119 one-time <strong>or</strong> $29/month (a real recurring subscription) &mdash; you choose at checkout.</li><li>We recommend starting on a <strong>demo account</strong>.</li></ul>
+          <p>This clip shows the extension running its configured sequence in your own tab on a demo account with virtual money: rules, Start, the steps, Stop.</p>
+          <div class="video-embed" data-video-id="fCADVurXawU" data-video-name="How to Use a Pocket Option Bot — Real Demo" data-video-description="Avalisa PO Bot running on a Pocket Option demo account: set the rules, press Start, watch a step sequence, press Stop." data-upload-date="2026-10-27" data-duration="PT1M45S">
+            <a href="https://www.youtube.com/watch?v=fCADVurXawU" onclick="this.outerHTML='&lt;iframe src=&quot;https://www.youtube-nocookie.com/embed/fCADVurXawU?autoplay=1&quot; title=&quot;How to Use a Pocket Option Bot — Real Demo&quot; allow=&quot;autoplay; encrypted-media; picture-in-picture&quot; allowfullscreen&gt;&lt;/iframe&gt;';return false;" aria-label="Play video: How to Use a Pocket Option Bot — Real Demo">
+              <img src="https://i.ytimg.com/vi/fCADVurXawU/hqdefault.jpg" alt="Avalisa PO Bot panel on a Pocket Option demo account" loading="lazy" width="480" height="360">
+              <span class="play" aria-hidden="true">&#9654;</span>
+            </a>
+          </div>
+          <p class="video-note">Demo account, no real money. Every result in the video is one demo session; a step sequence can also lose every step, so set a Steps limit you can afford and try it on demo first.</p>
+        </section>
 <section id="frequently-asked-questions"><h2>Frequently asked questions</h2><h3>Is there an official Pocket Option bot I should use instead?</h3><p>Every bot we know of for Pocket Option, including ours, is a third-party product you install yourself. If someone claims theirs is official, ask Pocket Option support to confirm it.</p><h3>Does Pocket Option endorse a specific bot?</h3><p>We have not seen Pocket Option name or endorse a specific third-party bot. Its own blog says automated strategies are fine as long as they comply with platform rules &mdash; that is their blog, not their formal Terms of Service. Treat "Pocket Option's official choice" as a marketing claim until you see it on the broker's own site.</p><h3>How do I tell a broker feature from a third-party tool?</h3><p>Ask who made it and where it is installed from. Its own developer name, its own price and its own install step mean third-party. Built into the broker's website and free with the account means a broker feature.</p></section>
 <section id="risk" class="risk"><h2>Risk statement</h2><p>Martingale raises the stake after every loss, and a losing streak can wipe out a balance. Binary options are <strong>high risk</strong>. Use only money you can afford to lose. Trading involves risk. Avalisa does not guarantee profits. Start on a demo account.</p></section>
           <p class="cta-row"><a class="button" href="/register">Try the free demo</a> <a class="button secondary" href="/pricing">See plans</a></p>
