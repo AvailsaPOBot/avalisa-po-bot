@@ -310,10 +310,10 @@
           <ul>
             <li><strong>Minimum payout %</strong> &mdash; set too high and most signals are rejected. Lower it until you see trades.</li>
             <li><strong>Pair Scan</strong> (Avalisa Bot mode) &mdash; &ldquo;Current pair only&rdquo; limits trading to the pair open on screen. If that pair never triggers, nothing happens. Try &ldquo;Auto scan favorites&rdquo;.</li>
-            <li><strong>Timeframe</strong> &mdash; if the expiry you selected is not offered on the pair you are trading, the bot cannot place the trade; it retries instead, and the panel status line reads &ldquo;Timeframe &hellip; unavailable &mdash; retrying&rdquo;. Switch to a timeframe the pair actually offers. Shorter expiries are also the riskiest, so prefer a longer supported timeframe while troubleshooting and while trading on real money.</li>
+            <li><strong>Timeframe</strong> (Martingale mode) &mdash; if the expiry you selected is not offered on the pair you are trading, the bot cannot place the trade; it retries instead, and the panel status line reads &ldquo;Timeframe &hellip; unavailable &mdash; retrying&rdquo;. Switch to a timeframe the pair actually offers. Shorter expiries are also the riskiest, so prefer a longer supported timeframe while troubleshooting and while trading on real money.</li>
             <li><strong>Martingale Steps</strong> &mdash; if the current cycle already reached its step limit, the cycle ends; watch for the start of a new one.</li>
           </ul>
-          <p>Start from known-sane values: a moderate payout threshold, favourite-pair scanning, and a conservative timeframe, and confirm trades appear before tuning anything.</p>
+          <p>Start from known-sane values: a moderate payout threshold, then favourite-pair scanning in Avalisa Bot mode or a conservative timeframe in Martingale mode, and confirm trades appear before tuning anything.</p>
         </section>
 
         <section id="check-5">
