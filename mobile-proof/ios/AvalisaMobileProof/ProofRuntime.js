@@ -1239,7 +1239,9 @@
   // The element a finger taps to open PO mobile's amount keypad. Verified 7 Nov 2026:
   // only a pointer/mouse sequence on .value__val opens it, and it opens one tick later (never synchronously).
   function amountValueElement() {
-    return Array.from(document.querySelectorAll('.block--bet-amount .value__val, .block--bet-amount')).find(visible) || null;
+    // Order matters: querySelectorAll returns document order (block before its child), and only the child opens it.
+    return Array.from(document.querySelectorAll('.block--bet-amount .value__val')).find(visible)
+      || Array.from(document.querySelectorAll('.block--bet-amount')).find(visible) || null;
   }
 
   // Async pre-step for PO mobile: open the keypad, wait for it, type the amount, close it.
