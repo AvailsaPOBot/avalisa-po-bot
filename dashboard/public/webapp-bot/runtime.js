@@ -1152,7 +1152,9 @@
 
   // PO mobile shows the trade amount in .amount-field ("$1", "$1.00", "$1,000"), not in an input.
   function readAmountFieldValue() {
-    const field = Array.from(document.querySelectorAll('.amount-field')).find(visible);
+    // Open keypad shows .amount-field ("$1"); the closed trade panel shows .block--bet-amount .value__val ("1").
+    const field = Array.from(document.querySelectorAll('.amount-field')).find(visible)
+      || Array.from(document.querySelectorAll('.block--bet-amount .value__val')).find(visible);
     if (!field) return null;
     const raw = moneyFromText(text(field)).replace(/[$\s]/g, '');
     if (!raw) return null;
@@ -1230,8 +1232,31 @@
 
   function closeAmountKeypad() {
     if (!amountKeypadKeys().count) return;
-    const toggle = Array.from(document.querySelectorAll('.block--bet-amount')).find(visible) || findAmountDisplay();
-    try { toggle?.click(); } catch (_) {}
+    const toggle = amountValueElement() || findAmountDisplay();
+    try { if (toggle) pressKeypadKey(toggle); } catch (_) {}
+  }
+
+  // The element a finger taps to open PO mobile's amount keypad. Verified 7 Nov 2026:
+  // only a pointer/mouse sequence on .value__val opens it, and it opens one tick later (never synchronously).
+  function amountValueElement() {
+    return Array.from(document.querySelectorAll('.block--bet-amount .value__val, .block--bet-amount')).find(visible) || null;
+  }
+
+  // Async pre-step for PO mobile: open the keypad, wait for it, type the amount, close it.
+  // Desktop (a real amount input) is left to setAmountValue.
+  async function prepareAmountAsync(amount) {
+    const safeAmount = Number(amount);
+    if (!Number.isFinite(safeAmount) || safeAmount < 1) return false;
+    if (findAmountInput()) return true;
+    if (visibleAmountMatches(safeAmount)) return true;
+    const target = amountValueElement();
+    if (!target) return false;
+    if (!amountKeypadKeys().count) pressKeypadKey(target);
+    for (let i = 0; i < 10 && !amountKeypadKeys().count; i += 1) await sleep(100);
+    if (!amountKeypadKeys().count) return false;
+    try { typeAmountOnKeypad(safeAmount); } finally { closeAmountKeypad(); }
+    for (let i = 0; i < 10 && amountKeypadKeys().count; i += 1) await sleep(100);
+    return visibleAmountMatches(safeAmount);
   }
 
   function setAmountValue(amount) {
@@ -2072,6 +2097,7 @@
     state.botBaselineBalance = null;
     state.botPendingDirection = direction;
     persistBotState('placing');
+    await prepareAmountAsync(amount);
     const clicked = placeDemoTrade(direction, amount, { allowProofMartingale: true, botInternal: true });
     if (!clicked) {
       state.botInTrade = false;
@@ -2139,6 +2165,7 @@
 
   async function placeTrade(direction, amount) {
     if (!(await ensureTradeAccess())) return false;
+    await prepareAmountAsync(amount);
     const placed = placeDemoTrade(direction, amount);
     if (placed) incrementTradeUsage();
     return placed;
@@ -2287,6 +2314,7 @@
       requestedTradeTimeframe,
       inferBalanceAndMode,
       setAmountValue,
+      prepareAmountAsync,
       visibleAmountMatches,
     },
   };
