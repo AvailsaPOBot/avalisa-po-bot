@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ArrowRight, ArrowUpRight, BookOpen, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { API_BASE } from '../lib/api';
+import { isPhoneLike } from '../lib/device';
 import '../styles/luxury.css';
 import '../styles/landing-v3.css';
 import '../styles/pages-v3.css';
@@ -188,7 +189,9 @@ function LicenceCheck() {
 }
 
 export default function Guide() {
-  const [setupMode, setSetupMode] = useState('desktop');
+  // Phones and tablets start on the Phone / Tablet quick start; desktop keeps Desktop Chrome.
+  const phoneDevice = isPhoneLike();
+  const [setupMode, setSetupMode] = useState(phoneDevice ? 'phone' : 'desktop');
   const sections = [
     {
       title: 'Install and sign in',
@@ -378,10 +381,11 @@ export default function Guide() {
                 <button type="button" aria-pressed={setupMode === 'desktop'} className={setupMode === 'desktop' ? 'is-active' : ''} onClick={() => setSetupMode('desktop')}>Desktop Chrome · 3 min</button>
               </div>
               <div className="v3-glass v3p-quick__summary" aria-live="polite">
-                {setupMode === 'phone' ? <><span className="v3-hud v3-gold">Phone or tablet</span><p>Open <Link to="/webapp">/webapp</Link> in Safari on iPhone or Chrome on Android, save the free Avalisa bookmark, then open Pocket Option on its Demo balance and run the bookmark there. No app to install.</p><Link className="v3-btn" to="/webapp">Open phone setup<span className="v3-btn__icon" aria-hidden="true"><ArrowRight size={17} /></span></Link></> : <><span className="v3-hud v3-gold">Desktop Chrome</span><p>Install the Chrome extension, sign in to your Avalisa account in the panel, open Pocket Option, switch to its Demo balance and set a Martingale step cap before you press Start.</p><a className="v3-btn" href={STORE_URL} target="_blank" rel="noreferrer">Install the extension<span className="v3-btn__icon" aria-hidden="true"><ArrowUpRight size={17} /></span></a></>}
+                {setupMode === 'phone' ? <><span className="v3-hud v3-gold">Phone or tablet</span><p>Open <Link to="/webapp">/webapp</Link> in Safari on iPhone or Chrome on Android, save the free Avalisa bookmark, then open Pocket Option on its Demo balance and run the bookmark there. No app to install.</p><Link className="v3-btn" to="/webapp">Phone setup<span className="v3-btn__icon" aria-hidden="true"><ArrowRight size={17} /></span></Link></> : <><span className="v3-hud v3-gold">Desktop Chrome</span><p>Install the Chrome extension, sign in to your Avalisa account in the panel, open Pocket Option, switch to its Demo balance and set a Martingale step cap before you press Start.</p>{phoneDevice ? <Link className="v3-btn" to="/webapp">Phone setup<span className="v3-btn__icon" aria-hidden="true"><ArrowRight size={17} /></span></Link> : <a className="v3-btn" href={STORE_URL} target="_blank" rel="noreferrer">Install the extension<span className="v3-btn__icon" aria-hidden="true"><ArrowUpRight size={17} /></span></a>}</>}
               </div>
               <div className="v3p-quick__links">
-                <a className="v3-textlink" href={STORE_URL} target="_blank" rel="noreferrer">Get the extension <ArrowUpRight size={15} aria-hidden="true" /></a>
+                {/* On a phone the quick-start button above is already "Phone setup"; the Chrome Web Store link is a dead end there. */}
+                {!phoneDevice && <a className="v3-textlink" href={STORE_URL} target="_blank" rel="noreferrer">Get the extension <ArrowUpRight size={15} aria-hidden="true" /></a>}
                 <Link className="v3-textlink" to="/pricing">See pricing <ArrowRight size={15} aria-hidden="true" /></Link>
               </div>
               <p className="v3p-quick__more">New here? <a href="/guide/how-to-install-avalisa-po-bot.html">Read the install walkthrough</a>. On a phone? <Link to="/webapp">Open phone setup</Link>. Want to check a plan? <Link to="/pricing">Compare plans</Link>.</p>

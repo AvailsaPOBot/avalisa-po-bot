@@ -120,7 +120,8 @@
 .v3p-plan__features li.is-excluded { color: var(--bronze); }
 .v3p-plan__features li.is-excluded svg { color: var(--bronze); }
 .v3p-plan__tip { margin-top: 18px !important; padding-left: 12px; border-left: 1px solid rgba(201, 164, 108, .5); font-size: 12.5px; line-height: 1.5; color: var(--pewter); }
-.v3p-plan__cta { margin-top: 22px; }
+.v3p-plan__cta { display: grid; gap: 10px; margin-top: 22px; }
+.v3p-plan__features a, .v3p-compare .v3p-table tbody th a, .v3p-faq details p a { color: var(--bright); border-bottom: 1px solid rgba(223, 192, 142, .4); }
 
 .v3p-partner { background: linear-gradient(180deg, var(--bg) 0%, var(--bg-warm) 50%, var(--bg) 100%); }
 .v3p-partner { padding-top: clamp(130px, 18vh, 190px); }
@@ -193,6 +194,11 @@
 .v3p-provider.is-facebook { background: #1877f2; color: #fff; }
 .v3p-reg__switch { font-size: 14px; color: var(--pewter); text-align: center; }
 .v3p-reg__switch a { color: var(--bright); border-bottom: 1px solid rgba(223, 192, 142, .4); }
+.v3p-reg__phonehint { margin: -4px 0 0 !important; font-size: 14.5px; color: #d2c8bb; }
+.v3p-reg__phonehint a { display: inline-flex; align-items: center; min-height: 44px; color: var(--bright); border-bottom: 1px solid rgba(223, 192, 142, .4); }
+.v3p-reg__passnote { margin-top: -4px; padding: 12px 14px; font-size: 13.5px; }
+.v3p-reg__passnote p { margin: 0; }
+.v3p-reg__form .v3p-reg__offer { margin-top: 4px; }
 
 .v3p-reg__next { grid-area: next; padding: 0 clamp(4px, 1vw, 12px); }
 .v3p-numbered--steps strong { display: block; margin-bottom: 6px; font: 500 10.5px/1.3 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--bright); }
@@ -294,6 +300,7 @@
   .v3p-compare .v3p-table { min-width: 620px; }
   .v3p-compare .v3p-table th:first-child { position: sticky; left: 0; z-index: 1; background: #0d0b09; box-shadow: 1px 0 0 rgba(201, 164, 108, .18); }
   .v3p-compare .v3p-table tbody th { width: 34%; min-width: 128px; }
+  .v3p-plan__features a, .v3p-compare .v3p-table tbody th a { display: inline-flex; align-items: center; min-height: 44px; }
   .v3p .v3-num { font-size: 110px; }
   .v3p-modal { align-items: end; padding: 10px; }
   .v3p-modal__panel { padding-top: 64px; border-radius: 22px; }
@@ -304,12 +311,19 @@
   .v3p-reg__visual { border-radius: 200px 200px 20px 20px; }
   .v3p-reg__visual::after { border-radius: 190px 190px 12px 12px; }
   .v3p-reg__visualcopy .v3p-h1 { font-size: clamp(36px, 10.6vw, 48px); }
+  /* Decorative portrait is hidden on phones; its h1 stays in the DOM for screen readers. */
+  .v3p-reg { grid-template-areas: 'form' 'next'; }
+  .v3p-reg__visual { position: absolute; width: 1px; height: 1px; min-height: 0; max-height: 1px; aspect-ratio: auto; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); border: 0; box-shadow: none; white-space: nowrap; }
   .v3p-licence__form { grid-template-columns: minmax(0, 1fr); }
   .v3p-licence__form .v3-btn { justify-content: center; }
   .v3p-gsec__num { font-size: 64px; }
   .v3p-library__index ol { grid-template-columns: minmax(0, 1fr); }
   .v3p-quick__summary .v3-btn { width: 100%; justify-content: space-between; }
   .v3p-partner__panel .v3-btn { width: 100%; justify-content: space-between; padding-left: 22px; font-size: 14px; }
+}
+@media (max-width: 639px) {
+  /* Narrow phones: a ~120px sticky FEATURE column leaves room to scroll the plan columns. */
+  .v3p-compare .v3p-table th:first-child, .v3p-compare .v3p-table tbody th { width: 120px; min-width: 120px; max-width: 120px; padding-left: 10px; padding-right: 8px; font-size: 13px; overflow-wrap: anywhere; }
 }
 @media (prefers-reduced-motion: reduce) {
   .v3p .v3-grain { animation: none !important; }

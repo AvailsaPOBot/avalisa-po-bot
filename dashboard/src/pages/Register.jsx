@@ -5,6 +5,8 @@ import toast from 'react-hot-toast';
 import { useAuth } from '../hooks/useAuth';
 import { API_BASE } from '../lib/api';
 import { AFFILIATE_LINK } from '../lib/affiliate';
+import { usePhoneLike } from '../lib/device';
+import { clearNext, safeNext, stashNext, withNext } from '../lib/authNext';
 import '../styles/luxury.css';
 import '../styles/landing-v3.css';
 import '../styles/pages-v3.css';
@@ -17,6 +19,11 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const affiliateIntent = searchParams.get('intent') === 'affiliate';
+  const phone = usePhoneLike();
+  const next = safeNext(searchParams.get('next'));
+  // Where a successful sign-up lands: the page the visitor came from (?next=), else the
+  // phone setup for phone visitors, else the dashboard.
+  const landing = next || (phone ? '/webapp' : '/dashboard');
 
   useEffect(() => {
     const authError = searchParams.get('authError');
@@ -24,6 +31,8 @@ export default function Register() {
   }, [searchParams]);
 
   function startSocialAuth(provider) {
+    // The backend OAuth state cannot carry `next`, so park it for /auth/callback.
+    stashNext(landing === '/dashboard' ? null : landing);
     window.location.href = `${API_BASE}/api/auth/oauth/${provider}?from=register`;
   }
 
@@ -36,7 +45,8 @@ export default function Register() {
     try {
       await register(form.email, form.password);
       toast.success('Account created. Welcome to Avalisa.');
-      navigate('/dashboard');
+      clearNext();
+      navigate(landing);
     } catch (err) {
       toast.error(err.response?.data?.error || 'Registration failed');
     } finally {
@@ -54,15 +64,11 @@ export default function Register() {
           <p className="v3-hud v3-gold v3p-reg__kicker"><i className="v3-dot" aria-hidden="true" />Free account · 10 Demo trades</p>
           <h2 id="register-form-title">Create your account</h2>
           <p className="v3p-reg__subtitle">Free to start. The Demo includes 10 trades. Try them on a Pocket Option demo balance first.</p>
-
-          <a className="v3p-reg__offer" href={AFFILIATE_LINK} target="_blank" rel="noreferrer">
-            <Gift size={18} aria-hidden="true" />
-            <span>New to Pocket Option? Open an account through our link (we earn a commission), then add your Pocket Option ID in Settings to request Pro.</span>
-            <ArrowUpRight size={16} aria-hidden="true" />
-          </a>
+          {phone && <p className="v3p-reg__phonehint">Testing on your phone first? <Link to="/webapp">Phone setup</Link></p>}
 
           <label className="v3p-field"><span className="v3p-field__label"><Mail size={14} aria-hidden="true" /> Email</span><input type="email" required autoComplete="email" placeholder="you@example.com" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} /></label>
           <label className="v3p-field"><span className="v3p-field__label"><Lock size={14} aria-hidden="true" /> Password</span><span className="v3p-field__wrap"><input type={showPassword ? 'text' : 'password'} required autoComplete="new-password" placeholder="Min 8 characters" value={form.password} onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))} /><button type="button" className="v3p-field__toggle" aria-label={showPassword ? 'Hide password' : 'Show password'} onClick={() => setShowPassword((shown) => !shown)}>{showPassword ? <EyeOff size={17}/> : <Eye size={17}/>}</button></span></label>
+          <div className="v3p-note v3p-note--safe v3p-reg__passnote"><Lock size={17} aria-hidden="true" /><p>Create a password for Avalisa. <strong>Never enter your Pocket Option password here.</strong></p></div>
           <label className="v3p-field"><span className="v3p-field__label"><ShieldCheck size={14} aria-hidden="true" /> Confirm password</span><input type="password" required autoComplete="new-password" placeholder="Repeat password" value={form.confirm} onChange={(e) => setForm((f) => ({ ...f, confirm: e.target.value }))} /></label>
 
           <button type="submit" className="v3-btn v3p-btn-block" disabled={loading}>{loading ? 'Creating account...' : 'Create Avalisa Account'}</button>
@@ -77,7 +83,13 @@ export default function Register() {
               Sign up with Facebook
             </button>
           </div>
-          <p className="v3p-reg__switch">Already have an account? <Link to="/login">Sign in</Link></p>
+          <p className="v3p-reg__switch">Already have an account? <Link to={withNext('/login', next)}>Sign in</Link></p>
+
+          <a className="v3p-reg__offer" href={AFFILIATE_LINK} target="_blank" rel="noreferrer">
+            <Gift size={18} aria-hidden="true" />
+            <span>New to Pocket Option? Open an account through our link (we earn a commission), then add your Pocket Option ID in Settings to request Pro.</span>
+            <ArrowUpRight size={16} aria-hidden="true" />
+          </a>
         </form>
 
         <section className="v3p-reg__visual" aria-labelledby="register-title">
@@ -95,7 +107,6 @@ export default function Register() {
             <li><span aria-hidden="true">02</span><div><strong>Instant</strong><p>Get 10 Free Demo Trades automatically. No card required.</p></div></li>
             <li><span aria-hidden="true">03</span><div><strong>Next screen</strong><p>Choose phone setup at <Link to="/webapp">/webapp</Link> or install the desktop Chrome extension. Start on a Pocket Option demo balance.</p></div></li>
           </ol>
-          <div className="v3p-note v3p-note--safe"><Lock size={17} aria-hidden="true" /><p>Create a password for Avalisa. <strong>Never enter your Pocket Option password here.</strong></p></div>
           {affiliateIntent && <p className="v3p-note v3p-note--gold">After you register a new Pocket Option account through our link, link its numeric ID in Dashboard → Settings. Pro unlocks when the referral is confirmed; otherwise it is queued for admin verification.</p>}
           <p className="v3-risk">Trading involves risk. Start on a Pocket Option Demo balance.</p>
         </aside>

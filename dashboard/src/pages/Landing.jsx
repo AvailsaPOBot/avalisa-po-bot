@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowDown, ArrowRight, ArrowUpRight } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../hooks/useAuth';
+import { usePhoneLike } from '../lib/device';
 import { AFFILIATE_LINK } from '../lib/affiliate';
 import HeroSlab from './landing-v3/HeroSlab';
 import '../styles/home.css';
@@ -18,6 +19,9 @@ const HERO = {
   eyebrow: 'Pocket Option · Desktop Chrome · Phone browser',
   sub: 'Avalisa runs inside your own Pocket Option tab, on desktop Chrome or your phone. Set the stake, a step cap and a minimum payout, then start with 10 free Demo trades.',
   cta: 'Start 10 free Demo trades',
+  // Phone visitors go straight to the phone setup: it runs the same 10 free Demo trades with no signup.
+  phoneCta: 'Start on this phone',
+  phoneSub: '10 free Demo trades in Safari or Chrome. No app to install.',
   trust: ['10 free Demo trades', 'No card to start', 'No Pocket Option password asked'],
 };
 // hero-copy-end
@@ -78,7 +82,9 @@ function useReveal(rootRef) {
 
 export default function Landing() {
   const { user } = useAuth();
-  const startHref = user ? '/dashboard' : '/register';
+  const phone = usePhoneLike();
+  const startHref = phone ? '/webapp' : user ? '/dashboard' : '/register';
+  const startLabel = phone ? HERO.phoneCta : HERO.cta;
   const rootRef = useRef(null);
   const [showSticky, setShowSticky] = useState(false);
   const [stepCap, setStepCap] = useState(3);
@@ -120,9 +126,10 @@ export default function Landing() {
             </h1>
             <p className="v3-hero__sub">{HERO.sub}</p>
             <div className="v3-hero__actions">
-              <Link className="v3-btn" to={startHref}>{HERO.cta}<span className="v3-btn__icon" aria-hidden="true"><ArrowUpRight size={17} /></span></Link>
+              <Link className="v3-btn" to={startHref}>{startLabel}<span className="v3-btn__icon" aria-hidden="true"><ArrowUpRight size={17} /></span></Link>
               <a className="v3-textlink" href="#how">See how it works <ArrowDown size={15} aria-hidden="true" /></a>
             </div>
+            {phone && <p className="v3-hero__phonesub">{HERO.phoneSub}</p>}
             <ul className="v3-hud v3-hero__trust">{HERO.trust.map((item) => <li key={item}>{item}</li>)}</ul>
             <p className="v3-risk">Trading involves risk. Start on a demo account.</p>
           </div>
@@ -342,14 +349,14 @@ export default function Landing() {
             <Lines id="final-title" lines={['Try the controls', <>at your <em>own</em> pace.</>]} />
             <p className="v3-lede v3-reveal">Start with 10 free Martingale trades on a practice balance. No card, no Pocket Option password.</p>
             <div className="v3-hero__actions v3-reveal">
-              <Link className="v3-btn" to={startHref}>{HERO.cta}<span className="v3-btn__icon" aria-hidden="true"><ArrowUpRight size={17} /></span></Link>
+              <Link className="v3-btn" to={startHref}>{startLabel}<span className="v3-btn__icon" aria-hidden="true"><ArrowUpRight size={17} /></span></Link>
               <Link className="v3-textlink" to="/pricing">Compare plans <ArrowRight size={15} /></Link>
             </div>
             <p className="v3-risk">Trading involves risk. Start on a demo account.</p>
           </div>
         </section>
       </main>
-      {showSticky && <div className="home-sticky"><span>10 free Demo trades · No card</span><Link to={startHref}>Start free Demo <ArrowRight size={16} /></Link></div>}
+      {showSticky && <div className="home-sticky"><span>10 free Demo trades · No card</span><Link to={startHref}>{phone ? 'Phone setup' : 'Start free Demo'} <ArrowRight size={16} /></Link></div>}
     </div>
   );
 }

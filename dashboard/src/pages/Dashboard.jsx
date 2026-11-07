@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import api from '../lib/api';
 import { AFFILIATE_LINK } from '../lib/affiliate';
 import { useAuth } from '../hooks/useAuth';
+import { usePhoneLike } from '../lib/device';
 import toast from 'react-hot-toast';
 
 const VALID_TABS = ['settings', 'history', 'bots', 'admin'];
@@ -59,6 +60,7 @@ function hasCompletedReviewAsk() {
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const phone = usePhoneLike();
   const plan = user?.license?.plan || 'free';
   const planLabel = planDisplayName(plan);
   const isAdmin = user?.isAdmin || false;
@@ -512,7 +514,27 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {shouldShowInstallStep && (
+      {shouldShowInstallStep && phone && (
+        <section className="card mb-8" aria-labelledby="install-step-heading" data-testid="install-step-card">
+          <h2 id="install-step-heading" className="text-lg font-semibold text-white mb-1">Next step: set up on this phone</h2>
+          <p className="text-gray-400 text-sm mb-3">The bot runs on the Pocket Option page in your phone&apos;s browser, with nothing to install. Your account is ready — save the Avalisa bookmark once and you can start.</p>
+          <ol className="text-gray-300 text-sm list-decimal pl-5 mb-4 space-y-1">
+            <li>Open Phone setup and copy the bookmark code.</li>
+            <li>Save it as a bookmark in Safari (iPhone) or Chrome (Android).</li>
+            <li>Open Pocket Option on its Demo balance and run the Avalisa bookmark there.</li>
+          </ol>
+          <div className="flex flex-col gap-2">
+            <Link to="/webapp" className="btn-primary text-center text-sm py-3 px-4" style={{ minHeight: 44 }}>Phone setup</Link>
+            <a href={CHROME_WEB_STORE_URL} target="_blank" rel="noopener noreferrer" className="btn-outline text-center text-sm py-3 px-4" style={{ minHeight: 44 }}>Using a computer? Chrome extension</a>
+            <button type="button" onClick={dismissInstallStep} className="text-gray-400 text-sm py-3 px-4 hover:text-white" style={{ minHeight: 44 }}>
+              I&apos;ve set it up
+            </button>
+          </div>
+          <p className="text-gray-500 text-xs mt-3">Start on a demo account. Trading involves risk.</p>
+        </section>
+      )}
+
+      {shouldShowInstallStep && !phone && (
         <section className="card mb-8" aria-labelledby="install-step-heading" data-testid="install-step-card">
           <h2 id="install-step-heading" className="text-lg font-semibold text-white mb-1">Next step: install the Avalisa extension</h2>
           <p className="text-gray-400 text-sm mb-3">The bot runs inside Chrome on Pocket Option. Your account is ready — trades start once the extension is installed.</p>

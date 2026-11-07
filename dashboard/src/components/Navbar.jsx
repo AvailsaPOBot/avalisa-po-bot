@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { AFFILIATE_LINK } from '../lib/affiliate';
+import { usePhoneLike } from '../lib/device';
 import AccountMenu, { TradeButton } from './AccountMenu';
 
 const navItems = [
@@ -28,6 +29,7 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const phone = usePhoneLike();
 
   const plan = user?.license?.plan || 'free';
   const planLabel = plan === 'lifetime' ? 'pro' : plan === 'free' ? 'demo' : plan;
@@ -61,6 +63,8 @@ export default function Navbar() {
           )}
         </div>
 
+        {phone && <Link to="/webapp" className="site-nav__phone">Phone setup</Link>}
+
         <button
           className="site-nav__menu"
           type="button"
@@ -73,7 +77,8 @@ export default function Navbar() {
 
       {menuOpen && (
         <div className="site-nav__mobile">
-          {navItems.map((item) => (
+          <Link to="/webapp" className="site-nav__cta" onClick={() => setMenuOpen(false)}>Phone setup</Link>
+          {navItems.filter((item) => item.href !== '/webapp').map((item) => (
             <a key={item.label} href={item.href} onClick={() => setMenuOpen(false)}>{item.label}</a>
           ))}
           {user ? (

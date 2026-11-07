@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { useAuth } from '../hooks/useAuth';
 import { API_BASE } from '../lib/api';
 import { AVALISA_CHARACTER_IMAGE } from '../lib/brandAssets';
+import { clearNext, safeNext, stashNext, withNext } from '../lib/authNext';
 import '../styles/luxury.css';
 
 export default function Login() {
@@ -22,6 +23,8 @@ export default function Login() {
   function startSocialAuth(provider) {
     const next = searchParams.get('next');
     const from = next && next.startsWith('/') && !next.startsWith('//') ? `login&next=${encodeURIComponent(next)}` : 'login';
+    // The backend OAuth state cannot carry `next`, so park it for /auth/callback.
+    stashNext(safeNext(next));
     window.location.href = `${API_BASE}/api/auth/oauth/${provider}?from=${from}`;
   }
 
@@ -34,6 +37,7 @@ export default function Login() {
       // Continue to wherever the visitor started (e.g. /webapp) instead of always
       // dropping them on the dashboard. Same-site paths only — never an absolute URL.
       const next = searchParams.get('next');
+      clearNext();
       navigate(next && next.startsWith('/') && !next.startsWith('//') ? next : '/dashboard');
     } catch (err) {
       toast.error(err.response?.data?.error || 'Login failed');
@@ -69,7 +73,7 @@ export default function Login() {
               Continue with Facebook
             </button>
           </div>
-          <p className="lux-auth-switch">No account? <Link to="/register">Create Avalisa account</Link></p>
+          <p className="lux-auth-switch">No account? <Link to={withNext('/register', searchParams.get('next'))}>Create Avalisa account</Link></p>
         </form>
 
         <aside className="lux-auth-visual lux-auth-visual--login">

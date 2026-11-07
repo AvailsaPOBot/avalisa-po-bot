@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { takeNext } from '../lib/authNext';
 import '../styles/luxury.css';
 
 export default function AuthCallback() {
@@ -19,7 +20,8 @@ export default function AuthCallback() {
     localStorage.setItem('jwt', token);
     localStorage.removeItem('user');
     toast.success(`Signed in with ${provider || 'social account'}.`);
-    window.location.replace('/dashboard');
+    // Honour ?next= parked before the OAuth redirect (the backend state cannot carry it).
+    window.location.replace(takeNext() || '/dashboard');
   }, [location.search]);
 
   return (

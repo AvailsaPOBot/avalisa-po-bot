@@ -4253,6 +4253,31 @@
 .lux-webapp-steps a { color: #d8a24a; }
 @media (max-width: 680px) { .lux-webapp-steps a { display: inline-flex; align-items: center; min-height: 44px; } }
 
+/* /webapp: Pocket Option button inside its step, in-app browser gate, unnumbered account cards */
+.lux-webapp-steps__action { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 44px; margin-top: 0.75rem; cursor: pointer; }
+.lux-webapp-steps .lux-webapp-steps__risk { margin-top: 0.55rem; font-size: 0.82rem; color: rgba(245, 239, 228, 0.6); }
+.lux-webapp-gate {
+  margin: 0 0 1.25rem; padding: 1.1rem 1.2rem;
+  border: 1px solid rgba(216, 162, 74, 0.55); border-radius: 0.7rem;
+  background: rgba(216, 162, 74, 0.1);
+}
+.lux-webapp-gate h2 { margin: 0 0 0.4rem; color: #fff8ee; font-size: 1.08rem; line-height: 1.3; }
+.lux-webapp-gate p { margin: 0 0 0.9rem; color: rgba(245, 239, 228, 0.82); line-height: 1.55; }
+.lux-webapp-gate .avalisa-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 44px; cursor: pointer; }
+.lux-webapp-notes { display: grid; gap: 0.7rem; margin: 1.15rem 0 0; }
+.lux-webapp-notes article {
+  padding: 0.95rem 1.1rem; border: 1px solid rgba(216, 162, 74, 0.18);
+  border-radius: 0.6rem; background: rgba(216, 162, 74, 0.05);
+}
+.lux-webapp-notes article.is-done { border-color: rgba(120, 200, 140, 0.34); background: rgba(120, 200, 140, 0.07); }
+.lux-webapp-notes strong { display: block; color: #fff8ee; font-size: 0.95rem; margin-bottom: 0.2rem; }
+.lux-webapp-notes p { margin: 0; color: rgba(245, 239, 228, 0.72); line-height: 1.55; font-size: 0.9rem; }
+.lux-webapp-notes a { color: #d8a24a; }
+@media (max-width: 680px) {
+  .lux-webapp-gate .avalisa-button, .lux-webapp-steps__action { width: 100%; }
+  .lux-webapp-notes a { display: inline-flex; align-items: center; min-height: 44px; }
+}
+
 /* ---------------------------------------------------------------------------
    Hero image: one picture, same on every screen (2026-08-15)
    The hero image was absolutely positioned at min(70rem,72vw) inside a 43rem-tall

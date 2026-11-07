@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Check, Copy, Laptop, Monitor, Puzzle, Smartphone } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { detectPlatform } from '../lib/tradeLaunch';
+import { detectInAppBrowser } from '../lib/device';
+import { withNext } from '../lib/authNext';
 import '../styles/luxury.css';
 
 const CHROME_EXTENSION_URL =
@@ -23,20 +25,22 @@ export function bookmarkCode(origin) {
   );
 }
 
+// A step with a third item carries an extra action; "open-po" is the Pocket Option button, which
+// only appears once the bookmark has been saved and edited (steps before it).
 const PHONE_STEPS = {
   // Walked on a real iPhone (Safari, Oct 2026): Share has no Add Bookmark, the address
   // can only be edited from the Bookmarks list, and Safari never suggests a javascript:
   // bookmark when you type its name — so iPhone users run it from the Bookmarks tab.
   ios: [
-    ['Save a bookmark', 'Tap Copy bookmark code above. Then tap ≡ at the left of Safari\'s address bar, choose Add Bookmark to…, name it Avalisa and tap Save.'],
+    ['Save a bookmark', 'Tap Copy bookmark code above. Then tap Share at the bottom of Safari (or the menu in the address bar), choose Add Bookmark, name it Avalisa and tap Save.'],
     ['Put the code in it', 'Tap the address bar, then the book icon (Bookmarks). Press and hold Avalisa, tap Edit, clear the address, paste the code and tap Save.'],
-    ['Open Pocket Option', 'Use the Open Pocket Option button, sign in to Pocket Option and stay on the Demo account for your first run.'],
-    ['Tap Avalisa on the trading page', 'On the Pocket Option trading page, tap the address bar, then the book icon, then Avalisa. The Avalisa panel opens at the bottom of the screen — sign in there with your Avalisa account and press Start. If Pocket Option reloads, tap it again; the bot picks up where it was.'],
+    ['Open Pocket Option on Demo', 'Tap Open Pocket Option below, sign in to Pocket Option and stay on the Demo account for your first run.', 'open-po'],
+    ['Tap Avalisa on the trading page', 'On the Pocket Option trading page, tap the address bar, then the book icon, then Avalisa. The Avalisa panel opens at the bottom of the screen — press Start. Sign in there with your Avalisa account if you want to sync settings or use Basic/Pro. If Pocket Option reloads, tap it again; the bot picks up where it was.'],
   ],
   android: [
     ['Save the Avalisa bookmark', 'Tap Copy bookmark code above. In Chrome tap ⋮ then the star to bookmark this page, tap Edit, name it Avalisa, clear the URL and paste the code.'],
-    ['Open Pocket Option', 'Use the Open Pocket Option button, sign in to Pocket Option and stay on the Demo account for your first run.'],
-    ['Type Avalisa in the address bar', 'On the Pocket Option page, tap the address bar, type Avalisa and tap the bookmark in the suggestions (Chrome only runs it from there). The Avalisa panel opens at the bottom — sign in with your Avalisa account and press Start. If Pocket Option reloads, run the bookmark again; the bot picks up where it was.'],
+    ['Open Pocket Option on Demo', 'Tap Open Pocket Option below, sign in to Pocket Option and stay on the Demo account for your first run.', 'open-po'],
+    ['Type Avalisa in the address bar', 'On the Pocket Option page, tap the address bar, type Avalisa and tap the bookmark in the suggestions (Chrome only runs it from there). The Avalisa panel opens at the bottom — press Start. Sign in there with your Avalisa account if you want to sync settings or use Basic/Pro. If Pocket Option reloads, run the bookmark again; the bot picks up where it was.'],
   ],
 };
 
@@ -62,22 +66,54 @@ function PhoneSetup({ platform }) {
         <button type="button" className="avalisa-button avalisa-button--gold" onClick={copy}>
           {copied ? 'Copied' : 'Copy bookmark code'} {copied ? <Check size={17} /> : <Copy size={17} />}
         </button>
-        <a className="avalisa-button avalisa-button--dark" href={PO_MOBILE_URL} target="_blank" rel="noreferrer">
-          Open Pocket Option <ArrowRight size={17} />
-        </a>
       </div>
       <ol className="lux-webapp-steps lux-webapp-steps--phone">
-        {steps.map(([title, text], i) => (
+        {steps.map(([title, text, action], i) => (
           <li key={title}>
             <span className="lux-webapp-steps__mark">{i + 1}</span>
             <div>
               <strong>{title}</strong>
               <p>{text}</p>
+              {action === 'open-po' && (
+                <>
+                  <a className="avalisa-button avalisa-button--dark lux-webapp-steps__action" href={PO_MOBILE_URL} target="_blank" rel="noreferrer">
+                    Open Pocket Option <ArrowRight size={17} />
+                  </a>
+                  <p className="lux-webapp-steps__risk">Start on a demo account. Trading involves risk.</p>
+                </>
+              )}
             </div>
           </li>
         ))}
       </ol>
     </>
+  );
+}
+
+// Social-app browsers (Instagram, TikTok, Facebook, Line, Telegram, Android WebView) have no
+// Safari / Chrome bookmark menu and block javascript: bookmarks. Say so before the steps.
+function WebViewGate() {
+  const [copied, setCopied] = useState(false);
+
+  async function copyLink() {
+    const link = typeof window === 'undefined' ? '' : window.location.href;
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+    } catch (_) {
+      setCopied(false);
+      window.prompt('Copy this page link:', link);
+    }
+  }
+
+  return (
+    <section className="lux-webapp-gate" aria-labelledby="webview-gate-title" data-testid="webview-gate">
+      <h2 id="webview-gate-title">Open this page in Safari (iPhone) or Chrome (Android)</h2>
+      <p>Tap ••• in the corner and choose Open in Browser.</p>
+      <button type="button" className="avalisa-button avalisa-button--gold" onClick={copyLink}>
+        {copied ? 'Link copied' : 'Copy page link'} {copied ? <Check size={17} /> : <Copy size={17} />}
+      </button>
+    </section>
   );
 }
 
@@ -132,6 +168,7 @@ export default function Webapp() {
   const info = COPY[platform] || COPY.unknown;
   const Icon = info.icon;
   const ready = info.status === 'ready';
+  const inAppBrowser = useMemo(() => detectInAppBrowser(), []);
 
   return (
     <main className="lux-webapp-page">
@@ -142,6 +179,8 @@ export default function Webapp() {
           Avalisa works by running inside the Pocket Option trading page itself. Each device
           needs a host that can open Pocket Option and run the bot in it.
         </p>
+
+        {inAppBrowser && <WebViewGate />}
 
         <article className={`lux-webapp-card is-${info.status}`}>
           <header>
@@ -183,39 +222,35 @@ export default function Webapp() {
           </p>
         )}
 
-        {/* Two separate sign-ins, and people conflate them: the Avalisa account gates
-            the bot's licence, the Pocket Option account is the broker the bot trades on.
-            Show both as steps so nobody sits on a login screen wondering which is which. */}
-        <ol className="lux-webapp-steps">
-          <li className={user ? 'is-done' : ''}>
-            <span className="lux-webapp-steps__mark">{user ? <Check size={15} /> : '1'}</span>
-            <div>
-              <strong>Avalisa account</strong>
-              {user ? (
-                <p>
-                  Signed in as {user.email}. Your plan and trade allowance are checked each
-                  time the bot runs — manage them in the <Link to="/dashboard">dashboard</Link>.
-                </p>
-              ) : (
-                <p>
-                  <Link to="/login?next=/webapp">Sign in</Link> or{' '}
-                  <Link to="/register">create an account</Link> — this is the licence the bot
-                  checks before it can run. You will come straight back here.
-                </p>
-              )}
-            </div>
-          </li>
-          <li>
-            <span className="lux-webapp-steps__mark">2</span>
-            <div>
-              <strong>Pocket Option account</strong>
+        {/* Two separate sign-ins, and people conflate them: the Avalisa account only syncs
+            settings and unlocks Basic/Pro (the first 10 Demo trades run without it), the
+            Pocket Option account is the broker the bot trades on. Unnumbered cards, so they
+            are not mistaken for more steps of the bookmark setup above. */}
+        <div className="lux-webapp-notes">
+          <article className={user ? 'is-done' : ''}>
+            <strong>Avalisa account{user ? '' : ' (optional)'}</strong>
+            {user ? (
               <p>
-                Separate from your Avalisa account. You sign in to Pocket Option itself, in
-                the same window the bot runs in — Avalisa never sees those credentials.
+                Signed in as {user.email}. Your plan and trade allowance are checked each
+                time the bot runs — manage them in the <Link to="/dashboard">dashboard</Link>.
               </p>
-            </div>
-          </li>
-        </ol>
+            ) : (
+              <p>
+                Optional for your first run: 10 free Demo trades work on this phone without an
+                account. <Link to={withNext('/login', '/webapp')}>Sign in</Link> or{' '}
+                <Link to={withNext('/register', '/webapp')}>create an account</Link> to sync
+                settings or use Basic/Pro.
+              </p>
+            )}
+          </article>
+          <article>
+            <strong>Pocket Option account</strong>
+            <p>
+              Separate from your Avalisa account. You sign in to Pocket Option itself, in
+              the same window the bot runs in — Avalisa never sees those credentials.
+            </p>
+          </article>
+        </div>
 
         <p className="lux-risk-note">
           Start in demo mode. Trading involves risk and Avalisa does not guarantee profits.

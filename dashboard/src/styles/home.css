@@ -133,3 +133,13 @@
    so the two never overlap (Board 2026-10-22). */
 body:has(.home-sticky) .floating-chat-button { bottom: calc(76px + env(safe-area-inset-bottom)); }
 body:has(.home-sticky) .floating-chat { bottom: calc(140px + env(safe-area-inset-bottom)); }
+
+/* Phone setup: header pill next to the menu button, hero sub-line, and 44px footer links (phone only). */
+.site-nav--glass .site-nav__phone { display: none; }
+.v3-hero__phonesub { margin: .7rem 0 0; font-size: .86rem; line-height: 1.45; color: #e9dfd0; }
+@media(max-width:700px) {
+  .site-nav--glass .site-nav__phone { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; min-height: 44px; margin-right: .45rem; padding: 0 .85rem; border: 1px solid #c9a46c; border-radius: 999px; background: #c9a46c; color: #090807; font-size: .74rem; font-weight: 800; white-space: nowrap; }
+  .site-nav--glass .site-brand { min-width: 0; }
+  .site-nav--glass .site-brand__badge { display: none; }
+  .site-shared-footer a { display: inline-flex; align-items: center; min-height: 44px; }
+}

@@ -15,6 +15,7 @@ import {
   WHOP_PRO_MONTHLY_CHECKOUT_URL,
 } from '../lib/checkout';
 import { AFFILIATE_LINK } from '../lib/affiliate';
+import { usePhoneLike } from '../lib/device';
 
 const API_BASE = import.meta.env.REACT_APP_API_URL || 'https://avalisa-backend.onrender.com';
 const PRICING_VIEW_SESSION_KEY = 'avalisa-pricing-view-sent';
@@ -113,7 +114,29 @@ const PRICING_FAQ = [
   },
 ];
 
+// The wording the audit found on /pricing for phone access. Each one is now a link to /webapp
+// (same text, so the plan facts and the plan-table tests are unchanged).
+const PHONE_FEATURES = new Set(['Webapp Bot access', 'Desktop + phone /webapp']);
+const PHONE_FAQ_URL = 'avalisabot.vercel.app/webapp';
+
+function renderFeatureLabel(item) {
+  return PHONE_FEATURES.has(item) ? <Link to="/webapp">{item}</Link> : item;
+}
+
+function renderFaqAnswer(answer) {
+  const at = answer.indexOf(PHONE_FAQ_URL);
+  if (at === -1) return answer;
+  return (
+    <>
+      {answer.slice(0, at)}
+      <Link to="/webapp">{PHONE_FAQ_URL}</Link>
+      {answer.slice(at + PHONE_FAQ_URL.length)}
+    </>
+  );
+}
+
 export default function Pricing() {
+  const phone = usePhoneLike();
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -266,7 +289,9 @@ export default function Pricing() {
       >
         <div className="v3-glass v3p-strip">
           <span><strong>New here?</strong> Start with 10 Free Demo Trades. No card required.</span>
-          <Link className="v3-textlink" to="/register">Start free Demo <ArrowRight size={15} aria-hidden="true" /></Link>
+          {phone
+            ? <Link className="v3-textlink" to="/webapp">Phone setup <ArrowRight size={15} aria-hidden="true" /></Link>
+            : <Link className="v3-textlink" to="/register">Start free Demo <ArrowRight size={15} aria-hidden="true" /></Link>}
         </div>
       </PageHead>
 
@@ -302,7 +327,7 @@ export default function Pricing() {
                       const excluded = item.startsWith('No ');
                       return (
                         <li key={item} className={excluded ? 'is-excluded' : undefined}>
-                          {excluded ? <Minus size={14} aria-hidden="true" /> : <Check size={14} aria-hidden="true" />} {item}
+                          {excluded ? <Minus size={14} aria-hidden="true" /> : <Check size={14} aria-hidden="true" />} {renderFeatureLabel(item)}
                         </li>
                       );
                     })}
@@ -310,7 +335,10 @@ export default function Pricing() {
                   {(plan.id === 'basic' || plan.id === 'pro') && <p className="v3p-plan__tip">Use the same email on Whop as your Avalisa account so the licence can match automatically. Your licence activates after payment confirmation.</p>}
                   <div className="v3p-plan__cta">
                     {current ? (
-                      <button type="button" className="v3p-btn-line" disabled>Current Plan</button>
+                      <>
+                        <button type="button" className="v3p-btn-line" disabled>Current Plan</button>
+                        {phone && plan.id === 'demo' && <Link className="v3-btn v3p-btn-block" to="/webapp">Phone setup</Link>}
+                      </>
                     ) : plan.external ? (
                       plan.paypalPlan && !paypalEnabled && plan.href ? (
                         <a className={plan.featured ? 'v3-btn v3p-btn-block' : 'v3p-btn-line'} href={plan.href} target="_blank" rel="noreferrer" onClick={() => trackCheckoutClick(plan.id)}>{plan.cta}</a>
@@ -326,7 +354,14 @@ export default function Pricing() {
                     ) : plan.id === 'basic' || plan.id === 'pro' ? (
                       <button type="button" className="v3p-btn-line" onClick={() => setSelectedPlan(plan.id)}>{plan.cta}</button>
                     ) : (
-                      <Link className="v3p-btn-line" to={plan.href}>{plan.cta}</Link>
+                      phone && plan.id === 'demo' ? (
+                        <>
+                          <Link className="v3-btn v3p-btn-block" to="/webapp">Phone setup</Link>
+                          <Link className="v3p-btn-line" to={plan.href}>{plan.cta}</Link>
+                        </>
+                      ) : (
+                        <Link className="v3p-btn-line" to={plan.href}>{plan.cta}</Link>
+                      )
                     )}
                   </div>
                 </article>
@@ -370,7 +405,7 @@ export default function Pricing() {
                 <tr><th scope="row">Martingale step cap</th><td className="is-yes">✓</td><td className="is-yes">✓</td><td className="is-pro is-yes">✓</td><td className="is-yes">✓</td></tr>
                 <tr><th scope="row">Minimum payout filter</th><td className="is-yes">✓</td><td className="is-yes">✓</td><td className="is-pro is-yes">✓</td><td className="is-yes">✓</td></tr>
                 <tr><th scope="row">Avalisa Bot 4-rule mode</th><td className="is-no">—</td><td className="is-no">—</td><td className="is-pro is-yes">✓</td><td className="is-yes">✓</td></tr>
-                <tr><th scope="row">Desktop Chrome + phone /webapp</th><td className="is-yes">✓</td><td className="is-yes">✓</td><td className="is-pro is-yes">✓</td><td className="is-yes">✓</td></tr>
+                <tr><th scope="row"><Link to="/webapp">Desktop Chrome + phone /webapp</Link></th><td className="is-yes">✓</td><td className="is-yes">✓</td><td className="is-pro is-yes">✓</td><td className="is-yes">✓</td></tr>
                 <tr><th scope="row">Licence expiry</th><td>Demo allowance</td><td>Never</td><td className="is-pro">Never once / active while subscribed</td><td>Never</td></tr>
               </tbody>
             </table>
@@ -388,7 +423,7 @@ export default function Pricing() {
             {PRICING_FAQ.map(({ q, a }) => (
               <details key={q}>
                 <summary>{q}</summary>
-                <p>{a}</p>
+                <p>{renderFaqAnswer(a)}</p>
               </details>
             ))}
           </div>
