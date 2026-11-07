@@ -1230,6 +1230,29 @@
     return true;
   }
 
+  // PO applies each keypad press one tick later, so presses fired back-to-back overwrite each
+  // other ("16" became "6", verified 7 Nov 2026). Wait between presses and re-read the display.
+  async function typeAmountOnKeypadAsync(safeAmount) {
+    const typed = Number.isInteger(safeAmount)
+      ? String(safeAmount)
+      : safeAmount.toFixed(2).replace(/0+$/, '').replace(/\.$/, '');
+    for (let presses = 0; presses < 12; presses += 1) {
+      const shown = amountDisplayText().replace(/[^\d.]/g, '');
+      if (!/\d/.test(shown) || Number(shown) === 0) break;
+      const { backspace } = amountKeypadKeys();
+      if (!backspace) return false;
+      pressKeypadKey(backspace);
+      await sleep(80);
+    }
+    for (const char of typed) {
+      const key = amountKeypadKeys().digits[char];
+      if (!key) return false;
+      pressKeypadKey(key);
+      await sleep(80);
+    }
+    return true;
+  }
+
   function closeAmountKeypad() {
     if (!amountKeypadKeys().count) return;
     const toggle = amountValueElement() || findAmountDisplay();
@@ -1256,7 +1279,7 @@
     if (!amountKeypadKeys().count) pressKeypadKey(target);
     for (let i = 0; i < 10 && !amountKeypadKeys().count; i += 1) await sleep(100);
     if (!amountKeypadKeys().count) return false;
-    try { typeAmountOnKeypad(safeAmount); } finally { closeAmountKeypad(); }
+    try { await typeAmountOnKeypadAsync(safeAmount); } finally { closeAmountKeypad(); }
     for (let i = 0; i < 10 && amountKeypadKeys().count; i += 1) await sleep(100);
     return visibleAmountMatches(safeAmount);
   }
