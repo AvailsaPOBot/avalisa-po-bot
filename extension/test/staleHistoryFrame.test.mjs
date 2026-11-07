@@ -287,3 +287,34 @@ test('live switch sequence: Bitcoin OTC -> BHD/CNY OTC -> CAD/JPY OTC ignores la
   assert.deepEqual(Object.keys(h.state.candleBuffer), ['CADJPY_otc:30']);
 });
 
+
+test('chart-period history (60s on M1) does not replace or wipe the 30s analysis buffer', async () => {
+  const h = await createContentHarness({ displayedPair: 'CAD/JPY OTC' });
+
+  const seed30 = Array.from({ length: 27 }, (_, i) => [1700000000 + i * 30, 100 + i]);
+  h.dispatchHistory({ asset: 'CADJPY_otc', period: 30, history: seed30 });
+  assert.equal(h.state.activePeriod, 30);
+  const ref = h.state.candleBuffer['CADJPY_otc:30'];
+  const before = toHost(ref);
+
+  // PO's own chart answer at the chart timeframe, same pair.
+  const seed60 = Array.from({ length: 14 }, (_, i) => [1700000000 + i * 60, 100 + i]);
+  h.dispatchHistory({ asset: 'CADJPY_otc', period: 60, history: seed60 });
+
+  assert.equal(h.state.activePair, 'CADJPY_otc');
+  assert.equal(h.state.activePeriod, 30);
+  assert.equal(h.state.candleBuffer['CADJPY_otc:30'], ref);
+  assert.deepEqual(toHost(h.state.candleBuffer['CADJPY_otc:30']), before);
+  assert.equal(h.state.candleBuffer['CADJPY_otc:60'], undefined);
+  assert.equal(h.getBufferedCandles().length, before.length);
+});
+
+test('a 60s frame on a freshly opened pair never becomes the active analysis series', async () => {
+  const h = await createContentHarness({ displayedPair: 'CAD/JPY OTC' });
+  h.dispatchHistory({ asset: 'CADJPY_otc', period: 60, history: [[1700000000, 110.1], [1700000060, 110.2]] });
+  assert.notEqual(h.state.activePeriod, 60);
+  assert.equal(h.state.candleBuffer['CADJPY_otc:60'], undefined);
+  h.dispatchHistory({ asset: 'CADJPY_otc', period: 30, history: [[1700000000, 110.1], [1700000030, 110.2]] });
+  assert.equal(h.state.activePair, 'CADJPY_otc');
+  assert.equal(h.state.activePeriod, 30);
+});

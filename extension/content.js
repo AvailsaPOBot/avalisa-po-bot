@@ -2357,6 +2357,16 @@ window.addEventListener('message', (e) => {
           return;
         }
 
+        // Every candle reader is the Avalisa analysis at AI_ANALYSIS_PERIOD_SEC.
+        // PO answers its OWN chart's changeSymbol too (period = chart timeframe,
+        // e.g. 60 on M1). Accepting that frame flipped activePeriod and
+        // clearStalePairBuffers() wiped the 30s analysis buffer, so every newly
+        // opened favourite read ~14/16 candles and was skipped (live 2026-11-07).
+        if (histPeriod !== AI_ANALYSIS_PERIOD_SEC) {
+          debugLog('[Avalisa] HISTORY ignored for', histAsset + ':' + histPeriod, '- analysis period is', AI_ANALYSIS_PERIOD_SEC);
+          return;
+        }
+
         // Detect pair / period switch and wipe stale buffers from other pairs
         const pairChanged = state.activePair !== histAsset || state.activePeriod !== histPeriod;
         if (pairChanged) {
