@@ -2352,6 +2352,11 @@ window.addEventListener('message', (e) => {
         const parsedPeriod = Number(parsed.period);
         const histPeriod = Number.isFinite(parsedPeriod) && parsedPeriod > 0 ? parsedPeriod : periodSec;
 
+        if (asset !== 'UNKNOWN' && histAsset !== asset) {
+          debugLog('[Avalisa] HISTORY ignored for', histAsset, '- chart shows', asset);
+          return;
+        }
+
         // Detect pair / period switch and wipe stale buffers from other pairs
         const pairChanged = state.activePair !== histAsset || state.activePeriod !== histPeriod;
         if (pairChanged) {
