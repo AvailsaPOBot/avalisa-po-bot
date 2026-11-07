@@ -22,10 +22,11 @@ function mockInitialRequests() {
   global.fetch = vi.fn().mockResolvedValue({ json: () => Promise.resolve({}) });
 }
 
+const BASIC_CTA = /basic/i;
+
 async function openBasicWhopCheckout() {
   render(<Pricing />);
-  fireEvent.click((await screen.findAllByRole('button', { name: /choose payment method/i }))[0]);
-  return screen.findByRole('link', { name: /whop/i });
+  return screen.findByRole('link', { name: BASIC_CTA });
 }
 
 function readBlob(blob) {

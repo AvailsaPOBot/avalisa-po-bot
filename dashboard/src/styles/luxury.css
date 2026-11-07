@@ -3895,7 +3895,8 @@
   line-height: 1.65;
 }
 
-.lux-not-found a {
+.lux-not-found a,
+.lux-not-found button {
   display: inline-flex;
   min-height: 44px;
   align-items: center;

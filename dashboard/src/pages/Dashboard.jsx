@@ -147,7 +147,7 @@ export default function Dashboard() {
   }, [isAdmin]);
 
   const loadClaimStatus = useCallback(async () => {
-    if (plan !== 'free') return;
+    if (plan !== 'free' && plan !== 'lifetime') return;
     try {
       const res = await api.get('/api/license/claim/status');
       setClaimStatus(res.data.claimStatus || 'none');
@@ -274,7 +274,7 @@ export default function Dashboard() {
     try {
       const res = await api.post('/api/license/claim', { poUid: claimPoUid.trim() });
       setClaimResult({ success: true, message: res.data.message });
-      setClaimStatus('pending');
+      setClaimStatus(res.data.status === 'approved' ? 'approved' : 'pending');
     } catch (err) {
       setClaimResult({ success: false, message: err.response?.data?.error || 'Failed to submit claim' });
     } finally {
@@ -699,6 +699,26 @@ export default function Dashboard() {
             >
               {aiSettingsSaving ? 'Saving…' : 'Save Prompt'}
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Approved free Pro note — settings tab */}
+      {activeTab === 'settings' && plan === 'lifetime' && claimStatus === 'approved' && (
+        <div className="card mt-6">
+          <h2 className="text-lg font-semibold text-white mb-1">Your free Pro plan is active.</h2>
+          <p className="text-gray-400 text-sm mb-4">
+            Keep testing on your demo account for as long as you like. When you feel ready to look at a real account, our <a href="/guide/pocket-option-demo-to-real-account.html" className="text-brand-400 underline">demo-to-real guide</a> is here.
+            Never deposit money you can't afford to lose.
+          </p>
+        </div>
+      )}
+
+      {/* Instant approval: the claim card below hides, so the server's message shows here until the next load */}
+      {activeTab === 'settings' && plan === 'free' && claimStatus === 'approved' && claimResult?.success && (
+        <div className="card mt-6">
+          <div className="text-sm px-3 py-2 rounded-lg bg-green-900/30 border border-green-700/50 text-green-400">
+            {claimResult.message}
           </div>
         </div>
       )}

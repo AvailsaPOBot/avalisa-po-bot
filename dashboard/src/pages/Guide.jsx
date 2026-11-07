@@ -304,7 +304,7 @@ export default function Guide() {
         },
         {
           subtitle: 'Pro — $119 one-time, or $29 per month',
-          text: 'Everything in Basic plus Avalisa Bot mode. Both options are offered at checkout: $119 one-time, or $29/month, which is a recurring subscription that renews every month until you cancel it.',
+          text: 'Everything in Basic plus Avalisa Bot mode. Both options are on the pricing page: $119 one-time, or $29/month, which is a recurring subscription that renews every month until you cancel it.',
         },
       ],
     },

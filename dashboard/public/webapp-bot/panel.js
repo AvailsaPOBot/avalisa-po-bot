@@ -212,7 +212,7 @@
     '    <div class="limit-card" hidden>',
     '      <h4>Your 10 free demo trades are used</h4>',
     '      <p>You used all 10 free Demo Martingale trades.</p>',
-    '      <p>Basic ($69 one-time) adds unlimited Martingale trades. Pro ($119 one-time, or $29/month as a recurring subscription — you choose at checkout) adds unlimited trades in both Martingale and Avalisa Bot modes.</p>',
+    '      <p>Basic ($69 one-time) adds unlimited Martingale trades. Pro ($119 one-time, or $29/month as a recurring subscription — you choose on the pricing page) adds unlimited trades in both Martingale and Avalisa Bot modes.</p>',
     '      <a class="lc-btn" target="_blank" rel="noopener" href="https://avalisabot.vercel.app/pricing">See plans</a>',
     '      <a class="lc-btn pro" target="_blank" rel="noopener" href="https://avalisabot.vercel.app/guide/free-pro-with-new-account.html">Get Pro free with a new Pocket Option account (granted once Pocket Option confirms the sign-up came through our link)</a>',
     '      <p class="lc-risk">No plan guarantees profit; results depend on market outcomes.</p>',

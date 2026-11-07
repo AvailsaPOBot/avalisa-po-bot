@@ -71,6 +71,8 @@ export default function AccountMenu({ onNavigate }) {
             <Link role="menuitem" to="/dashboard" onClick={done}><LayoutDashboard size={16} /> Dashboard</Link>
             <Link role="menuitem" to="/webapp" onClick={done}><Smartphone size={16} /> Bot on this device</Link>
             {user.isAdmin && <Link role="menuitem" to="/admin" onClick={done}>Admin</Link>}
+            {plan === 'demo' && !user.poUserId && <Link role="menuitem" to="/dashboard?tab=settings" onClick={done}>Get Pro free</Link>}
+            {plan === 'demo' && <Link role="menuitem" to="/pricing" onClick={done}>Upgrade</Link>}
             <button role="menuitem" type="button" onClick={handleLogout}><LogOut size={16} /> Log out</button>
           </div>
         )}

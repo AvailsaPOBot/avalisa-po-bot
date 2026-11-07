@@ -41,3 +41,15 @@ test('every advertised promo code matches the code the affiliate link carries', 
     .filter((c) => c !== theCode && !/^UTM|^REACT/.test(c));
   expect(strays).toEqual([]);
 });
+
+test('no deployed static page advertises a code the affiliate link does not carry', () => {
+  // dashboard/public/redesign-v2.html said 50START while the links carried WELCOME50.
+  // It now lives in dashboard/design-spec/ (not deployed); this stops it coming back.
+  const publicDir = path.join(__dirname, '..', 'public');
+  const html = fs.readdirSync(publicDir, { recursive: true })
+    .filter((f) => f.endsWith('.html'));
+  expect(html.length).toBeGreaterThan(0);
+  for (const file of html) {
+    expect(fs.readFileSync(path.join(publicDir, file), 'utf8'), file).not.toMatch(/\b50START\b/);
+  }
+});

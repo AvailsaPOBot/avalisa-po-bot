@@ -17,6 +17,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Pricing = lazy(() => import('./pages/Pricing'));
 const Support = lazy(() => import('./pages/Support'));
 const Privacy = lazy(() => import('./pages/Privacy'));
+const Unsubscribe = lazy(() => import('./pages/Unsubscribe'));
 const Guide = lazy(() => import('./pages/Guide'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const Webapp = lazy(() => import('./pages/Webapp'));
@@ -71,6 +72,7 @@ function AppShell() {
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/support" element={<Support />} />
         <Route path="/privacy" element={<Privacy />} />
+        <Route path="/unsubscribe" element={<Unsubscribe />} />
         <Route path="/guide" element={<Guide />} />
         <Route path="/dashboard" element={
           <ProtectedRoute><Dashboard /></ProtectedRoute>

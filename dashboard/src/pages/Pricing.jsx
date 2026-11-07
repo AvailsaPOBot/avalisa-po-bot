@@ -12,6 +12,7 @@ import {
   appendCheckoutEmail,
   WHOP_BASIC_CHECKOUT_URL,
   WHOP_PRO_CHECKOUT_URL,
+  WHOP_PRO_MONTHLY_CHECKOUT_URL,
 } from '../lib/checkout';
 import { AFFILIATE_LINK } from '../lib/affiliate';
 
@@ -64,7 +65,7 @@ const PRICING_FAQ = [
   },
   {
     q: 'Is it a subscription?',
-    a: 'Basic is a one-time $69 payment and never renews. For Pro you choose at checkout: $119 one-time, which also never renews, or $29/month, which is a recurring subscription that renews monthly until you cancel. Both Pro options unlock the same features.',
+    a: 'Basic is a one-time $69 payment and never renews. For Pro you choose on this page, with the toggle on the Pro card: $119 one-time, which also never renews, or $29/month, which is a recurring subscription that renews monthly until you cancel. Both Pro options unlock the same features.',
   },
   {
     q: 'What can I test with the free Demo plan?',
@@ -84,7 +85,7 @@ const PRICING_FAQ = [
   },
   {
     q: 'How do I cancel the $29/month Pro?',
-    a: 'Cancel the subscription in Whop, where you bought it. When it ends, your licence returns to the free Demo plan; your account, settings and trade history are kept, and subscribing again upgrades it again. Basic and the $119 Pro option never renew, so there is nothing to cancel.',
+    a: "Cancel the subscription in Whop, where you bought it (or email avalisapobot@gmail.com and we'll help). When it is cancelled or ends, your licence goes back to the free Demo plan (10 trades); your account, settings and trade history are kept, and subscribing again upgrades it again. Basic and the $119 Pro option never renew, so there is nothing to cancel.",
   },
   {
     q: 'Does Avalisa need my Pocket Option password?',
@@ -105,10 +106,6 @@ const PRICING_FAQ = [
   {
     q: 'If I buy Basic first, do I get credit toward Pro?',
     a: 'No. There is no credit or discount; Pro is always its full price ($119 one-time or $29/month).',
-  },
-  {
-    q: 'How do I cancel the $29/month Pro subscription, and what happens after?',
-    a: "Email avalisapobot@gmail.com and we'll cancel it for you. After the subscription is cancelled or ends, your licence goes back to the free Demo plan (10 trades). Your account, settings and trade history are kept, and subscribing again upgrades it again.",
   },
   {
     q: 'Do I need to deposit money to use Avalisa PO Bot?',
@@ -237,11 +234,11 @@ export default function Pricing() {
     {
       id: 'pro',
       name: 'Pro',
-      price: '$119',
-      period: 'one-time',
+      price: proBilling === 'monthly' ? '$29' : '$119',
+      period: proBilling === 'monthly' ? '/month recurring' : 'one-time',
       description: 'Both trading modes with no trade limit.',
       cta: proBilling === 'one-time' ? 'Buy Pro — $119 one-time' : 'Subscribe to Pro — $29/month',
-      href: appendCheckoutEmail(WHOP_PRO_CHECKOUT_URL, email),
+      href: appendCheckoutEmail(proBilling === 'monthly' ? WHOP_PRO_MONTHLY_CHECKOUT_URL : WHOP_PRO_CHECKOUT_URL, email),
       paypalPlan: 'lifetime',
       external: true,
       featured: true,
@@ -310,12 +307,14 @@ export default function Pricing() {
                       );
                     })}
                   </ul>
-                  {(plan.id === 'basic' || plan.id === 'pro') && <p className="v3p-plan__tip">Use the same email on Whop as your Avalisa account so the licence can match automatically.</p>}
+                  {(plan.id === 'basic' || plan.id === 'pro') && <p className="v3p-plan__tip">Use the same email on Whop as your Avalisa account so the licence can match automatically. Your licence activates after payment confirmation.</p>}
                   <div className="v3p-plan__cta">
                     {current ? (
                       <button type="button" className="v3p-btn-line" disabled>Current Plan</button>
                     ) : plan.external ? (
-                      plan.paypalPlan ? (
+                      plan.paypalPlan && !paypalEnabled && plan.href ? (
+                        <a className={plan.featured ? 'v3-btn v3p-btn-block' : 'v3p-btn-line'} href={plan.href} target="_blank" rel="noreferrer" onClick={() => trackCheckoutClick(plan.id)}>{plan.cta}</a>
+                      ) : plan.paypalPlan ? (
                         <button type="button" className={plan.featured ? 'v3-btn v3p-btn-block' : 'v3p-btn-line'} aria-label={`${plan.cta} · Choose payment method`} onClick={() => setSelectedPlan(plan.id)}>{plan.cta}</button>
                       ) : (
                         plan.href ? (
@@ -353,6 +352,7 @@ export default function Pricing() {
             </ol>
             <a className="v3-btn" href={AFFILIATE_LINK} target="_blank" rel="noreferrer">Open Pocket Option to register<span className="v3-btn__icon" aria-hidden="true"><ArrowUpRight size={17} /></span></a>
             <small>We may earn a commission when you register through this link.</small>
+            <a href="/guide/free-pro-with-new-account.html">Read the free-Pro guide</a>
           </div>
         </div>
       </section>
