@@ -33,7 +33,11 @@ export default function Privacy() {
       content: [
         {
           subtitle: 'Authentication',
-          text: 'Your email and password hash are used solely to verify your identity when you log in.',
+          text: 'Your email and password hash are used to verify your identity when you log in.',
+        },
+        {
+          subtitle: 'Emails We Send',
+          text: 'We use your email to send account and service messages (for example welcome, password reset, purchase and licence notices) and occasional product updates about Avalisa PO Bot, such as new features, setup tips or plan options. You can opt out of product updates at any time by replying STOP or using the unsubscribe link in the email; account and service messages still arrive. We never sell or share your email.',
         },
         {
           subtitle: 'License & Usage Tracking',
@@ -146,7 +150,7 @@ export default function Privacy() {
         <div>
           <p className="lux-kicker">Privacy</p>
           <h1>Privacy Policy</h1>
-          <p className="lux-privacy-updated">Last updated: April 2026</p>
+          <p className="lux-privacy-updated">Last updated: November 2026</p>
           <p>
             This Privacy Policy explains how Avalisa Bot ("we", "us", "our") collects, uses, and protects
             your information when you use our Chrome extension and dashboard. By using Avalisa Bot, you agree
