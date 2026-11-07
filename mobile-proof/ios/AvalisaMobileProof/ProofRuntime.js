@@ -833,14 +833,52 @@
     return `${account}-${strategy}`;
   }
 
+  // A money amount as PO prints it: "10", "0.50", "1234.5", "49,999.92", "1,234,567.89".
+  // The thousands form comes first so "49,999.92" is not cut off at the comma.
+  const MONEY_NUMBER_SRC = '\\d{1,3}(?:,\\d{3})+(?:\\.\\d{1,2})?|\\d+(?:[.,]\\d{1,2})?';
+
+  function moneyFromText(value) {
+    const match = String(value || '').match(new RegExp(`\\$?\\s?(?:${MONEY_NUMBER_SRC})`));
+    return match ? match[0] : '';
+  }
+
+  // Reads the account label PO shows in the VISIBLE header ("QT Demo" / "QT Real").
+  // PO also keeps a hidden account menu in the DOM that lists "QT Real" before "QT Demo",
+  // so the label must come from something the user can actually see.
+  // If visible signals disagree, Real wins: a real account read as demo is the dangerous direction.
+  function visibleAccountLabel() {
+    const found = [];
+    const labelRe = /^\s*QT\s+(Real|Demo)\b/i;
+    document.querySelectorAll('.balance-info-block__label').forEach(el => {
+      const match = text(el).match(labelRe);
+      if (match && visible(el)) found.push(match[1].toLowerCase());
+    });
+    // Any other visible element whose own text is exactly "QT Demo" / "QT Real".
+    if (document.body && typeof document.createTreeWalker === 'function') {
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+        const match = String(node.nodeValue || '').match(/^\s*QT\s+(Real|Demo)\s*$/i);
+        if (match && node.parentElement && visible(node.parentElement)) found.push(match[1].toLowerCase());
+      }
+    }
+    if (found.includes('real')) return 'QT Real';
+    if (found.includes('demo')) return 'QT Demo';
+    return '';
+  }
+
   function inferBalanceAndMode() {
     const bodyText = text(document.body);
+    const visibleLabel = visibleAccountLabel();
     const demoSelectors = [
       '.js-balance-demo',
       '[class*="balance-demo"]',
       '[data-testid*="demo-balance" i]',
       '[aria-label*="demo balance" i]',
     ];
+    // The try-demo header block is only trusted as a demo balance when its label says Demo.
+    const demoOnlySelectors = /\bQT\s+Demo\b/i.test(visibleLabel)
+      ? ['.js-try-demo-balance', '[class*="balance-info-block"]']
+      : [];
     const realSelectors = [
       '.js-balance-real',
       '.js-balance-real-USD',
@@ -848,9 +886,13 @@
       '[data-testid*="real-balance" i]',
       '[aria-label*="real balance" i]',
     ];
-    const demoEl = demoSelectors.map(s => document.querySelector(s)).find(visible);
+    const baseDemoEl = demoSelectors.map(s => document.querySelector(s)).find(visible);
+    const headerDemoEl = baseDemoEl ? null : demoOnlySelectors
+      .map(s => document.querySelector(s)).find(visible);
+    const demoEl = baseDemoEl || headerDemoEl;
+    const demoElText = baseDemoEl ? text(baseDemoEl) : moneyFromText(text(headerDemoEl));
     const realEl = realSelectors.map(s => document.querySelector(s)).find(visible);
-    const accountModeText = bodyText.match(/\bQT\s+(?:Real|Demo)\b/i)?.[0] || '';
+    const accountModeText = visibleLabel || bodyText.match(/\bQT\s+(?:Real|Demo)\b/i)?.[0] || '';
 
     const pathSaysDemo = /\bdemo\b/i.test(location.pathname);
     const pathSaysReal = /\/cabinet\/quick-high-low\b/i.test(location.pathname) && !pathSaysDemo;
@@ -863,10 +905,10 @@
     // Pick the balance from the active mode first so real sessions never read
     // stale demo balance and resolve every real trade as unchanged/tie.
     let balanceText = realDetected
-      ? (text(realEl) || activeAccountBalanceText(bodyText) || text(demoEl))
-      : (text(demoEl) || activeAccountBalanceText(bodyText) || text(realEl));
+      ? (text(realEl) || activeAccountBalanceText(bodyText, 'real') || demoElText)
+      : (demoElText || activeAccountBalanceText(bodyText, demoConfirmed ? 'demo' : '') || text(realEl));
     if (!balanceText) {
-      const match = bodyText.match(/\$\s?\d+(?:[.,]\d{1,2})?/);
+      const match = bodyText.match(new RegExp(`\\$\\s?(?:${MONEY_NUMBER_SRC})`));
       balanceText = match ? match[0] : '-';
     }
 
@@ -904,8 +946,12 @@
     }
   }
 
-  function activeAccountBalanceText(bodyText) {
-    const match = String(bodyText || '').match(/\bQT\s+(?:Real|Demo|Practice)\s+[A-Z]{3}\s+(\d+(?:[.,]\d{1,2})?)/i);
+  function activeAccountBalanceText(bodyText, mode) {
+    // PO's hidden account menu lists every account, so prefer the entry for the detected mode.
+    const labels = mode === 'real' ? 'Real' : (mode === 'demo' ? 'Demo|Practice' : 'Real|Demo|Practice');
+    const read = pattern => String(bodyText || '').match(
+      new RegExp(`\\bQT\\s+(?:${pattern})\\s+[A-Z]{3}\\s+(${MONEY_NUMBER_SRC})`, 'i'));
+    const match = read(labels) || read('Real|Demo|Practice');
     return match ? match[1] : '';
   }
 
@@ -1076,6 +1122,7 @@
   function findAmountDisplay() {
     const selectors = [
       '.block--bet-amount',
+      '.amount-field',
       '[class*="amount"]',
       '[class*="bet"]',
       '[class*="invest"]',
@@ -1103,9 +1150,23 @@
       /\bPayout\b.{0,80}\+\s?\$\s?\d+(?:[.,]\d{1,2})?/i.test(body);
   }
 
+  // PO mobile shows the trade amount in .amount-field ("$1", "$1.00", "$1,000"), not in an input.
+  function readAmountFieldValue() {
+    const field = Array.from(document.querySelectorAll('.amount-field')).find(visible);
+    if (!field) return null;
+    const raw = moneyFromText(text(field)).replace(/[$\s]/g, '');
+    if (!raw) return null;
+    const value = /^\d{1,3}(,\d{3})+/.test(raw) ? raw.replace(/,/g, '') : raw.replace(',', '.');
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
   function visibleAmountIsOne() {
     const input = findAmountInput();
-    if (input) return Number(String(input.value).replace(/[^\d.]/g, '')) === 1;
+    if (input && Number(String(input.value).replace(/[^\d.]/g, '')) === 1) return true;
+    const fieldValue = readAmountFieldValue();
+    if (fieldValue !== null) return fieldValue === 1;
+    if (input) return false;
     const body = text(document.body);
     return /\bAmount\b.{0,30}\$?\s?1(?:[.,]00)?\b/i.test(body) ||
       (/\bPayout\b/i.test(body) && /\+\s?\$\s?0\.\d{1,2}\b/i.test(body) && /\+\s?\$\s?1(?:[.,]00)?\b/i.test(body));
@@ -1113,9 +1174,64 @@
 
   function visibleAmountMatches(amount) {
     const input = findAmountInput();
-    if (input) return Number(String(input.value).replace(/[^\d.]/g, '')) === Number(amount);
+    if (input && Number(String(input.value).replace(/[^\d.]/g, '')) === Number(amount)) return true;
+    const fieldValue = readAmountFieldValue();
+    if (fieldValue !== null) return Math.abs(fieldValue - Number(amount)) < 0.005;
+    if (input) return false;
     const normalized = String(Number(amount)).replace('.', '[.,]');
     return new RegExp(`\\bAmount\\b.{0,30}\\$?\\s?${normalized}(?:[.,]00)?\\b`, 'i').test(text(document.body));
+  }
+
+  // Custom keypad PO mobile opens when the amount block is tapped.
+  function amountKeypadKeys() {
+    const keys = Array.from(document.querySelectorAll('.virtual-keyboard__input')).filter(visible);
+    const digits = {};
+    let backspace = null;
+    for (const key of keys) {
+      const label = String(key.innerText ?? key.textContent ?? '').trim();
+      if (/^[0-9.]$/.test(label)) digits[label] = key;
+      else if (!label && key.querySelector('svg')) backspace = key;
+    }
+    return { count: keys.length, digits, backspace };
+  }
+
+  function pressKeypadKey(el) {
+    const Pointer = typeof window.PointerEvent === 'function' ? window.PointerEvent : window.MouseEvent;
+    for (const [Ctor, type] of [[Pointer, 'pointerdown'], [window.MouseEvent, 'mousedown'],
+      [Pointer, 'pointerup'], [window.MouseEvent, 'mouseup'], [window.MouseEvent, 'click']]) {
+      el.dispatchEvent(new Ctor(type, { bubbles: true, cancelable: true, view: window }));
+    }
+  }
+
+  function amountDisplayText() {
+    const field = Array.from(document.querySelectorAll('.amount-field')).find(visible);
+    return text(field || findAmountDisplay());
+  }
+
+  function typeAmountOnKeypad(safeAmount) {
+    const typed = Number.isInteger(safeAmount)
+      ? String(safeAmount)
+      : safeAmount.toFixed(2).replace(/0+$/, '').replace(/\.$/, '');
+    // Clear whatever is there; stop once the display has no digits (or reads 0). Max 12 presses.
+    for (let presses = 0; presses < 12; presses += 1) {
+      const shown = amountDisplayText().replace(/[^\d.]/g, '');
+      if (!/\d/.test(shown) || Number(shown) === 0) break;
+      const { backspace } = amountKeypadKeys();
+      if (!backspace) return false;
+      pressKeypadKey(backspace);
+    }
+    for (const char of typed) {
+      const key = amountKeypadKeys().digits[char];
+      if (!key) return false;
+      pressKeypadKey(key);
+    }
+    return true;
+  }
+
+  function closeAmountKeypad() {
+    if (!amountKeypadKeys().count) return;
+    const toggle = Array.from(document.querySelectorAll('.block--bet-amount')).find(visible) || findAmountDisplay();
+    try { toggle?.click(); } catch (_) {}
   }
 
   function setAmountValue(amount) {
@@ -1126,11 +1242,21 @@
     if (input) {
       setNativeValue(input, value);
       input.blur?.();
-      return visibleAmountMatches(safeAmount) || Number(String(input.value).replace(/[^\d.]/g, '')) === safeAmount;
+      if (visibleAmountMatches(safeAmount) || Number(String(input.value).replace(/[^\d.]/g, '')) === safeAmount) return true;
+      // Not the real amount control (PO mobile has no amount input): try the display + keypad paths below.
     }
 
     const display = findAmountDisplay();
-    try { display?.click(); } catch (_) {}
+    // If the keypad is already open (e.g. it opened late on an earlier try), do not tap and toggle it shut.
+    if (!amountKeypadKeys().count) {
+      try { display?.click(); } catch (_) {}
+    }
+
+    const keypad = amountKeypadKeys();
+    if (keypad.count) {
+      try { typeAmountOnKeypad(safeAmount); } finally { closeAmountKeypad(); }
+      return visibleAmountMatches(safeAmount);
+    }
 
     const openedInput = Array.from(document.querySelectorAll('input, [contenteditable="true"]'))
       .find(el => visible(el) && (el.matches('input') || el.isContentEditable));
@@ -2159,6 +2285,9 @@
       findDurationElement,
       classifyResult,
       requestedTradeTimeframe,
+      inferBalanceAndMode,
+      setAmountValue,
+      visibleAmountMatches,
     },
   };
 
