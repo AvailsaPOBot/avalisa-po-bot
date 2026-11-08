@@ -268,6 +268,11 @@
     dock.classList.toggle('closed', !open);
   }
   $('.toggle').addEventListener('click', function () { setOpen(!open); });
+  // Not saved: an automatic fold must not change how the panel opens next time.
+  function foldFor(running) {
+    open = !running;
+    dock.classList.toggle('closed', running);
+  }
 
   function applyStrategyRows() {
     var ai = settings.strategy === 'ai';
@@ -316,6 +321,10 @@
   var lastStatus = {};
   var lastResultKey = null;
   var lastOffline = false;
+  // On a phone the open panel covers most of the chart. Fold it to the header bar when the bot
+  // starts (the green dot shows it is running) and unfold it when the bot stops, so a stop
+  // reason or the demo-limit card is seen. null = first render: leave the saved state alone.
+  var wasRunning = null;
   // The backend sleeps when idle and can take longer than the runtime's 15 s request budget
   // to wake (seen on a real iPhone the morning after). Keep re-checking quietly instead of
   // leaving the user on an error: every 10 s, up to 12 times.
@@ -366,6 +375,8 @@
     }
 
     dock.classList.toggle('running', !!s.botRunning);
+    if (wasRunning !== null && wasRunning !== !!s.botRunning) foldFor(!!s.botRunning);
+    wasRunning = !!s.botRunning;
     // Flash the outcome of each finished trade, once, the way the extension's status does.
     var resultKey = (s.tradesCount || 0) + ':' + s.lastResult;
     if (/^(win|loss|draw|tie)$/i.test(String(s.lastResult)) && resultKey !== lastResultKey && lastResultKey !== null) {

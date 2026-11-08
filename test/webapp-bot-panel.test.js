@@ -54,3 +54,45 @@ test('a network failure keeps the signed-in view and offers Retry', async () => 
     win.close();
   }
 });
+
+// Phone UX (2026-11-08): the open panel covers ~2/3 of the PO chart. It folds to the header
+// when the bot starts and unfolds when it stops (stop reason / demo-limit card must be seen),
+// without overwriting the user's saved open/closed choice.
+test('the panel folds when the bot starts and unfolds when it stops', async () => {
+  const dom = new JSDOM('<!doctype html><html><head></head><body><div>QT Demo USD 100.00</div></body></html>', {
+    url: 'https://m.po.trade/en/cabinet/demo-quick-high-low/',
+    runScripts: 'outside-only',
+  });
+  const win = dom.window;
+  win.TextDecoder = TextDecoder;
+  win.AbortController = AbortController;
+  win.fetch = async () => { throw new Error('offline in test'); };
+  try {
+    win.eval(`${runtime}\n//# sourceURL=ProofRuntime.js`);
+    await new Promise(r => setTimeout(r, 50));
+    win.AvalisaProof.scan = () => {};
+    win.eval(`${panel}\n//# sourceURL=panel.js`);
+    await new Promise(r => setTimeout(r, 50));
+    const shadow = win.document.getElementById('avalisa-webapp-bot').shadowRoot;
+    const dock = shadow.querySelector('.dock');
+    const realSnapshot = win.AvalisaProof.snapshot;
+    let running = false;
+    win.AvalisaProof.snapshot = () => JSON.stringify({ ...JSON.parse(realSnapshot()), botRunning: running });
+    win.AvalisaWebappPanel.render();
+    assert.equal(dock.classList.contains('closed'), false, 'opens by default');
+
+    running = true; win.AvalisaWebappPanel.render();
+    assert.equal(dock.classList.contains('closed'), true, 'folded once running');
+    running = true; win.AvalisaWebappPanel.render();
+    assert.equal(dock.classList.contains('closed'), true, 'stays folded while running');
+
+    shadow.querySelector('.toggle').click();
+    assert.equal(dock.classList.contains('closed'), false, 'user can still open it while running');
+
+    running = false; win.AvalisaWebappPanel.render();
+    assert.equal(dock.classList.contains('closed'), false, 'unfolded after stop');
+    assert.equal(win.localStorage.getItem('avalisa.webappBot.panelOpen.v1'), 'true', 'saved choice untouched by auto-fold');
+  } finally {
+    win.close();
+  }
+});
