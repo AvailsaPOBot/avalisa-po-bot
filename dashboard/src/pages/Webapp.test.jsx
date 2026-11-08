@@ -104,7 +104,8 @@ describe('/webapp account copy', () => {
     setUserAgent(SAFARI_IPHONE);
     renderWebapp();
     const card = screen.getByText('Avalisa account (optional)').closest('article');
-    expect(card).toHaveTextContent('Optional for your first run: 10 free Demo trades work on this phone without an account. Sign in or create an account to sync settings or use Basic/Pro.');
+    expect(card).toHaveTextContent('Optional for your first run: 10 free Demo trades work on this phone without an account. See plans after the free trades. Sign in or create an account to sync settings or use Basic/Pro.');
+    expect(within(card).getByRole('link', { name: 'See plans after the free trades' })).toHaveAttribute('href', '/pricing');
     expect(within(card).getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/login?next=/webapp');
     expect(within(card).getByRole('link', { name: 'create an account' })).toHaveAttribute('href', '/register?next=/webapp');
     expect(card).not.toHaveTextContent(/licence the bot checks before it can run/i);

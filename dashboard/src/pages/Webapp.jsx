@@ -237,7 +237,8 @@ export default function Webapp() {
             ) : (
               <p>
                 Optional for your first run: 10 free Demo trades work on this phone without an
-                account. <Link to={withNext('/login', '/webapp')}>Sign in</Link> or{' '}
+                account. <Link to="/pricing">See plans after the free trades</Link>.{' '}
+                <Link to={withNext('/login', '/webapp')}>Sign in</Link> or{' '}
                 <Link to={withNext('/register', '/webapp')}>create an account</Link> to sync
                 settings or use Basic/Pro.
               </p>

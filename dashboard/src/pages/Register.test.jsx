@@ -47,3 +47,8 @@ test('the sign-up form comes first in the page, so phones show it directly under
   expect(form.querySelector('input[type="email"]')).not.toBeNull();
   expect(screen.getByRole('button', { name: /show password/i })).toBeInTheDocument();
 });
+
+test('the free-demo step links to the plans page', () => {
+  render(<Register />);
+  expect(screen.getByRole('link', { name: 'See plans after the free trades' })).toHaveAttribute('href', '/pricing');
+});

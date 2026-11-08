@@ -104,7 +104,7 @@ export default function Register() {
         <aside className="v3p-reg__next" aria-label="What happens next">
           <ol className="v3p-numbered v3p-numbered--steps">
             <li><span aria-hidden="true">01</span><div><strong>Now · about 30 seconds</strong><p>Create your free Avalisa account, or continue with Google or Facebook.</p></div></li>
-            <li><span aria-hidden="true">02</span><div><strong>Instant</strong><p>Get 10 Free Demo Trades automatically. No card required.</p></div></li>
+            <li><span aria-hidden="true">02</span><div><strong>Instant</strong><p>Get 10 Free Demo Trades automatically. No card required. <Link to="/pricing">See plans after the free trades</Link></p></div></li>
             <li><span aria-hidden="true">03</span><div><strong>Next screen</strong><p>Choose phone setup at <Link to="/webapp">/webapp</Link> or install the desktop Chrome extension. Start on a Pocket Option demo balance.</p></div></li>
           </ol>
           {affiliateIntent && <p className="v3p-note v3p-note--gold">After you register a new Pocket Option account through our link, link its numeric ID in Dashboard → Settings. Pro unlocks when the referral is confirmed; otherwise it is queued for admin verification.</p>}
