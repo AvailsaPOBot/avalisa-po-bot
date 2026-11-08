@@ -61,6 +61,10 @@ export function trackPricingView() {
 // Keep the $29/month line explicit: it is the only option that renews.
 const PRICING_FAQ = [
   {
+    q: 'What happens after my 10 free demo trades?',
+    a: 'You have two options. Get Pro free: register a NEW Pocket Option account through our registration link, then link that Pocket Option ID in your Avalisa account (Dashboard → Settings); if Pocket Option confirms the registration came through our link, Pro is granted permanently, with no subscription. We may earn a commission from Pocket Option when you sign up through the link. Or buy a plan: Basic is $69 one-time only; Pro is $119 one-time or $29/month (a real recurring subscription that renews until you cancel), you choose at checkout. Trading carries risk; no result is guaranteed.',
+  },
+  {
     q: 'What is the difference between Basic and Pro?',
     a: 'Basic ($69) unlocks unlimited Martingale trading, cloud settings sync and trade history. Pro adds Avalisa Bot mode, the rule-based signal mode, alongside Martingale. Choose Basic if Martingale is all you need, Pro if you want both modes.',
   },
