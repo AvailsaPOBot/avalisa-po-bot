@@ -282,11 +282,16 @@
   "real-account-go-no-go-checklist.html": [
     "martingale-risk-explained.html",
     "payout-percentage-filter-importance.html",
-    "do-i-need-to-deposit.html"
+    "pocket-option-black10-deposit-bonus.html"
   ],
   "what-happens-after-10-free-demo-trades.html": [
     "basic-vs-pro.html",
     "free-pro-with-new-account.html",
     "pricing-questions.html"
+  ],
+  "pocket-option-black10-deposit-bonus.html": [
+    "free-pro-with-new-account.html",
+    "real-account-go-no-go-checklist.html",
+    "do-i-need-to-deposit.html"
   ]
 }

@@ -30,6 +30,7 @@ const STATIC_GUIDES = [
   { href: '/guide/pricing-questions.html', title: 'Avalisa PO Bot pricing questions answered' },
   { href: '/guide/do-i-need-to-deposit.html', title: 'Do I Need to Deposit Money to Use Avalisa PO Bot?' },
   { href: '/guide/what-happens-after-10-free-demo-trades.html', title: 'What Happens After My 10 Free Demo Trades?' },
+  { href: '/guide/pocket-option-black10-deposit-bonus.html', title: 'Pocket Option BLACK10 Code: 100% Deposit Bonus, 12-30 Nov' },
   { href: '/guide/best-pocket-option-bot-settings.html', title: 'Best Pocket Option Bot Settings: What We Measured and Where to Start' },
   { href: '/guide/best-timeframe-for-pocket-option-automation.html', title: 'Best Timeframe for Pocket Option Automation: 1-Minute vs 5-Minute' },
   { href: '/guide/binary-options-vs-forex-automation.html', title: 'Automating Binary Options vs Forex: Why the Maths Is Not the Same' },
