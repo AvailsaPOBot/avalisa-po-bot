@@ -179,7 +179,7 @@
           "name": "Can the bot tell when a losing streak is happening and stop?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "The built-in protection is the step cap: when the sequence reaches its limit, or when the next stake would exceed your balance, escalation stops and the bot pauses. There is no separate automatic stop-loss to configure beyond that cap, which is exactly why the cap should never be “infinite” on a real account."
+            "text": "The step limit is a setting you choose, and it stays on Infinite until you change it. When a losing sequence reaches your limit, the stake returns to the start amount and the bot keeps trading, so the losses from that sequence stay on the account. The bot pauses only when the next stake would exceed your balance. There is no separate automatic stop-loss to configure, which is exactly why the step limit should be set to a number, never “Infinite”, on a real account."
           }
         },
         {
@@ -281,7 +281,7 @@
           </ul>
           <p>This is why the difference between “works on demo” and “kills the account” so often shows up in Martingale mode. Practical protections:</p>
           <ol>
-            <li><strong>Limit the steps.</strong> A capped step count is the actual mechanism for limiting a losing streak — it is the only built-in cap. “Infinite” steps means no cap: the sequence keeps escalating until the next stake exceeds your balance and the bot pauses.</li>
+            <li><strong>Limit the steps.</strong> Setting a step count is the actual mechanism for limiting a losing streak, and there is no other loss limit to configure. The setting starts on “Infinite”, which means no limit: the sequence keeps escalating until the next stake exceeds your balance and the bot pauses.</li>
             <li><strong>Prefer the lower multipliers</strong> (2x) when testing, since they escalate more slowly than aggressive multipliers.</li>
             <li><strong>Check the math before going live.</strong> At a 92% payout, break-even needs roughly a 52.1% successful-trade percentage. That is a useful number to keep in your head whenever you evaluate whether something is actually winning.</li>
             <li><strong>Keep stakes small enough that a full capped sequence is survivable.</strong> Size the entry stake so that even the worst allowed sequence costs an amount you planned for, not an amount you will notice.</li>
@@ -324,7 +324,7 @@
           <p>Smaller entry stakes with hard caps are the safer arithmetic. The danger is not any single trade; it is the accumulated cost of an escalating sequence. Size so the capped maximum is affordable, then reduce until it is comfortably affordable.</p>
 
           <h3>Can the bot tell when a losing streak is happening and stop?</h3>
-          <p>The built-in protection is the step cap: when the sequence reaches its limit, or when the next stake would exceed your balance, escalation stops and the bot pauses. There is no separate automatic stop-loss to configure beyond that cap, which is exactly why the cap should never be “infinite” on a real account.</p>
+          <p>The step limit is a setting you choose, and it stays on Infinite until you change it. When a losing sequence reaches your limit, the stake returns to the start amount and the bot keeps trading, so the losses from that sequence stay on the account. The bot pauses only when the next stake would exceed your balance. There is no separate automatic stop-loss to configure, which is exactly why the step limit should be set to a number, never “Infinite”, on a real account.</p>
 
           <h3>Should I ever trust the demo results at all?</h3>
           <p>Yes — as a test of settings and behavior, never as a prediction of profit. If a setting behaves badly on demo it will behave worse on real. If it behaves well on demo, it merely has not been disproved yet.</p>
