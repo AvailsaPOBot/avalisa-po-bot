@@ -38,6 +38,14 @@ function planDisplayName(plan) {
   return plan || 'demo';
 }
 
+// The BLACK10 deposit-bonus promo runs 12-30 November 2026; the note's link
+// shows only while the current UTC date is on or before the end date.
+const BLACK10_PROMO_END_UTC = Date.UTC(2026, 10, 30);
+
+function isBlack10PromoActive(now = new Date()) {
+  return Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) <= BLACK10_PROMO_END_UTC;
+}
+
 function hasDismissedInstallStep() {
   try {
     return window.localStorage.getItem(INSTALL_STEP_STORAGE_KEY) === 'true';
@@ -731,6 +739,14 @@ export default function Dashboard() {
           <h2 className="text-lg font-semibold text-white mb-1">Your free Pro plan is active.</h2>
           <p className="text-gray-400 text-sm mb-4">
             Keep testing on your demo account for as long as you like. When you feel ready to look at a real account, our <a href="/guide/pocket-option-demo-to-real-account.html" className="text-brand-400 underline">demo-to-real guide</a> is here.
+            {' '}
+            {isBlack10PromoActive() && (
+              <>
+                {'Pocket Option\'s BLACK10 deposit bonus runs 12-30 November 2026. Read the terms first in our '}
+                <a href="/guide/pocket-option-black10-deposit-bonus.html" className="text-brand-400 underline">BLACK10 guide</a>
+                {'. '}
+              </>
+            )}
             Never deposit money you can't afford to lose.
           </p>
         </div>
