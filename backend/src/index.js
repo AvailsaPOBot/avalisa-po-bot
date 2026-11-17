@@ -260,6 +260,7 @@ app.use('/api/license', licenseRoutes);
 app.use('/api/trades', tradeRoutes);
 app.use('/api/market', require('./routes/market'));
 app.use('/api/settings', settingsRoutes);
+app.use('/api/admin-read', require('./routes/adminRead'));
 app.use('/api/admin', adminRoutes);
 app.use('/api/support', supportRoutes);
 app.use('/api/funnel', funnelRoutes);
