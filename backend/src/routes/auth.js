@@ -201,6 +201,11 @@ router.post('/register', async (req, res) => {
 });
 
 // POST /api/auth/login
+// Shown in the dashboard and in the extension panel (the panel shows the backend
+// error text as-is). Google/Facebook sign-ups have no password of their own, so
+// point them to Forgot password instead of a dead end.
+const LOGIN_FAILED_MSG = 'Wrong email or password. Signed up with Google or Facebook? Use "Forgot password" to set one.';
+
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -210,12 +215,12 @@ router.post('/login', async (req, res) => {
   try {
     const user = await findUserByEmail(email);
     if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: LOGIN_FAILED_MSG });
     }
 
     const valid = await bcrypt.compare(password, user.passwordHash);
     if (!valid) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: LOGIN_FAILED_MSG });
     }
 
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '30d' });
