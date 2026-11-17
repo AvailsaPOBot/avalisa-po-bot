@@ -228,3 +228,41 @@ test('a failed notification user lookup still attempts the Board email', async (
     notify.restore();
   }
 });
+
+test('rejected (not found) email gives the steps and our sign-up link, never the word affiliate', async () => {
+  const sent = [];
+  const notify = loadClaimNotify({ emailConfigured: () => true, sendEmail: (message) => sent.push(message) });
+  try {
+    await notify.claimNotify.notifyUserOfClaimOutcome(mockPrisma(), {
+      userId: 'user_123', email: 'trader@example.com', poUid: '987654', outcome: 'rejected', reason: 'not_found',
+    });
+    await new Promise((resolve) => setImmediate(resolve));
+    const mail = sent.find((m) => m.to === 'trader@example.com');
+    assert.ok(mail, 'user email sent');
+    assert.match(mail.text, /987654/);
+    assert.match(mail.text, /https:\/\/u3\.shortink\.io\/register/);
+    assert.match(mail.text, /Link Your Pocket Option Account/);
+    assert.match(mail.html, /<a href="https:\/\/u3\.shortink\.io\/register[^"]*">register a new Pocket Option account here<\/a>/);
+    const visibleHtml = mail.html.replace(/href="[^"]*"/g, '');
+    assert.doesNotMatch(visibleHtml, /affiliate/i);
+    assert.doesNotMatch(mail.text.replace(/https?:\/\/\S+/g, ''), /affiliate/i);
+  } finally {
+    notify.restore();
+  }
+});
+
+test('rejected (ID mismatch) email explains the mismatch and has no sign-up link', async () => {
+  const sent = [];
+  const notify = loadClaimNotify({ emailConfigured: () => true, sendEmail: (message) => sent.push(message) });
+  try {
+    await notify.claimNotify.notifyUserOfClaimOutcome(mockPrisma(), {
+      userId: 'user_123', email: 'trader@example.com', poUid: '987654', outcome: 'rejected', reason: 'uid_mismatch',
+    });
+    await new Promise((resolve) => setImmediate(resolve));
+    const mail = sent.find((m) => m.to === 'trader@example.com');
+    assert.match(mail.text, /does not match/);
+    assert.doesNotMatch(mail.text, /shortink/);
+  } finally {
+    notify.restore();
+  }
+});
