@@ -242,6 +242,7 @@ test('rejected (not found) email gives the steps and our sign-up link, never the
     assert.match(mail.text, /987654/);
     assert.match(mail.text, /https:\/\/u3\.shortink\.io\/register/);
     assert.match(mail.text, /Link Your Pocket Option Account/);
+    assert.match(mail.text, /Admin — https:\/\/avalisabot\.vercel\.app/);
     assert.match(mail.html, /<a href="https:\/\/u3\.shortink\.io\/register[^"]*">register a new Pocket Option account here<\/a>/);
     const visibleHtml = mail.html.replace(/href="[^"]*"/g, '');
     assert.doesNotMatch(visibleHtml, /affiliate/i);

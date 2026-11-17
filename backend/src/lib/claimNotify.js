@@ -90,6 +90,9 @@ function notifyUserOfClaimOutcome(prisma, details = {}) {
           '',
           `Prefer to keep your current account? A paid plan unlocks it straight away: ${PRICING_URL}`,
           'Questions? Email avalisapobot@gmail.com.',
+          '',
+          'Best,',
+          'Admin — https://avalisabot.vercel.app',
         ].join('\n')
         : [
           getClaimRejectionMessage(reason),
