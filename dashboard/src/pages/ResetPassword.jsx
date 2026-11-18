@@ -24,7 +24,7 @@ export default function ResetPassword() {
         localStorage.setItem('jwt', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
       }
-      toast.success('Password updated. Signing you in...');
+      toast.success('Password updated. Use this email and password to sign in to the extension too.');
       // Full reload so AuthProvider picks up the new session.
       window.location.assign('/dashboard');
     } catch (err) {
