@@ -31,3 +31,8 @@ test('popup loads the shared config before using AFFILIATE_LINK', async () => {
     'popup loads config.js before popup.js'
   );
 });
+
+test('bundled fallback link carries sub_id1=ext at the very end (PocketPartners attribution)', async () => {
+  const config = await readFile(configPath, 'utf8');
+  assert.match(config, /&code=WELCOME50&sub_id1=ext';/);
+});
