@@ -19,6 +19,24 @@ function hasValidToken(req) {
   return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 
+// Channel attribution: PocketPartners echoes sub_id1..sub_id5 / click_id / site_id
+// (and the {ac} campaign macro) back in postbacks when the postback URL asks for them.
+// Keep only short, plain tags so a postback can never stuff arbitrary data into events.
+const SOURCE_TAG_KEYS = ['ac', 'sub_id1', 'sub_id2', 'sub_id3', 'sub_id4', 'sub_id5', 'click_id', 'site_id'];
+function sourceTags(query) {
+  const tags = {};
+  for (const key of SOURCE_TAG_KEYS) {
+    const raw = query[key];
+    if (typeof raw !== 'string') continue;
+    const value = raw.trim();
+    // Unfilled macros arrive literally, e.g. "{sub_id1}"; those carry no information.
+    if (!value || /^\{.*\}$/.test(value)) continue;
+    if (!/^[A-Za-z0-9_.-]{1,64}$/.test(value)) continue;
+    tags[key] = value;
+  }
+  return tags;
+}
+
 // GET /api/webhooks/pocketpartners?event=Registration&trader_id=12345&token=SECRET
 // Called by PocketPartners server — always return 200 (retries on non-200)
 router.get('/', async (req, res) => {
@@ -43,7 +61,11 @@ router.get('/', async (req, res) => {
   // "PocketPartners sent nothing" apart from "it sent a postback with no usable trader id".
   try {
     recordFunnelEvent(prisma, 'affiliate_postback_received', {
-      meta: { event: String(event || ''), hasTraderId: Boolean(trader_id && String(trader_id).trim()) },
+      meta: {
+        event: String(event || ''),
+        hasTraderId: Boolean(trader_id && String(trader_id).trim()),
+        ...sourceTags(req.query),
+      },
     });
   } catch (err) {
     // Analytics must never change this webhook's response.

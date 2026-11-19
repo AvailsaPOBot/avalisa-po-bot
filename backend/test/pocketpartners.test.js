@@ -182,3 +182,28 @@ test('a non-registration event is still stored but grants nothing', async () => 
     loaded.restore();
   }
 });
+
+test('postback source tags (campaign / sub_id) are recorded, junk and unfilled macros are dropped', async () => {
+  const calls = [];
+  process.env.POCKETPARTNERS_SECRET = 'test-secret';
+  const loaded = loadPocketPartnersRouter({ recorder: (...args) => calls.push(args) });
+  try {
+    await postback(loaded.router, {
+      token: 'test-secret',
+      event: 'Registration',
+      trader_id: '555',
+      ac: 'april2024',
+      sub_id1: 'tiktok_c4',
+      sub_id2: '{sub_id2}',
+      sub_id3: '<script>x</script>',
+      click_id: 'a'.repeat(65),
+    });
+    const received = calls.find((c) => c[1] === 'affiliate_postback_received');
+    assert.ok(received);
+    assert.deepEqual(received[2], {
+      meta: { event: 'Registration', hasTraderId: true, ac: 'april2024', sub_id1: 'tiktok_c4' },
+    });
+  } finally {
+    loaded.restore();
+  }
+});
