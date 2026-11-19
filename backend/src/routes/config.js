@@ -1,32 +1,35 @@
 const express = require('express');
 const prisma = require('../lib/prisma');
 const { recordFunnelEvent } = require('../lib/funnel');
-const { AFFILIATE_LINK } = require('../lib/affiliateLink');
+const { AFFILIATE_LINK, withSubId } = require('../lib/affiliateLink');
 
 const router = express.Router();
 
 // In-memory cache — 1 hour TTL
 let cache = { url: null, expiry: 0 };
 
-// GET /api/config/affiliate-link — no auth, public
+// GET /api/config/affiliate-link — no auth, public. Only the extension calls this, so the link it
+// serves carries sub_id1=ext (tag added on the way out, so a DB override is tagged too).
+const EXT_CHANNEL = 'ext';
+
 router.get('/affiliate-link', async (req, res) => {
   const now = Date.now();
   recordFunnelEvent(prisma, 'affiliate_link_served');
   if (cache.url && now < cache.expiry) {
-    return res.json({ url: cache.url });
+    return res.json({ url: withSubId(cache.url, EXT_CHANNEL) });
   }
 
   try {
     const row = await prisma.appConfig.findUnique({ where: { key: 'affiliate_link' } });
     if (row?.value) {
       cache = { url: row.value, expiry: now + 3600000 };
-      return res.json({ url: row.value });
+      return res.json({ url: withSubId(row.value, EXT_CHANNEL) });
     }
   } catch (err) {
     console.error('[config] affiliate-link DB error:', err.message);
   }
 
-  return res.json({ url: AFFILIATE_LINK });
+  return res.json({ url: withSubId(AFFILIATE_LINK, EXT_CHANNEL) });
 });
 
 // GET /api/config/winrates — no auth, public

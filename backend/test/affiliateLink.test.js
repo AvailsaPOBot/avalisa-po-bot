@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { AFFILIATE_LINK } = require('../src/lib/affiliateLink');
+const { AFFILIATE_LINK, withSubId } = require('../src/lib/affiliateLink');
 
 function sourceFiles(directory) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -66,11 +66,31 @@ test('backend affiliate consumers use the shared URL', async () => {
   const support = require('../src/routes/support');
 
   try {
-    assert.equal(await getAffiliateLink(router), AFFILIATE_LINK);
+    assert.equal(await getAffiliateLink(router), `${AFFILIATE_LINK}&sub_id1=ext`);
     assert.equal(await getRegisterUrl({ appConfig: { findUnique: async () => null } }), AFFILIATE_LINK);
     assert.match(support.__test.SYSTEM_PROMPT, new RegExp(AFFILIATE_LINK.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   } finally {
     restore();
     delete require.cache[supportPath];
   }
+});
+
+test('extension link carries sub_id1=ext at the very end, DB override included', async () => {
+  const fromDefault = loadConfigRouter({ appConfig: { findUnique: async () => null } });
+  try {
+    const url = await getAffiliateLink(fromDefault.router);
+    assert.ok(url.startsWith(AFFILIATE_LINK), 'original params unchanged and in order');
+    assert.ok(url.endsWith('&sub_id1=ext'));
+  } finally { fromDefault.restore(); }
+
+  const override = 'https://u3.shortink.io/register?a=x&ac=other&code=Y';
+  const fromDb = loadConfigRouter({ appConfig: { findUnique: async () => ({ value: override }) } });
+  try {
+    assert.equal(await getAffiliateLink(fromDb.router), `${override}&sub_id1=ext`);
+  } finally { fromDb.restore(); }
+});
+
+test('withSubId never double-tags and handles links without a query', () => {
+  assert.equal(withSubId('https://x.test/r?a=1&sub_id1=yt', 'ext'), 'https://x.test/r?a=1&sub_id1=yt');
+  assert.equal(withSubId('https://x.test/r', 'ext'), 'https://x.test/r?sub_id1=ext');
 });
