@@ -8,6 +8,7 @@ vi.mock('react-router-dom', () => ({
   Link: ({ children, to, ...props }) => <a href={to} {...props}>{children}</a>,
   useSearchParams: () => [new URLSearchParams(mockSearch)],
 }));
+vi.mock('../components/Navbar', () => ({ default: () => null }));
 vi.mock('../hooks/useAuth', () => ({ useAuth: () => ({ user: mockUser }) }));
 
 beforeEach(() => { mockSearch = ''; mockUser = null; });

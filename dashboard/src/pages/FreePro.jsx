@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, Check, X } from 'lucide-react';
+import Navbar from '../components/Navbar';
 import { useAuth } from '../hooks/useAuth';
 import { affiliateLinkFor } from '../lib/affiliate';
 import '../styles/luxury.css';
@@ -8,18 +9,39 @@ import '../styles/landing-v3.css';
 import '../styles/pages-v3.css';
 import '../styles/free-pro.css';
 
-// /free-pro — the page clip descriptions and the extension can point at instead of the bare
-// Pocket Option link. Clips brought 72 clicks on 18-19 Nov and 0 registrations: nobody was told
-// why to sign up through our link. This page says why, in what order, and what does not qualify.
-// Facts mirror public/guide/free-pro-with-new-account.html and the Dashboard claim card.
-// No outcome claims (2113). Pricing must match the plan table ($119 one-time).
+// /free-pro — where clip descriptions and the extension point instead of the bare Pocket Option link.
+// Clips brought 72 clicks on 18-19 Nov and 0 registrations: nobody was told why to sign up through us.
+// Visual direction (Board): cinematic, Avalisa carries the page. Images generated 2026-11-21 in Gemini
+// from "Avalisa Character refer sheet.png" (AVALISA GIRL); composed, never smiling. Sources:
+// Promo Assets/Website Redesign/2026-11-21-free-pro/. No outcome claims (2113). Price matches the plan table.
 
-const PRO_FEATURES = [
-  'Unlimited trades',
-  'Martingale and Avalisa Bot 4-rule mode',
-  'Works on Demo and Real accounts',
-  'Never billed, never expires',
+const STEPS = [
+  {
+    key: 'po',
+    title: 'Open a new Pocket Option account',
+    body: 'Register a fresh account through the button on this page. If you use an ad blocker, pause it for this step so Pocket Option records where you came from.',
+    image: '/assets/free-pro/step-1.webp',
+    alt: 'Avalisa holding a phone that shows a Pocket Option chart',
+  },
+  {
+    key: 'account',
+    title: 'Create your free Avalisa account',
+    titleSignedIn: 'You already have an Avalisa account',
+    body: 'Email, Google or Facebook. You get 10 Demo trades right away, so you can try the controls while Pro is confirmed.',
+    bodySignedIn: 'Signed in. Go straight to step 3.',
+    image: '/assets/free-pro/step-2.webp',
+    alt: 'Avalisa at a laptop, setting up her account',
+  },
+  {
+    key: 'id',
+    title: 'Add your Pocket Option ID',
+    body: 'Your ID is the number on your Pocket Option profile. Paste it in Avalisa under Dashboard, Settings, “Link Your Pocket Option Account”. Pro turns on at once when Pocket Option has confirmed the sign-up; otherwise it waits for a quick manual check.',
+    image: '/assets/free-pro/step-3.webp',
+    alt: 'Avalisa holding a glowing gold card',
+  },
 ];
+
+const PRO_FEATURES = ['Unlimited trades', 'Martingale and Avalisa Bot 4-rule mode', 'Demo and Real accounts', 'Never billed, never expires'];
 
 const QUALIFIES = [
   'A Pocket Option account you register today, through the button on this page',
@@ -41,11 +63,26 @@ const FAQ = [
 
 const SUPPORT_EMAIL = 'avalisapobot@gmail.com';
 
+function StepAction({ index, user, pocketOptionHref }) {
+  if (index === 0) {
+    return <a className="fp-step__action" href={pocketOptionHref} target="_blank" rel="noreferrer">Open Pocket Option <ArrowUpRight size={15} aria-hidden="true" /></a>;
+  }
+  if (index === 1) {
+    return user ? null : <Link className="fp-step__action" to="/register?intent=affiliate">Create Avalisa account <ArrowRight size={15} aria-hidden="true" /></Link>;
+  }
+  return (
+    <Link className="fp-step__action" to={user ? '/dashboard?tab=settings' : '/login?next=%2Fdashboard%3Ftab%3Dsettings'}>
+      Open Dashboard settings <ArrowRight size={15} aria-hidden="true" />
+    </Link>
+  );
+}
+
 export default function FreePro() {
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const pocketOptionHref = affiliateLinkFor(searchParams.get('src'));
-  const accountHref = user ? '/dashboard?tab=settings' : '/register?intent=affiliate';
+  const [active, setActive] = useState(0);
+  const stepRefs = useRef([]);
 
   useEffect(() => {
     const previous = document.title;
@@ -53,80 +90,90 @@ export default function FreePro() {
     return () => { document.title = previous; };
   }, []);
 
+  // The sticky frame on desktop shows the photo of whichever step is in the middle of the screen.
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) return undefined;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => { if (entry.isIntersecting) setActive(Number(entry.target.dataset.step)); });
+    }, { rootMargin: '-45% 0px -45% 0px' });
+    stepRefs.current.forEach((node) => node && io.observe(node));
+    return () => io.disconnect();
+  }, []);
+
   return (
     <main className="v3 v3p fp">
-      <section className="fp-head" aria-labelledby="fp-title">
-        <div className="v3p-head__bg" aria-hidden="true"><div className="v3-grain" /></div>
-        <div className="v3-wrap fp-head__grid">
-          <div className="fp-head__copy">
-            <p className="v3-hud v3p-eyebrow"><i className="v3-dot" aria-hidden="true" />For new Pocket Option accounts</p>
-            <h1 className="v3p-h1" id="fp-title">Get Avalisa Pro <em>free</em>.</h1>
-            <p className="v3p-sub">
-              Open a new Pocket Option account through our link, add its ID in Avalisa, and the Pro plan
-              that normally costs $119 is yours at no charge.
-            </p>
-            <div className="v3-hero__actions">
-              <a className="v3-btn" href={pocketOptionHref} target="_blank" rel="noreferrer">
-                Open a new Pocket Option account
-                <span className="v3-btn__icon" aria-hidden="true"><ArrowUpRight size={17} /></span>
-              </a>
-              <a className="v3-textlink" href="#fp-steps">How it works <ArrowRight size={15} aria-hidden="true" /></a>
-            </div>
-            <p className="v3-risk">Opens Pocket Option in a new tab. Keep this page open for steps 2 and 3.</p>
-          </div>
+      <Navbar />
 
-          <div className="fp-visual">
-          <img className="fp-visual__img" src="/assets/v3/avalisa-final.webp" alt="Avalisa, the Avalisa PO Bot mascot" width="1122" height="1402" fetchPriority="high" decoding="async" />
-          <aside className="fp-pass" aria-label="What Pro includes">
-            <div className="fp-pass__top">
-              <span className="fp-pass__brand">Avalisa <b>Pro</b></span>
-              <span className="fp-pass__chip" aria-hidden="true" />
-            </div>
-            <p className="fp-pass__price">
-              <strong>$0</strong>
-              <span><s>$119 one-time</s> with a new account</span>
-            </p>
-            <ul className="fp-pass__list">
-              {PRO_FEATURES.map((item) => <li key={item}><Check size={15} aria-hidden="true" />{item}</li>)}
-            </ul>
-            <p className="fp-pass__foot">Granted once Pocket Option confirms your sign-up came through our link.</p>
-          </aside>
+      <section className="fp-hero" aria-labelledby="fp-title">
+        <div className="fp-hero__media" aria-hidden="true">
+          <picture>
+            <source media="(max-width: 767px)" srcSet="/assets/free-pro/hero-phone.webp" width="860" height="1541" />
+            <img className="fp-hero__photo" src="/assets/free-pro/hero-2200.webp" srcSet="/assets/free-pro/hero-1280.webp 1280w, /assets/free-pro/hero-2200.webp 2200w" sizes="100vw" alt="" width="2200" height="1228" fetchPriority="high" decoding="async" />
+          </picture>
+          <div className="fp-hero__shade" />
+          <div className="v3-grain" />
+        </div>
+
+        <div className="fp-hero__copy">
+          <p className="v3-hud fp-hero__eyebrow"><i className="v3-dot" aria-hidden="true" />For new Pocket Option accounts</p>
+          <h1 className="fp-hero__title" id="fp-title">Avalisa Pro, <em>on the house.</em></h1>
+          <p className="fp-hero__price" aria-label="Price: 0 dollars instead of 119 dollars one-time">
+            <span className="fp-hero__now">$0</span>
+            <span className="fp-hero__was"><s>$119 one-time</s><br />with a new account</span>
+          </p>
+          <p className="fp-hero__sub">
+            Open a new Pocket Option account through our link, add its ID in Avalisa, and the full Pro plan is yours.
+          </p>
+          <div className="v3-hero__actions">
+            <a className="v3-btn" href={pocketOptionHref} target="_blank" rel="noreferrer">
+              Open a new Pocket Option account
+              <span className="v3-btn__icon" aria-hidden="true"><ArrowUpRight size={17} /></span>
+            </a>
+            <a className="v3-textlink" href="#fp-steps">See the 3 steps <ArrowRight size={15} aria-hidden="true" /></a>
           </div>
+          <p className="v3-risk">Opens Pocket Option in a new tab. Keep this page open for steps 2 and 3.</p>
         </div>
       </section>
 
-      <section className="fp-sec" id="fp-steps" aria-labelledby="fp-steps-title">
-        <div className="v3-wrap">
-          <h2 className="fp-h2" id="fp-steps-title">Three steps, in this order.</h2>
-          <ol className="fp-route">
-            <li className="fp-stop">
-              <span className="fp-stop__n" aria-hidden="true">1</span>
-              <div className="fp-stop__body">
-                <h3>Open a new Pocket Option account</h3>
-                <p>Register a fresh account through our button. If you use an ad blocker, pause it for this step so Pocket Option records where you came from.</p>
-                <a className="fp-stop__action" href={pocketOptionHref} target="_blank" rel="noreferrer">Open Pocket Option <ArrowUpRight size={15} aria-hidden="true" /></a>
-              </div>
-            </li>
-            <li className="fp-stop">
-              <span className="fp-stop__n" aria-hidden="true">2</span>
-              <div className="fp-stop__body">
-                <h3>{user ? 'You already have an Avalisa account' : 'Create your free Avalisa account'}</h3>
-                <p>{user
-                  ? 'Signed in. Go straight to step 3.'
-                  : 'Email, Google or Facebook. You get 10 Demo trades right away, so you can try the controls while Pro is confirmed.'}
-                </p>
-                {!user && <Link className="fp-stop__action" to={accountHref}>Create Avalisa account <ArrowRight size={15} aria-hidden="true" /></Link>}
-              </div>
-            </li>
-            <li className="fp-stop">
-              <span className="fp-stop__n" aria-hidden="true">3</span>
-              <div className="fp-stop__body">
-                <h3>Add your Pocket Option ID</h3>
-                <p>Your ID is the number on your Pocket Option profile. Paste it in Avalisa under Dashboard, Settings, “Link Your Pocket Option Account”. Pro turns on at once when Pocket Option has confirmed the sign-up; otherwise it waits for a quick manual check.</p>
-                <Link className="fp-stop__action" to={user ? '/dashboard?tab=settings' : '/login?next=%2Fdashboard%3Ftab%3Dsettings'}>Open Dashboard settings <ArrowRight size={15} aria-hidden="true" /></Link>
-              </div>
-            </li>
-          </ol>
+      <section className="fp-pro" aria-label="What Pro includes">
+        <div className="v3-wrap fp-pro__row">
+          <p className="fp-pro__label">Pro includes</p>
+          <ul className="fp-pro__list">
+            {PRO_FEATURES.map((item) => <li key={item}><Check size={15} aria-hidden="true" />{item}</li>)}
+          </ul>
+        </div>
+      </section>
+
+      <section className="fp-story" id="fp-steps" aria-labelledby="fp-steps-title">
+        <div className="v3-wrap fp-story__grid">
+          <div className="fp-story__stage" aria-hidden="true">
+            <div className="fp-frame">
+              {STEPS.map((step, index) => (
+                <img key={step.key} className={`fp-frame__img${index === active ? ' is-on' : ''}`} src={step.image} alt="" width="900" height="1206" loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
+              ))}
+              <span className="fp-frame__count"><b>{active + 1}</b> / {STEPS.length}</span>
+            </div>
+          </div>
+
+          <div className="fp-story__steps">
+            <h2 className="fp-h2" id="fp-steps-title">Three steps, in this order.</h2>
+            <ol className="fp-steps">
+              {STEPS.map((step, index) => (
+                <li
+                  key={step.key}
+                  className={`fp-step${index === active ? ' is-on' : ''}`}
+                  data-step={index}
+                  ref={(node) => { stepRefs.current[index] = node; }}
+                >
+                  <img className="fp-step__img" src={step.image} alt={step.alt} width="900" height="1206" loading="lazy" decoding="async" />
+                  <span className="fp-step__n" aria-hidden="true">{index + 1}</span>
+                  <h3>{user && step.titleSignedIn ? step.titleSignedIn : step.title}</h3>
+                  <p>{user && step.bodySignedIn ? step.bodySignedIn : step.body}</p>
+                  <StepAction index={index} user={user} pocketOptionHref={pocketOptionHref} />
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
       </section>
 
@@ -161,21 +208,23 @@ export default function FreePro() {
       </section>
 
       <section className="fp-close" aria-labelledby="fp-close-title">
-        <div className="v3-wrap fp-close__inner">
-          <div>
-            <h2 className="fp-h2" id="fp-close-title">Start with step 1.</h2>
-            <p className="v3p-sub">It takes about two minutes. Your Pocket Option password stays with Pocket Option; Avalisa never asks for it.</p>
-            <div className="v3-hero__actions">
-              <a className="v3-btn" href={pocketOptionHref} target="_blank" rel="noreferrer">
-                Open a new Pocket Option account
-                <span className="v3-btn__icon" aria-hidden="true"><ArrowUpRight size={17} /></span>
-              </a>
-            </div>
-            <p className="v3-risk">
-              We earn a commission from Pocket Option when you open an account through our link. Trading involves risk:
-              you can lose money, and no setting guarantees profit. Start on a demo balance.
-            </p>
+        <div className="fp-close__media" aria-hidden="true">
+          <img src="/assets/free-pro/close-2200.webp" srcSet="/assets/free-pro/close-1280.webp 1280w, /assets/free-pro/close-2200.webp 2200w" sizes="100vw" alt="" width="2200" height="1228" loading="lazy" decoding="async" />
+          <div className="fp-close__shade" />
+        </div>
+        <div className="fp-close__copy">
+          <h2 className="fp-h2" id="fp-close-title">Start with step 1.</h2>
+          <p className="fp-close__sub">It takes about two minutes. Your Pocket Option password stays with Pocket Option; Avalisa never asks for it.</p>
+          <div className="v3-hero__actions">
+            <a className="v3-btn" href={pocketOptionHref} target="_blank" rel="noreferrer">
+              Open a new Pocket Option account
+              <span className="v3-btn__icon" aria-hidden="true"><ArrowUpRight size={17} /></span>
+            </a>
           </div>
+          <p className="v3-risk">
+            We earn a commission from Pocket Option when you open an account through our link. Trading involves risk:
+            you can lose money, and no setting guarantees profit. Start on a demo balance.
+          </p>
         </div>
       </section>
     </main>

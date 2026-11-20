@@ -28,6 +28,8 @@ const Admin = lazy(() => import('./pages/Admin'));
 function AppShell() {
   const location = useLocation();
   const isLanding = location.pathname === '/';
+  // Pages with a full-bleed hero render the glass nav themselves, floating over the photo.
+  const ownsNav = isLanding || location.pathname === '/free-pro';
 
   // Cross-page hash links (e.g. "Webapp Bot" -> /#webapp from /register) load the
   // landing route but React Router does not scroll to the anchor, so the visitor lands
@@ -61,7 +63,7 @@ function AppShell() {
 
   return (
     <>
-      {!isLanding && <Navbar />}
+      {!ownsNav && <Navbar />}
       <Suspense fallback={<div className="route-loading" role="status">Loading…</div>}>
       <Routes>
         <Route path="/" element={<Landing />} />
