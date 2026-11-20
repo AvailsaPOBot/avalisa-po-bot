@@ -10,6 +10,7 @@ const navItems = [
   { label: 'How It Works', href: '/#how' },
   { label: 'Controls', href: '/#controls' },
   { label: 'Pricing', href: '/pricing' },
+  { label: 'Free Pro', href: '/free-pro' },
   { label: 'Setup Guide', href: '/guide' },
   { label: 'Phone Setup', href: '/webapp' },
 ];

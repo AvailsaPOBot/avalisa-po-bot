@@ -289,10 +289,10 @@ export default function Landing() {
               </article>
             </div>
             <div className="v3-partner v3-reveal">
-              <p><b>New to Pocket Option?</b> Open a new account through our link and Pro is granted once the partner system confirms it.</p>
+              <p><b>New to Pocket Option? Pro is free.</b> Open a new Pocket Option account through our link, add its ID in Avalisa, and the $119 Pro plan costs you nothing.</p>
               <div>
+                <Link to="/free-pro">How free Pro works <ArrowRight size={15} /></Link>
                 <a href={AFFILIATE_LINK} target="_blank" rel="noreferrer">Open Pocket Option <ArrowUpRight size={15} /></a>
-                <Link to="/pricing">See all plans <ArrowRight size={15} /></Link>
               </div>
               <small>We may earn a commission.</small>
             </div>

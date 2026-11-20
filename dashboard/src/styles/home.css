@@ -116,6 +116,10 @@
 .site-nav--glass .site-nav__actions .site-nav__cta { padding: .65rem .9rem; background: #c9a46c; color: #090807; border-radius: 999px; font-weight: 800; }
 .site-nav--glass .site-nav__menu { display: none; }
 @media(max-width:1050px) { .home-hero { grid-template-columns: 1fr; gap: 2rem; padding-top: 3rem; }.home-hero-copy { max-width: 760px; }.home-stage { max-width: 760px; width: 100%; margin: auto; }.home-mascot { right: 3%; } }
+/* Labels never break onto two lines; on mid widths the two homepage-anchor links give way first. */
+.site-nav--glass .site-nav__links a { white-space: nowrap; }
+@media(max-width:1180px) { .site-nav--glass .site-nav__links a[href="/#controls"] { display: none; } }
+@media(max-width:1000px) { .site-nav--glass .site-nav__links a[href="/#how"] { display: none; } }
 @media(max-width:900px) { .site-nav--glass .site-nav__links { gap: .55rem; }.site-nav--glass .site-nav__links a { font-size: .65rem; }.site-nav--glass .site-nav__actions .site-nav__cta { font-size: .65rem; padding: .55rem; } }
 @media(max-width:700px) {
   .home-page { padding-bottom: 4.5rem; }.home-hero { padding: 2.5rem 1.1rem 3rem; min-height: 0; gap: 1.5rem; }.home-hero h1 { font-size: clamp(2rem,8.3vw,3rem); line-height: 1.06; }.home-hero-copy>p:not(.risk-note) { font-size: .96rem; }

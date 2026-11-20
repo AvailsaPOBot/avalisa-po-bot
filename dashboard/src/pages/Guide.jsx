@@ -122,7 +122,7 @@ function LicenceCheck() {
   const paid = result.status === 'done' && result.linked && Boolean(label);
 
   return (
-    <section className="v3p-sec v3p-licence">
+    <section className="v3p-sec v3p-licence" id="licence">
       <div className="v3-wrap">
         <div className="v3-glass v3p-licence__panel">
           <div className="v3p-licence__head">

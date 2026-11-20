@@ -15,6 +15,7 @@ const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const AuthCallback = lazy(() => import('./pages/AuthCallback'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Pricing = lazy(() => import('./pages/Pricing'));
+const FreePro = lazy(() => import('./pages/FreePro'));
 const Support = lazy(() => import('./pages/Support'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Unsubscribe = lazy(() => import('./pages/Unsubscribe'));
@@ -70,6 +71,7 @@ function AppShell() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/pricing" element={<Pricing />} />
+        <Route path="/free-pro" element={<FreePro />} />
         <Route path="/support" element={<Support />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/unsubscribe" element={<Unsubscribe />} />

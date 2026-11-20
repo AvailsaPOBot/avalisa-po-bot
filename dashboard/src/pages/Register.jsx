@@ -107,7 +107,7 @@ export default function Register() {
             <li><span aria-hidden="true">02</span><div><strong>Instant</strong><p>Get 10 Free Demo Trades automatically. No card required. <Link to="/pricing">See plans after the free trades</Link></p></div></li>
             <li><span aria-hidden="true">03</span><div><strong>Next screen</strong><p>Choose phone setup at <Link to="/webapp">/webapp</Link> or install the desktop Chrome extension. Start on a Pocket Option demo balance.</p></div></li>
           </ol>
-          {affiliateIntent && <p className="v3p-note v3p-note--gold">After you register a new Pocket Option account through our link, link its numeric ID in Dashboard → Settings. Pro unlocks when the referral is confirmed; otherwise it is queued for admin verification.</p>}
+          {affiliateIntent && <p className="v3p-note v3p-note--gold"><strong>Free Pro, step 2 of 3.</strong> After you register a new Pocket Option account through our link, link its numeric ID in Dashboard → Settings. Pro unlocks when the referral is confirmed; otherwise it is queued for admin verification. <Link to="/free-pro#fp-steps">See all steps</Link></p>}
           <p className="v3-risk">Trading involves risk. Start on a Pocket Option Demo balance.</p>
         </aside>
       </div>
