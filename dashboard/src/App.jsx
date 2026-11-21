@@ -89,7 +89,7 @@ function AppShell() {
         <Route path="*" element={<NotFound />} />
       </Routes>
       </Suspense>
-      <footer className="home-footer site-shared-footer"><span>© Avalisa PO Bot</span><Link to="/pricing">Pricing</Link><Link to="/guide">Setup guide</Link><Link to="/webapp">Phone setup</Link><Link to="/privacy">Privacy</Link></footer>
+      <footer className="pz-footer"><div className="pz-wrap pz-footer__in"><span>© Avalisa PO Bot</span><Link to="/pricing">Pricing</Link><Link to="/guide">Setup guide</Link><Link to="/webapp">Phone setup</Link><Link to="/privacy">Privacy</Link></div></footer>
       {isLanding && <FloatingChat deferUntilScroll />}
     </>
   );

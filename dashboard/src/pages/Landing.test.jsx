@@ -16,7 +16,7 @@ describe('homepage landing', () => {
 
   test('renders the hero heading and both hero calls to action', () => {
     renderLanding();
-    expect(screen.getByRole('heading', { level: 1, name: /set your rules\. let avalisa run the steps\./i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: /your pocket option trades, on autopilot\./i })).toBeInTheDocument();
     expect(screen.getAllByRole('link', { name: /start 10 free demo trades/i }).every((link) => link.getAttribute('href') === '/register')).toBe(true);
     expect(screen.getAllByRole('link', { name: /see how it works/i })[0]).toHaveAttribute('href', '#how');
     expect(screen.getByRole('link', { name: /compare pro options/i })).toHaveAttribute('href', '/pricing#pro');

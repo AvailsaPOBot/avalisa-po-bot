@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar';
 import { useAuth } from '../hooks/useAuth';
 import { usePhoneLike } from '../lib/device';
 import { AFFILIATE_LINK } from '../lib/affiliate';
-import HeroSlab from './landing-v3/HeroSlab';
+import PresenterHero from '../components/presenter/PresenterHero';
 import '../styles/home.css';
 import '../styles/landing-v3.css';
 
@@ -108,32 +108,17 @@ export default function Landing() {
     <div className="v3" ref={rootRef}>
       <Navbar />
       <main>
-        {/* 00 — Hero: photo / 3D slab / type, layered. No entrance animation on first-screen text. */}
-        <section className="v3-hero" id="top" aria-labelledby="v3-hero-title">
-          <div className="v3-hero__media">
-            <picture>
-              <source media="(max-width: 767px)" srcSet="/assets/v3/hero-mobile.webp" width="1122" height="1402" />
-              <img className="v3-hero__photo" src="/assets/v3/hero.webp" alt="Avalisa, the Avalisa PO Bot mascot, standing in front of a trading chart" width="1280" height="720" fetchPriority="high" decoding="async" />
-            </picture>
-            <div className="v3-hero__shade" aria-hidden="true" />
-            <div className="v3-grain" aria-hidden="true" />
-          </div>
-          <HeroSlab />
-          <div className="v3-hero__copy">
-            <p className="v3-hud v3-hero__eyebrow"><i className="v3-dot" aria-hidden="true" />{HERO.eyebrow}</p>
-            <h1 className="v3-hero__title" id="v3-hero-title">
-              Set your rules.<br /> Let <em>Avalisa</em><br /> run the steps.
-            </h1>
-            <p className="v3-hero__sub">{HERO.sub}</p>
-            <div className="v3-hero__actions">
-              <Link className="v3-btn" to={startHref}>{startLabel}<span className="v3-btn__icon" aria-hidden="true"><ArrowUpRight size={17} /></span></Link>
-              <a className="v3-textlink" href="#how">See how it works <ArrowDown size={15} aria-hidden="true" /></a>
-            </div>
-            {phone && <p className="v3-hero__phonesub">{HERO.phoneSub}</p>}
-            <ul className="v3-hud v3-hero__trust">{HERO.trust.map((item) => <li key={item}>{item}</li>)}</ul>
-            <p className="v3-risk">Trading involves risk. Start on a demo account.</p>
-          </div>
-          <a className="v3-hud v3-hero__cue" href="#how" aria-hidden="true" tabIndex={-1}><span>01 — How it works</span><i /></a>
+        {/* 00 — Hero: concept A "The Presenter". Avalisa turns toward the live product. */}
+        <section id="top" aria-labelledby="v3-hero-title">
+          <PresenterHero
+            titleId="v3-hero-title"
+            sub={HERO.sub}
+            cta={{ href: startHref, label: startLabel }}
+            secondary={{ href: '#how', label: 'See how it works' }}
+            phoneSub={phone ? HERO.phoneSub : null}
+            trust={HERO.trust}
+            risk="Trading involves risk. Start on a demo account."
+          />
         </section>
 
         {/* 01 — How it works */}

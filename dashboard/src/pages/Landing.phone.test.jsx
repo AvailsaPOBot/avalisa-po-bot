@@ -22,7 +22,7 @@ function scrollDown() {
 }
 
 const renderLanding = () => render(<MemoryRouter><Landing /></MemoryRouter>);
-const hero = () => document.querySelector('.v3-hero__copy');
+const hero = () => document.querySelector('.pzh-copy');
 
 afterEach(() => {
   window.matchMedia = REAL_MATCH_MEDIA;
@@ -56,13 +56,13 @@ describe('homepage on a phone', () => {
 
   test('header has a visible Phone setup pill and the mobile menu leads with Phone setup', () => {
     renderLanding();
-    const header = document.querySelector('header.site-nav');
-    const pill = header.querySelector('a.site-nav__phone');
+    const header = document.querySelector('header.pz-nav');
+    const pill = header.querySelector('a.pz-nav__phone');
     expect(pill).toHaveTextContent('Phone setup');
     expect(pill).toHaveAttribute('href', '/webapp');
 
     fireEvent.click(screen.getByRole('button', { name: /toggle menu/i }));
-    const first = document.querySelector('.site-nav__mobile').firstElementChild;
+    const first = document.querySelector('.pz-nav__mobile').firstElementChild;
     expect(first).toHaveTextContent('Phone setup');
     expect(first).toHaveAttribute('href', '/webapp');
   });
@@ -83,7 +83,7 @@ describe('homepage on desktop', () => {
     expect(within(hero()).getByRole('link', { name: /start 10 free demo trades/i })).toHaveAttribute('href', '/register');
     expect(screen.queryByText('Start on this phone')).toBeNull();
     expect(screen.queryByText(/No app to install\./)).toBeNull();
-    expect(document.querySelector('a.site-nav__phone')).toBeNull();
+    expect(document.querySelector('a.pz-nav__phone')).toBeNull();
   });
 
   test('sticky bar CTA stays "Start free Demo" -> /register', () => {

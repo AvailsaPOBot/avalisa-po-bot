@@ -9,7 +9,7 @@ vi.mock('./hooks/useAuth', () => ({
 test('the shared footer links to Phone setup on every viewport', () => {
   window.matchMedia = window.matchMedia || (() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() }));
   render(<App />);
-  const footer = document.querySelector('footer.site-shared-footer');
+  const footer = document.querySelector('footer.pz-footer');
   const labels = Array.from(footer.querySelectorAll('a')).map((a) => [a.textContent, a.getAttribute('href')]);
   expect(labels).toEqual([['Pricing', '/pricing'], ['Setup guide', '/guide'], ['Phone setup', '/webapp'], ['Privacy', '/privacy']]);
 });

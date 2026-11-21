@@ -17,11 +17,8 @@ const navItems = [
 
 function Brand() {
   return (
-    <Link to="/" className="site-brand">
-      <span className="site-brand__primary">
-        <img className="brand-signature brand-signature--nav" src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot" />
-      </span>
-      <span className="site-brand__badge">PO Bot</span>
+    <Link to="/" className="pz-nav__brand">
+      <img src="/assets/presenter/avalisa-logo.webp" alt="Avalisa PO Bot" width="520" height="274" />
     </Link>
   );
 }
@@ -42,32 +39,32 @@ export default function Navbar() {
   }
 
   return (
-    <header className="site-nav site-nav--glass">
-      <div className="site-nav__inner">
+    <header className="pz-nav">
+      <div className="pz-nav__inner">
         <Brand />
 
-        <nav className="site-nav__links" aria-label="Primary navigation">
+        <nav className="pz-nav__links" aria-label="Primary navigation">
           {navItems.map((item) => (
             <a key={item.label} href={item.href}>{item.label}</a>
           ))}
         </nav>
 
-        <div className="site-nav__actions">
+        <div className="pz-nav__actions">
           {user ? (
             <AccountMenu />
           ) : (
             <>
               <Link to="/login">Log In</Link>
-              <Link to="/register" className="site-nav__cta">Start 10 Free Demo Trades</Link>
-              <a href={AFFILIATE_LINK} className="site-nav__po" target="_blank" rel="noreferrer">Pocket Option</a>
+              <Link to="/register" className="pz-btn pz-btn--sm">Start 10 Free Demo Trades</Link>
+              <a href={AFFILIATE_LINK} className="pz-nav__po" target="_blank" rel="noreferrer">Pocket Option</a>
             </>
           )}
         </div>
 
-        {phone && <Link to="/webapp" className="site-nav__phone">Phone setup</Link>}
+        {phone && <Link to="/webapp" className="pz-nav__phone">Phone setup</Link>}
 
         <button
-          className="site-nav__menu"
+          className="pz-nav__menu"
           type="button"
           onClick={() => setMenuOpen((open) => !open)}
           aria-label="Toggle menu"
@@ -77,14 +74,14 @@ export default function Navbar() {
       </div>
 
       {menuOpen && (
-        <div className="site-nav__mobile">
-          <Link to="/webapp" className="site-nav__cta" onClick={() => setMenuOpen(false)}>Phone setup</Link>
+        <div className="pz-nav__mobile">
+          <Link to="/webapp" className="pz-btn pz-btn--sm" onClick={() => setMenuOpen(false)}>Phone setup</Link>
           {navItems.filter((item) => item.href !== '/webapp').map((item) => (
             <a key={item.label} href={item.href} onClick={() => setMenuOpen(false)}>{item.label}</a>
           ))}
           {user ? (
             <>
-              <TradeButton className="site-nav__cta" onNavigate={() => setMenuOpen(false)} />
+              <TradeButton className="pz-btn pz-btn--sm" onNavigate={() => setMenuOpen(false)} />
               <Link to="/dashboard" onClick={() => setMenuOpen(false)}>Dashboard ({planLabel})</Link>
               {user.isAdmin && <Link to="/admin" onClick={() => setMenuOpen(false)}>Admin</Link>}
               <button type="button" onClick={handleLogout}>Logout</button>
@@ -92,8 +89,8 @@ export default function Navbar() {
           ) : (
             <>
               <Link to="/login" onClick={() => setMenuOpen(false)}>Log In</Link>
-              <Link to="/register" className="site-nav__cta" onClick={() => setMenuOpen(false)}>Start 10 Free Demo Trades</Link>
-              <a href={AFFILIATE_LINK} className="site-nav__po" target="_blank" rel="noreferrer" onClick={() => setMenuOpen(false)}>Pocket Option</a>
+              <Link to="/register" className="pz-btn pz-btn--sm" onClick={() => setMenuOpen(false)}>Start 10 Free Demo Trades</Link>
+              <a href={AFFILIATE_LINK} className="pz-nav__po" target="_blank" rel="noreferrer" onClick={() => setMenuOpen(false)}>Pocket Option</a>
             </>
           )}
         </div>
