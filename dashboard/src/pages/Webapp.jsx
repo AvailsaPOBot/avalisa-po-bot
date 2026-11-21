@@ -6,6 +6,7 @@ import { detectPlatform } from '../lib/tradeLaunch';
 import { detectInAppBrowser } from '../lib/device';
 import { withNext } from '../lib/authNext';
 import '../styles/luxury.css';
+import { MascotAvatar } from '../components/presenter/PageHero';
 
 const CHROME_EXTENSION_URL =
   import.meta.env.REACT_APP_CHROME_STORE_URL ||
@@ -173,6 +174,7 @@ export default function Webapp() {
   return (
     <main className="lux-webapp-page">
       <section className="lux-webapp-shell">
+        <MascotAvatar size={84} />
         <p className="lux-kicker">Bot access</p>
         <h1>Run Avalisa on this device.</h1>
         <p className="lux-webapp-intro">

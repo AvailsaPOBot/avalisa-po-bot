@@ -30,17 +30,22 @@ beforeEach(() => {
   mockAdminRequests();
 });
 
-test('online-now card states the backend restart caveat', async () => {
+test('online-now chip shows the count and carries the backend restart caveat', async () => {
   render(<Admin />);
 
-  expect(await screen.findByText('Online now')).toBeInTheDocument();
-  expect(screen.getByText(/since last backend restart/i)).toBeInTheDocument();
+  // The seven activity cards became one stacked bar plus an "Online now" chip; the caveat moved
+  // from visible card text into the chip's title attribute.
+  const label = await screen.findByText('Online now');
+  const chip = label.closest('[title]');
+  expect(chip).toHaveAttribute('title', expect.stringMatching(/since last backend restart/i));
+  expect(chip).toHaveTextContent('Online now1');
+  expect(screen.getByRole('img', { name: /last 24h: 1/i })).toBeInTheDocument();
 });
 
 test('an online user has a green dot with a non-colour-only label', async () => {
   render(<Admin />);
 
   const dot = await screen.findByRole('img', { name: /online now\. last active:/i });
-  expect(dot).toHaveClass('bg-green-400');
+  expect(dot).toHaveClass('pz-dot--good');
   expect(dot).toHaveAttribute('title', expect.stringMatching(/since last backend restart/i));
 });

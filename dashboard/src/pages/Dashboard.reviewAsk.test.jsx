@@ -40,7 +40,7 @@ function mockDashboardRequests(stats) {
 async function renderDashboard(stats) {
   mockDashboardRequests(stats);
   render(<Dashboard />);
-  await screen.findByText('Save Settings');
+  await screen.findByText('Total trades');
 }
 
 beforeEach(() => {
@@ -90,7 +90,7 @@ test('continues to render when localStorage throws on read and write', async () 
 
   try {
     await renderDashboard({ wins: 8, losses: 0, ties: 0, winRate: 100, totalProfit: 10 });
-    expect(screen.getByText('Save Settings')).toBeInTheDocument();
+    expect(screen.getByText('Total trades')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Dismiss' }));
     expect(reviewCard()).not.toBeInTheDocument();

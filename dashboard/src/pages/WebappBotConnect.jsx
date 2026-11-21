@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import '../styles/luxury.css';
+import { MascotAvatar } from '../components/presenter/PageHero';
 
 // Pocket Option's own pages, where the phone Webapp Bot panel runs. The session is posted
 // to these origins only; the browser drops it for any other opener.
@@ -43,6 +44,7 @@ export default function WebappBotConnect() {
   return (
     <main className="lux-webapp-page">
       <section className="lux-webapp-shell">
+        <MascotAvatar size={84} />
         <p className="lux-kicker">Webapp Bot</p>
         {state === 'no-opener' ? (
           <>

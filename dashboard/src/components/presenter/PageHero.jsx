@@ -1,19 +1,23 @@
 // Page header used on every page except the homepage: title and lede on the left, Avalisa on the
-// right. `pose` picks one of the on-model images in public/assets/presenter (see MASCOT below).
+// right. `pose` picks one of the scene photos in public/assets/presenter (see MASCOT below).
 
-export const MASCOT = {
-  standing: { src: '/assets/presenter/avalisa-standing.webp', w: 705, h: 1700 },
-  turn: { src: '/assets/presenter/avalisa-turn.webp', w: 738, h: 1362 },
-  glance: { src: '/assets/presenter/avalisa-glance.webp', w: 738, h: 1362 },
-  front: { src: '/assets/presenter/girl-f0.webp', w: 738, h: 1362 },
-  portrait: { src: '/assets/presenter/avalisa-portrait.webp', w: 893, h: 1000 },
+// Scene photos generated from the Board's character sheet (champagne knot dress, no smile).
+// `pos` is the object-position that keeps her face inside a wide, short header band.
+const SCENES = {
+  card: { src: '/assets/presenter/scene-card.webp', w: 1120, h: 1500, pos: '50% 17%' },
+  phone: { src: '/assets/presenter/scene-phone.webp', w: 1120, h: 1500, pos: '50% 13%' },
+  laptop: { src: '/assets/presenter/scene-laptop.webp', w: 1120, h: 1500, pos: '62% 12%' },
+  desk: { src: '/assets/presenter/scene-desk.webp', w: 1500, h: 837, pos: '62% 18%' },
+  corridor: { src: '/assets/presenter/scene-corridor.webp', w: 1500, h: 837, pos: '50% 42%' },
+  face: { src: '/assets/presenter/avalisa-face.webp', w: 420, h: 420, pos: '50% 50%' },
 };
+export const MASCOT = { ...SCENES, glance: SCENES.desk, standing: SCENES.corridor, turn: SCENES.laptop, front: SCENES.card, portrait: SCENES.face };
 
 /** Small round Avalisa for cards, empty states and headers. */
 export function MascotAvatar({ size = 56, className = '' }) {
   return (
     <span className={`pz-avatar ${className}`.trim()} style={{ '--s': `${size}px` }} aria-hidden="true">
-      <img src={MASCOT.portrait.src} alt="" width={MASCOT.portrait.w} height={MASCOT.portrait.h} loading="lazy" decoding="async" />
+      <img src={MASCOT.face.src} alt="" width={MASCOT.face.w} height={MASCOT.face.h} loading="lazy" decoding="async" />
     </span>
   );
 }
@@ -29,7 +33,7 @@ export default function PageHero({ title, lede, pose = 'front', compact = false,
           {children && <div className="pz-pagehero__actions">{children}</div>}
         </div>
         <div className="pz-pagehero__art" aria-hidden="true">
-          <img src={image.src} alt="" width={image.w} height={image.h} decoding="async" />
+          <img src={image.src} alt="" width={image.w} height={image.h} decoding="async" style={{ objectPosition: image.pos }} />
         </div>
       </div>
     </header>

@@ -86,8 +86,8 @@ function StepAction({ index, user, pocketOptionHref }) {
     return user ? null : <Link className="fp-step__action" to="/register?intent=affiliate">Create Avalisa account <ArrowRight size={15} aria-hidden="true" /></Link>;
   }
   return (
-    <Link className="fp-step__action" to={user ? '/dashboard?tab=settings' : '/login?next=%2Fdashboard%3Ftab%3Dsettings'}>
-      Open Dashboard settings <ArrowRight size={15} aria-hidden="true" />
+    <Link className="fp-step__action" to={user ? '/dashboard#free-pro' : '/login?next=%2Fdashboard%23free-pro'}>
+      Open your Dashboard <ArrowRight size={15} aria-hidden="true" />
     </Link>
   );
 }

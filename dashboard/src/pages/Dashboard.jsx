@@ -1,41 +1,51 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import api from '../lib/api';
 import { AFFILIATE_LINK } from '../lib/affiliate';
 import { useAuth } from '../hooks/useAuth';
 import { usePhoneLike } from '../lib/device';
-import toast from 'react-hot-toast';
+import PageHero, { MascotAvatar } from '../components/presenter/PageHero';
+import { TradeButton } from '../components/AccountMenu';
+import '../styles/pz-dashboard.css';
 
-const VALID_TABS = ['settings', 'history', 'bots', 'admin'];
+// Member home. Bot setup lives in the bot itself (Chrome extension panel or the phone Webapp
+// Bot) and admin tools live on /admin, so this page only shows the account, next steps and
+// the user's own trades.
+
 const REVIEW_ASK_STORAGE_KEY = 'avalisa-review-ask-complete';
 const CHROME_WEB_STORE_URL = 'https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa';
 const CHROME_WEB_STORE_REVIEW_URL = `${CHROME_WEB_STORE_URL}/reviews`;
 const INSTALL_STEP_STORAGE_KEY = 'avalisa-install-step-dismissed';
-
-const STRATEGIES = [
-  { id: 'martingale', label: 'Martingale', plans: ['free', 'basic', 'lifetime'], desc: 'Double on loss to recover' },
-  { id: 'ai', label: 'Avalisa Bot', plans: ['basic', 'lifetime'], desc: 'Basic includes 10 Avalisa Bot trades; Pro is unlimited.' },
+const HISTORY_TYPES = [
+  { id: 'real', label: 'Real' },
+  { id: 'demo', label: 'Demo' },
+  { id: 'all', label: 'All' },
 ];
 
-const TIMEFRAMES = ['S30', 'M1', 'M3', 'M5', 'M30', 'H1'];
-const DIRECTIONS = [{ id: 'alternating', label: 'Alternating' }, { id: 'call', label: 'Always Call' }, { id: 'put', label: 'Always Put' }];
-const DELAYS = [2, 4, 6, 8, 10, 12];
-const MULTIPLIERS = [1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0];
-const STEPS = ['infinite', 1, 2, 3, 4, 5, 6, 8, 10, 12];
+// Ask people with an informed opinion, but the threshold must be REACHABLE. It was 20, while
+// the Demo plan caps at 10 trades for the LIFETIME of the account, so no free user could ever
+// see it. 8 is 80% of the free tier and lands just before the paywall, not at it.
+const REVIEW_ASK_MIN_TRADES = 8;
 
 const STRATEGY_LABELS = {
   martingale: 'Martingale',
   ai: 'Avalisa Bot',
 };
 
+const PLAN_COPY = {
+  free: { name: 'Demo', lede: 'You are on the free Demo plan.', includes: 'The Martingale strategy with a limited number of bot trades, to try Avalisa.' },
+  basic: { name: 'Basic', lede: 'You are on the Basic plan.', includes: 'The Martingale strategy plus 10 Avalisa Bot strategy trades.' },
+  lifetime: { name: 'Pro', lede: 'You are on the Pro plan.', includes: 'Every strategy, with unlimited Avalisa Bot strategy trades.' },
+};
+
 function strategyLabel(strategy) {
   return STRATEGY_LABELS[strategy] || strategy || 'Martingale';
 }
 
-function planDisplayName(plan) {
-  if (plan === 'lifetime') return 'pro';
-  if (plan === 'free') return 'demo';
-  return plan || 'demo';
+function sentenceCase(value) {
+  const text = String(value || '');
+  return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
 }
 
 // The BLACK10 deposit-bonus promo runs 12-30 November 2026; the note's link
@@ -46,11 +56,19 @@ function isBlack10PromoActive(now = new Date()) {
   return Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) <= BLACK10_PROMO_END_UTC;
 }
 
-function hasDismissedInstallStep() {
+function readFlag(key) {
   try {
-    return window.localStorage.getItem(INSTALL_STEP_STORAGE_KEY) === 'true';
+    return window.localStorage.getItem(key) === 'true';
   } catch (err) {
     return false;
+  }
+}
+
+function writeFlag(key) {
+  try {
+    window.localStorage.setItem(key, 'true');
+  } catch (err) {
+    // Storage can be unavailable in privacy-restricted browsers; hiding for this session is enough.
   }
 }
 
@@ -58,103 +76,36 @@ function completedTradeCount(s) {
   return ['wins', 'losses', 'ties'].reduce((total, result) => total + (Number(s?.[result]) || 0), 0);
 }
 
-function hasCompletedReviewAsk() {
-  try {
-    return window.localStorage.getItem(REVIEW_ASK_STORAGE_KEY) === 'true';
-  } catch (err) {
-    return false;
-  }
+function resultChip(result) {
+  if (result === 'win') return 'pz-chip--good';
+  if (result === 'loss') return 'pz-chip--bad';
+  return 'pz-chip--warn';
 }
 
 export default function Dashboard() {
   const { user } = useAuth();
   const phone = usePhoneLike();
   const plan = user?.license?.plan || 'free';
-  const planLabel = planDisplayName(plan);
+  const planCopy = PLAN_COPY[plan] || PLAN_COPY.free;
   const isAdmin = user?.isAdmin || false;
 
-  const [settings, setSettings] = useState(null);
   const [history, setHistory] = useState([]);
   const [stats, setStats] = useState(null);
   const [demoStats, setDemoStats] = useState(null);
-  const [installStepDismissed, setInstallStepDismissed] = useState(hasDismissedInstallStep);
   const [historyType, setHistoryType] = useState('real');
-  const [saving, setSaving] = useState(false);
+  const [installStepDismissed, setInstallStepDismissed] = useState(() => readFlag(INSTALL_STEP_STORAGE_KEY));
+  const [reviewAskCompleted, setReviewAskCompleted] = useState(() => readFlag(REVIEW_ASK_STORAGE_KEY));
+
   const [poUid, setPoUid] = useState('');
   const [poUidSaving, setPoUidSaving] = useState(false);
   const [poUidError, setPoUidError] = useState('');
   const [poUidLinked, setPoUidLinked] = useState(false);
-  const [reviewAskCompleted, setReviewAskCompleted] = useState(hasCompletedReviewAsk);
-  const [searchParams] = useSearchParams();
-  const initialTab = VALID_TABS.includes(searchParams.get('tab')) ? searchParams.get('tab') : 'settings';
-  const [activeTab, setActiveTab] = useState(initialTab);
 
-  useEffect(() => {
-    const t = searchParams.get('tab');
-    if (t && VALID_TABS.includes(t)) setActiveTab(t);
-  }, [searchParams]);
-
-  // Admin state
-  const [adminIdentifier, setAdminIdentifier] = useState('');
-  const [adminPlan, setAdminPlan] = useState('lifetime');
-  const [adminLoading, setAdminLoading] = useState(false);
-  const [adminResult, setAdminResult] = useState(null);
-  const [adminUsers, setAdminUsers] = useState([]);
-  const [allowanceEdit, setAllowanceEdit] = useState({}); // { [userId]: stringValue }
-  const [allowanceSavingId, setAllowanceSavingId] = useState(null);
-
-  // Claim state (settings tab)
   const [claimPoUid, setClaimPoUid] = useState('');
   const [claimLoading, setClaimLoading] = useState(false);
   const [claimResult, setClaimResult] = useState(null);
-  const [claimStatus, setClaimStatus] = useState(null); // null | 'pending' | 'approved' | 'rejected'
+  const [claimStatus, setClaimStatus] = useState(null); // null | 'none' | 'pending' | 'approved' | 'rejected'
   const [claimNotice, setClaimNotice] = useState(null);
-
-  // Admin claims state
-  const [pendingClaims, setPendingClaims] = useState([]);
-  const [claimsLoading, setClaimsLoading] = useState(false);
-  const [rejectingId, setRejectingId] = useState(null);
-
-  // Edit user modal state
-  const [editingUser, setEditingUser] = useState(null); // { id, email, poUserId, plan }
-  const [editPoUid, setEditPoUid] = useState('');
-  const [editPlan, setEditPlan] = useState('free');
-  const [editSaving, setEditSaving] = useState(false);
-
-  // User trade history modal state
-  const [tradeHistoryUser, setTradeHistoryUser] = useState(null); // { id, email }
-  const [userTrades, setUserTrades] = useState([]);
-  const [userTradesLoading, setUserTradesLoading] = useState(false);
-
-  // AI settings state
-  const [aiPrompt, setAiPrompt] = useState('');
-  const [aiTokenBudget, setAiTokenBudget] = useState('10000');
-  const [aiSettingsSaving, setAiSettingsSaving] = useState(false);
-  const [tokenUsage, setTokenUsage] = useState(null);
-  const [tokenResetting, setTokenResetting] = useState(false);
-
-  const loadAdminUsers = useCallback(async () => {
-    if (!isAdmin) return;
-    try {
-      const res = await api.get('/api/admin/users');
-      setAdminUsers(res.data.users || []);
-    } catch (err) {
-      console.error('Failed to load admin users:', err);
-    }
-  }, [isAdmin]);
-
-  const loadPendingClaims = useCallback(async () => {
-    if (!isAdmin) return;
-    setClaimsLoading(true);
-    try {
-      const res = await api.get('/api/admin/claims');
-      setPendingClaims(res.data || []);
-    } catch (err) {
-      console.error('Failed to load claims:', err);
-    } finally {
-      setClaimsLoading(false);
-    }
-  }, [isAdmin]);
 
   const loadClaimStatus = useCallback(async () => {
     if (plan !== 'free' && plan !== 'lifetime') return;
@@ -166,197 +117,8 @@ export default function Dashboard() {
         registerUrl: res.data.registerUrl || null,
         pricingUrl: res.data.pricingUrl || '/pricing',
       });
-    } catch (err) {
-      // silent
-    }
+    } catch (err) { /* silent */ }
   }, [plan]);
-
-  const loadAiSettings = useCallback(async () => {
-    if (!isAdmin) return;
-    try {
-      const res = await api.get('/api/admin/ai-settings');
-      setAiPrompt(res.data.ai_strategy_prompt || '');
-      setAiTokenBudget(res.data.ai_token_budget_per_user || '10000');
-    } catch (err) { /* silent */ }
-  }, [isAdmin]);
-
-  const loadTokenUsage = useCallback(async () => {
-    if (!isAdmin) return;
-    try {
-      const res = await api.get('/api/admin/token-usage');
-      setTokenUsage(res.data);
-    } catch (err) { /* silent */ }
-  }, [isAdmin]);
-
-  async function loadUserTrades(u) {
-    setTradeHistoryUser(u);
-    setUserTrades([]);
-    setUserTradesLoading(true);
-    try {
-      const res = await api.get(`/api/admin/users/${u.id}/trades`);
-      setUserTrades(res.data.trades || []);
-    } catch (err) {
-      toast.error('Failed to load trades');
-    } finally {
-      setUserTradesLoading(false);
-    }
-  }
-
-  async function saveAiSettings() {
-    setAiSettingsSaving(true);
-    try {
-      await api.put('/api/admin/ai-settings', {
-        ai_strategy_prompt: aiPrompt,
-        ai_token_budget_per_user: aiTokenBudget,
-      });
-      toast.success('AI settings saved.');
-    } catch (err) {
-      toast.error(err.response?.data?.error || 'Failed to save');
-    } finally {
-      setAiSettingsSaving(false);
-    }
-  }
-
-  async function resetTokens() {
-    if (!window.confirm('Reset ALL users token usage for this month?')) return;
-    setTokenResetting(true);
-    try {
-      const res = await api.post('/api/admin/token-reset');
-      toast.success(`Reset complete — ${res.data.recordsDeleted} records deleted.`);
-      loadTokenUsage();
-    } catch (err) {
-      toast.error('Failed to reset tokens');
-    } finally {
-      setTokenResetting(false);
-    }
-  }
-
-  async function saveAiAllowance(userId) {
-    const raw = allowanceEdit[userId];
-    const value = parseInt(raw, 10);
-    if (!Number.isFinite(value) || value < 0) {
-      toast.error('Enter a non-negative integer');
-      return;
-    }
-    setAllowanceSavingId(userId);
-    try {
-      await api.patch('/api/admin/grant-ai-allowance', { userId, aiTradesAllowance: value });
-      toast.success('AI allowance updated');
-      setAllowanceEdit(prev => {
-        const next = { ...prev };
-        delete next[userId];
-        return next;
-      });
-      loadAdminUsers();
-    } catch (err) {
-      toast.error(err.response?.data?.error || 'Failed to update allowance');
-    } finally {
-      setAllowanceSavingId(null);
-    }
-  }
-
-  async function grantAccess() {
-    if (!adminIdentifier.trim()) return;
-    setAdminLoading(true);
-    setAdminResult(null);
-    try {
-      const res = await api.post('/api/admin/grant-access', {
-        identifier: adminIdentifier.trim(),
-        plan: adminPlan,
-      });
-      setAdminResult({ success: true, message: res.data.message });
-      setAdminIdentifier('');
-      loadAdminUsers();
-    } catch (err) {
-      setAdminResult({
-        success: false,
-        message: err.response?.data?.error || 'Failed to grant access',
-      });
-    } finally {
-      setAdminLoading(false);
-    }
-  }
-
-  async function submitClaim() {
-    if (!claimPoUid.trim()) return;
-    setClaimLoading(true);
-    setClaimResult(null);
-    try {
-      const res = await api.post('/api/license/claim', { poUid: claimPoUid.trim() });
-      setClaimResult({ success: true, message: res.data.message });
-      setClaimStatus(res.data.status === 'approved' ? 'approved' : 'pending');
-    } catch (err) {
-      setClaimResult({ success: false, message: err.response?.data?.error || 'Failed to submit claim' });
-    } finally {
-      setClaimLoading(false);
-    }
-  }
-
-  async function approveClaim(userId) {
-    try {
-      await api.post('/api/admin/claims/approve', { userId });
-      toast.success('Claim approved. User now has Pro access.');
-      loadPendingClaims();
-      loadAdminUsers();
-    } catch (err) {
-      toast.error(err.response?.data?.error || 'Failed to approve');
-    }
-  }
-
-  async function rejectClaim(userId) {
-    try {
-      await api.post('/api/admin/claims/reject', { userId, reason: 'not_found' });
-      toast.success('Claim rejected.');
-      setRejectingId(null);
-      loadPendingClaims();
-    } catch (err) {
-      toast.error(err.response?.data?.error || 'Failed to reject');
-    }
-  }
-
-  function openEditModal(u) {
-    setEditingUser(u);
-    setEditPoUid(u.poUserId || '');
-    setEditPlan(u.license?.plan || 'free');
-  }
-
-  async function saveUser() {
-    if (!editingUser) return;
-    setEditSaving(true);
-    try {
-      await api.patch(`/api/admin/users/${editingUser.id}`, {
-        poUserId: editPoUid,
-        plan: editPlan,
-      });
-      toast.success('User updated.');
-      setEditingUser(null);
-      loadAdminUsers();
-    } catch (err) {
-      toast.error(err.response?.data?.error || 'Failed to save');
-    } finally {
-      setEditSaving(false);
-    }
-  }
-
-  async function deleteUser() {
-    if (!editingUser) return;
-    if (!window.confirm('Delete this user and all their data? This cannot be undone.')) return;
-    try {
-      await api.delete(`/api/admin/users/${editingUser.id}`);
-      toast.success('User deleted.');
-      setEditingUser(null);
-      loadAdminUsers();
-    } catch (err) {
-      toast.error(err.response?.data?.error || 'Failed to delete');
-    }
-  }
-
-  const loadSettings = useCallback(async () => {
-    try {
-      const res = await api.get('/api/settings');
-      setSettings(res.data);
-    } catch (err) { /* silent */ }
-  }, []);
 
   // Stats always use real trades only
   const loadStats = useCallback(async () => {
@@ -382,30 +144,31 @@ export default function Dashboard() {
     } catch (err) { /* silent */ }
   }, []);
 
-  useEffect(() => { loadSettings(); loadStats(); loadDemoStats(); }, [loadSettings, loadStats, loadDemoStats]);
+  useEffect(() => { loadStats(); loadDemoStats(); }, [loadStats, loadDemoStats]);
   useEffect(() => { loadHistory(historyType); }, [loadHistory, historyType]);
-  useEffect(() => { loadAdminUsers(); }, [loadAdminUsers]);
-  useEffect(() => { loadPendingClaims(); }, [loadPendingClaims]);
   useEffect(() => { loadClaimStatus(); }, [loadClaimStatus]);
-  useEffect(() => { loadAiSettings(); loadTokenUsage(); }, [loadAiSettings, loadTokenUsage]);
 
+  const showClaimCard = plan === 'free' && !user?.poUserId && claimStatus !== 'approved';
 
-  async function saveSettings() {
-    if (!settings) return;
-    setSaving(true);
+  // "Get Pro free" links to /dashboard#free-pro; the router does not scroll to hashes.
+  useEffect(() => {
+    if (!showClaimCard || typeof window === 'undefined' || window.location.hash !== '#free-pro') return;
+    document.getElementById('free-pro')?.scrollIntoView?.({ block: 'start' });
+  }, [showClaimCard]);
+
+  async function submitClaim() {
+    if (!claimPoUid.trim()) return;
+    setClaimLoading(true);
+    setClaimResult(null);
     try {
-      const res = await api.put('/api/settings', settings);
-      setSettings(res.data);
-      toast.success('Settings saved!');
+      const res = await api.post('/api/license/claim', { poUid: claimPoUid.trim() });
+      setClaimResult({ success: true, message: res.data.message });
+      setClaimStatus(res.data.status === 'approved' ? 'approved' : 'pending');
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Failed to save');
+      setClaimResult({ success: false, message: err.response?.data?.error || 'Failed to submit claim' });
     } finally {
-      setSaving(false);
+      setClaimLoading(false);
     }
-  }
-
-  function updateSetting(key, value) {
-    setSettings(s => ({ ...s, [key]: value }));
   }
 
   async function linkPoUid(event) {
@@ -425,951 +188,328 @@ export default function Dashboard() {
 
   function dismissInstallStep() {
     setInstallStepDismissed(true);
-    try {
-      window.localStorage.setItem(INSTALL_STEP_STORAGE_KEY, 'true');
-    } catch (err) {
-      // Storage can be unavailable; dismissing for this session is enough.
-    }
+    writeFlag(INSTALL_STEP_STORAGE_KEY);
   }
 
   function completeReviewAsk() {
     setReviewAskCompleted(true);
-    try {
-      window.localStorage.setItem(REVIEW_ASK_STORAGE_KEY, 'true');
-    } catch (err) {
-      // Storage can be unavailable in privacy-restricted browsers. The current
-      // dashboard session should still dismiss the card without failing.
-    }
+    writeFlag(REVIEW_ASK_STORAGE_KEY);
   }
 
-  if (!settings) return <div className="dashboard-page flex items-center justify-center min-h-screen text-brand-400">Loading dashboard...</div>;
-
-  // Ask people with an informed opinion — but the threshold must be REACHABLE. It was 20,
-  // while the Demo plan caps at 10 trades for the LIFETIME of the account, so no free user
-  // could ever see this. With only a handful of paid accounts in existence, the ask was
-  // effectively invisible to everyone: it tested green, deployed fine, and could not fire.
-  // 8 is 80% of the free tier — a real basis for an opinion about visible settings and a
-  // stop that works — and it lands just BEFORE the paywall rather than at it, so we are not
-  // asking a user for a favour at the moment they hit a wall.
-  const REVIEW_ASK_MIN_TRADES = 8;
   const completedTrades = completedTradeCount(stats) + completedTradeCount(demoStats);
   const shouldShowReviewAsk = completedTrades >= REVIEW_ASK_MIN_TRADES && !reviewAskCompleted;
   // New accounts landed here with no pointer to the extension, so most never placed a
   // trade. Until the first trade (real or demo), lead with the install step.
   const shouldShowInstallStep = stats !== null && demoStats !== null && completedTrades === 0 && !installStepDismissed;
+  const showPoUidCard = (plan === 'basic' || plan === 'lifetime') && !user?.poUserId && !poUidLinked;
+  const showFreeProActive = plan === 'lifetime' && claimStatus === 'approved';
+  const showInstantApproval = plan === 'free' && claimStatus === 'approved' && claimResult?.success;
+  const hasNextStep = shouldShowInstallStep || showPoUidCard || showFreeProActive || showInstantApproval || showClaimCard;
+
+  const tradesUsed = user?.license?.tradesUsed;
+  const tradesLimit = user?.license?.tradesLimit;
+  const hasTradeCount = tradesUsed != null && tradesLimit != null;
+
+  const claimForm = (
+    <div className="pzd-claimform">
+      <label className="pz-field" htmlFor="claim-po-uid">
+        Your Pocket Option UID
+        <input
+          id="claim-po-uid"
+          type="number"
+          inputMode="numeric"
+          className="pz-input"
+          placeholder="e.g. 128532137"
+          value={claimPoUid}
+          onChange={e => setClaimPoUid(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && submitClaim()}
+        />
+      </label>
+      <button type="button" onClick={submitClaim} disabled={claimLoading || !claimPoUid.trim()} className="pz-btn">
+        {claimLoading ? 'Submitting...' : 'Submit Claim'}
+      </button>
+      {claimResult && (
+        <div className={`pz-note ${claimResult.success ? 'pz-note--good' : 'pz-note--bad'}`} role="status">
+          {claimResult.message}
+        </div>
+      )}
+    </div>
+  );
 
   return (
-    <div className="dashboard-page max-w-6xl mx-auto px-4 py-10">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-          <p className="text-gray-400 text-sm mt-1">{user?.email}</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className={`badge-${plan}`}>{planLabel} plan</span>
-          {plan !== 'lifetime' && (
-            <Link to="/pricing" className="btn-primary text-sm py-1.5 px-4">Upgrade</Link>
-          )}
-        </div>
-      </div>
+    <div className="pz pzd">
+      <PageHero
+        compact
+        pose="glance"
+        title="Your account"
+        lede={(
+          <>
+            <span className="pzd-email">{user?.email}</span>
+            <br />
+            {planCopy.lede}
+          </>
+        )}
+      >
+        <TradeButton className="pz-btn" label="Open the bot" />
+        <Link to="/guide" className="pz-btn pz-btn--ghost">Setup guide</Link>
+      </PageHero>
 
-      {(plan === 'basic' || plan === 'lifetime') && !user?.poUserId && !poUidLinked && (
-        <section className="card mb-8" aria-labelledby="po-uid-heading" data-testid="po-uid-link-card">
-          <h2 id="po-uid-heading" className="text-lg font-semibold text-white mb-1">Link your Pocket Option ID</h2>
-          <p className="text-gray-400 text-sm mb-4">Link your Pocket Option ID so the bot recognises your plan even when you are not signed in to the panel.</p>
-          <form onSubmit={linkPoUid} className="flex flex-col gap-3 sm:flex-row sm:items-start">
-            <label className="flex-1 text-sm text-gray-300">
-              Pocket Option ID
-              <input
-                className="input mt-1 w-full"
-                inputMode="numeric"
-                pattern="[0-9]{3,20}"
-                value={poUid}
-                onChange={event => setPoUid(event.target.value)}
-                required
-                aria-label="Pocket Option ID"
-              />
-            </label>
-            <button type="submit" className="btn-primary text-sm py-2 px-4 sm:mt-6" disabled={poUidSaving || !/^\d{3,20}$/.test(poUid.trim())}>
-              {poUidSaving ? 'Linking...' : 'Link ID'}
-            </button>
-          </form>
-          {poUidError && <p className="text-red-400 text-sm mt-3" role="alert">{poUidError}</p>}
-        </section>
-      )}
+      <div className="pz-wrap pzd-body">
+        <div className="pzd-grid">
+          <div className="pzd-main">
+            {hasNextStep && (
+              <section className="pzd-next" aria-labelledby="next-step-heading">
+                <h2 id="next-step-heading" className="pzd-h2">Next step</h2>
 
-      <div className="dashboard-brand-panel">
-        <div>
-          <p className="dashboard-brand-panel__eyebrow">Pocket Option command center</p>
-          <h2>Avalisa is ready when your setup is.</h2>
-          <p>
-            Manage strategies, review trades, and keep the bot panel aligned with
-            your current plan from one dark workspace.
-          </p>
-        </div>
-        <div className="dashboard-brand-panel__visual">
-          <div className="dashboard-brand-panel__chart" aria-hidden="true">
-            {Array.from({ length: 20 }).map((_, i) => (
-              <span key={i} className={i % 5 === 0 ? 'is-down' : ''} />
-            ))}
-          </div>
-          <div className="dashboard-brand-panel__bot">
-            <span>⚡ Avalisa Bot</span>
-            <strong>{planLabel} mode</strong>
-            <small>Status: Ready</small>
-          </div>
-        </div>
-      </div>
-
-      {shouldShowInstallStep && phone && (
-        <section className="card mb-8" aria-labelledby="install-step-heading" data-testid="install-step-card">
-          <h2 id="install-step-heading" className="text-lg font-semibold text-white mb-1">Next step: set up on this phone</h2>
-          <p className="text-gray-400 text-sm mb-3">The bot runs on the Pocket Option page in your phone&apos;s browser, with nothing to install. Your account is ready — save the Avalisa bookmark once and you can start.</p>
-          <ol className="text-gray-300 text-sm list-decimal pl-5 mb-4 space-y-1">
-            <li>Open Phone setup and copy the bookmark code.</li>
-            <li>Save it as a bookmark in Safari (iPhone) or Chrome (Android).</li>
-            <li>Open Pocket Option on its Demo balance and run the Avalisa bookmark there.</li>
-          </ol>
-          <div className="flex flex-col gap-2">
-            <Link to="/webapp" className="btn-primary text-center text-sm py-3 px-4" style={{ minHeight: 44 }}>Phone setup</Link>
-            <a href={CHROME_WEB_STORE_URL} target="_blank" rel="noopener noreferrer" className="btn-outline text-center text-sm py-3 px-4" style={{ minHeight: 44 }}>Using a computer? Chrome extension</a>
-            <button type="button" onClick={dismissInstallStep} className="text-gray-400 text-sm py-3 px-4 hover:text-white" style={{ minHeight: 44 }}>
-              I&apos;ve set it up
-            </button>
-          </div>
-          <p className="text-gray-500 text-xs mt-3">Start on a demo account. Trading involves risk.</p>
-        </section>
-      )}
-
-      {shouldShowInstallStep && !phone && (
-        <section className="card mb-8" aria-labelledby="install-step-heading" data-testid="install-step-card">
-          <h2 id="install-step-heading" className="text-lg font-semibold text-white mb-1">Next step: install the Avalisa extension</h2>
-          <p className="text-gray-400 text-sm mb-3">The bot runs inside Chrome on Pocket Option. Your account is ready — trades start once the extension is installed.</p>
-          <ol className="text-gray-300 text-sm list-decimal pl-5 mb-4 space-y-1">
-            <li>Add Avalisa PO Bot from the Chrome Web Store.</li>
-            <li>Open Pocket Option in Chrome and sign in to the bot panel with this email and your Avalisa password. Signed up with Google or Facebook? <Link to="/forgot-password" className="text-brand-400 underline">Create a password first</Link>.</li>
-            <li>Switch Pocket Option to a demo account and run a few test trades first.</li>
-          </ol>
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <a href={CHROME_WEB_STORE_URL} target="_blank" rel="noopener noreferrer" className="btn-primary text-center text-sm py-2 px-4">
-              Add to Chrome
-            </a>
-            <Link to="/guide" className="btn-outline text-center text-sm py-2 px-4">Setup guide</Link>
-            <Link to="/webapp" className="btn-outline text-center text-sm py-2 px-4">On a phone? Use the Webapp Bot</Link>
-            <button type="button" onClick={dismissInstallStep} className="text-gray-400 text-sm py-2 px-4 hover:text-white">
-              I&apos;ve installed it
-            </button>
-          </div>
-        </section>
-      )}
-
-      {/* Stats */}
-      {stats && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {[
-            { label: 'Total Trades', value: (stats.wins || 0) + (stats.losses || 0) },
-            { label: 'Win Rate', value: `${stats.winRate || 0}%` },
-            { label: 'Wins', value: stats.wins || 0 },
-            { label: 'Total P&L', value: `$${stats.totalProfit || '0.00'}`, color: parseFloat(stats.totalProfit) >= 0 ? 'text-green-400' : 'text-red-400' },
-          ].map(s => (
-            <div key={s.label} className="card text-center">
-              <div className={`text-2xl font-bold ${s.color || 'text-white'}`}>{s.value}</div>
-              <div className="text-gray-400 text-xs mt-1">{s.label}</div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {shouldShowReviewAsk && (
-        <section className="card mb-8" aria-labelledby="review-ask-heading" data-testid="review-ask-card">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h2 id="review-ask-heading" className="text-lg font-semibold text-white mb-1">Share your experience with Avalisa</h2>
-              <p className="text-gray-400 text-sm">Reviews help other traders find the bot. If something is not working, our support team can help.</p>
-            </div>
-            <div className="flex flex-col gap-2 sm:flex-row sm:min-w-100">
-              <a
-                href={CHROME_WEB_STORE_REVIEW_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={completeReviewAsk}
-                className="btn-outline flex-1 text-center text-sm py-2"
-              >
-                Rate Avalisa on the Chrome Web Store
-              </a>
-              <Link
-                to="/support"
-                onClick={completeReviewAsk}
-                className="btn-outline flex-1 text-center text-sm py-2"
-              >
-                Something is not working
-              </Link>
-            </div>
-          </div>
-          <button type="button" onClick={completeReviewAsk} className="text-gray-400 hover:text-white text-xs mt-4 transition-colors">
-            Dismiss
-          </button>
-        </section>
-      )}
-
-      {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-dark-800 border border-dark-600 rounded-lg p-1 w-fit">
-        {['settings', 'history', 'bots', ...(isAdmin ? ['admin'] : [])].map(tab => (
-          <button key={tab} onClick={() => setActiveTab(tab)}
-            className={`px-5 py-2 rounded-md text-sm font-medium capitalize transition-colors ${activeTab === tab ? 'bg-brand-600 text-white' : 'text-gray-400 hover:text-white'}`}>
-            {tab}
-          </button>
-        ))}
-      </div>
-
-      {activeTab === 'settings' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Strategy picker */}
-          <div className="card">
-            <h2 className="text-lg font-semibold text-white mb-4">Strategy</h2>
-            <div className="space-y-3">
-              {STRATEGIES.map(s => {
-                const locked = !s.plans.includes(plan);
-                const selected = settings.strategy === s.id;
-                return (
-                  <button key={s.id} disabled={locked || s.comingSoon}
-                    onClick={() => !locked && !s.comingSoon && updateSetting('strategy', s.id)}
-                    className={`w-full text-left p-3 rounded-lg border transition-colors ${
-                      selected ? 'border-brand-600 bg-brand-900/30 text-white' :
-                      locked ? 'border-dark-600 text-gray-500 cursor-not-allowed' :
-                      'border-dark-600 text-gray-300 hover:border-brand-600'
-                    }`}>
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium">{s.label}</span>
-                      {s.comingSoon && <span className="text-xs bg-yellow-800 text-yellow-300 px-2 py-0.5 rounded-full">Soon</span>}
-                      {locked && <span className="text-xs badge-basic">Pro</span>}
-                      {selected && <span className="text-green-400 text-xs">✓ Active</span>}
+                {shouldShowInstallStep && phone && (
+                  <section className="pz-card pzd-card" aria-labelledby="install-step-heading" data-testid="install-step-card">
+                    <h3 id="install-step-heading" className="pz-card__title">Next step: set up on this phone</h3>
+                    <p className="pz-card__sub">The bot runs on the Pocket Option page in your phone&apos;s browser, with nothing to install. Your account is ready — save the Avalisa bookmark once and you can start.</p>
+                    <ol className="pzd-steps">
+                      <li>Open Phone setup and copy the bookmark code.</li>
+                      <li>Save it as a bookmark in Safari (iPhone) or Chrome (Android).</li>
+                      <li>Open Pocket Option on its Demo balance and run the Avalisa bookmark there.</li>
+                    </ol>
+                    <div className="pzd-actions pzd-actions--stack">
+                      <Link to="/webapp" className="pz-btn">Phone setup</Link>
+                      <a href={CHROME_WEB_STORE_URL} target="_blank" rel="noopener noreferrer" className="pz-btn pz-btn--ghost">Using a computer? Chrome extension</a>
+                      <button type="button" onClick={dismissInstallStep} className="pz-btn pz-btn--quiet">I&apos;ve set it up</button>
                     </div>
-                    <div className="text-xs mt-1 opacity-60">{s.desc}</div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Settings panel */}
-          <div className="card">
-            <h2 className="text-lg font-semibold text-white mb-4">Parameters</h2>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <label className="text-sm text-gray-400">Timeframe</label>
-                <select className="select text-sm" value={settings.timeframe} onChange={e => updateSetting('timeframe', e.target.value)}>
-                  {TIMEFRAMES.map(t => <option key={t}>{t}</option>)}
-                </select>
-              </div>
-
-              <div className="flex justify-between items-center">
-                <label className="text-sm text-gray-400">Direction</label>
-                <select className="select text-sm" value={settings.direction} onChange={e => updateSetting('direction', e.target.value)}>
-                  {DIRECTIONS.map(d => <option key={d.id} value={d.id}>{d.label}</option>)}
-                </select>
-              </div>
-
-              <div className="flex justify-between items-center">
-                <label className="text-sm text-gray-400">Delay Between Trades</label>
-                <select className="select text-sm" value={settings.delaySeconds} onChange={e => updateSetting('delaySeconds', parseInt(e.target.value))}>
-                  {DELAYS.map(d => <option key={d} value={d}>{d}s</option>)}
-                </select>
-              </div>
-
-              <div className="flex justify-between items-center">
-                <label className="text-sm text-gray-400">Starting Amount ($)</label>
-                <input type="number" min="0.01" step="0.01" className="select text-sm w-28"
-                  value={settings.startAmount}
-                  onChange={e => updateSetting('startAmount', parseFloat(e.target.value) || 1)} />
-              </div>
-
-              <div className="flex justify-between items-center">
-                <label className="text-sm text-gray-400">Martingale Multiplier</label>
-                <select className="select text-sm" value={settings.martingaleMultiplier} onChange={e => updateSetting('martingaleMultiplier', parseFloat(e.target.value))}>
-                  {MULTIPLIERS.map(m => <option key={m} value={m}>{m}×</option>)}
-                </select>
-              </div>
-
-              <div className="flex justify-between items-center">
-                <label className="text-sm text-gray-400">Martingale Steps</label>
-                <select className="select text-sm" value={settings.martingaleSteps} onChange={e => updateSetting('martingaleSteps', e.target.value)}>
-                  {STEPS.map(s => <option key={s} value={s}>{s === 'infinite' ? 'Infinite' : s}</option>)}
-                </select>
-              </div>
-
-              <button onClick={saveSettings} disabled={saving} className="btn-primary w-full py-2.5">
-                {saving ? 'Saving...' : 'Save Settings'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Admin AI configuration */}
-      {activeTab === 'settings' && isAdmin && (
-        <div className="card mt-6">
-          <h2 className="text-lg font-semibold text-white mb-1">Avalisa Bot Configuration</h2>
-          <p className="text-gray-400 text-sm mb-4">
-            Set the internal AI prompt for supported signal workflows.
-          </p>
-          <div className="space-y-3">
-            <textarea
-              rows={6}
-              value={aiPrompt}
-              onChange={e => setAiPrompt(e.target.value)}
-              className="input w-full font-mono text-xs"
-              placeholder="System prompt sent to Gemini for every signal request..."
-            />
-            <button
-              onClick={saveAiSettings}
-              disabled={aiSettingsSaving}
-              className="btn-primary"
-            >
-              {aiSettingsSaving ? 'Saving…' : 'Save Prompt'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Approved free Pro note — settings tab */}
-      {activeTab === 'settings' && plan === 'lifetime' && claimStatus === 'approved' && (
-        <div className="card mt-6">
-          <h2 className="text-lg font-semibold text-white mb-1">Your free Pro plan is active.</h2>
-          <p className="text-gray-400 text-sm mb-4">
-            Keep testing on your demo account for as long as you like. When you feel ready to look at a real account, our <a href="/guide/pocket-option-demo-to-real-account.html" className="text-brand-400 underline">demo-to-real guide</a> is here.
-            {' '}
-            {isBlack10PromoActive() && (
-              <>
-                {'Pocket Option\'s BLACK10 deposit bonus runs 12-30 November 2026. Read the terms first in our '}
-                <a href="/guide/pocket-option-black10-deposit-bonus.html" className="text-brand-400 underline">BLACK10 guide</a>
-                {'. '}
-              </>
-            )}
-            Never deposit money you can't afford to lose.
-          </p>
-        </div>
-      )}
-
-      {/* Instant approval: the claim card below hides, so the server's message shows here until the next load */}
-      {activeTab === 'settings' && plan === 'free' && claimStatus === 'approved' && claimResult?.success && (
-        <div className="card mt-6">
-          <div className="text-sm px-3 py-2 rounded-lg bg-green-900/30 border border-green-700/50 text-green-400">
-            {claimResult.message}
-          </div>
-        </div>
-      )}
-
-      {/* Claim Pro Access Card — settings tab, demo users without linked UID only */}
-      {activeTab === 'settings' && plan === 'free' && !user?.poUserId && claimStatus !== 'approved' && (
-        <div className="card mt-6">
-          <h2 className="text-lg font-semibold text-white mb-1">Link Your Pocket Option Account</h2>
-          <p className="text-gray-400 text-sm mb-4">
-            Created a NEW Pocket Option account through our link? Enter its numeric ID (shown on your Pocket Option profile) to claim free Pro.
-          </p>
-
-          {claimStatus === 'pending' ? (
-            <div className="text-sm px-3 py-3 rounded-lg bg-yellow-900/30 border border-yellow-700/50 text-yellow-300">
-              ⏳ Your ID is in. Pro turns on once Pocket Option confirms the account was registered through our link — sometimes that needs a manual check, so there is no fixed timeframe. We email you when it's done.
-            </div>
-          ) : claimStatus === 'rejected' ? (
-            <div className="space-y-3">
-              <div className="text-sm px-3 py-3 rounded-lg bg-red-900/30 border border-red-700/50 text-red-400">
-                ❌ {claimNotice?.message || 'We could not match that ID to a new registration through our link. Free Pro only covers accounts created through the link — if this account already existed, a paid plan unlocks it straight away.'}
-              </div>
-              <div className="flex gap-3">
-                <a href={AFFILIATE_LINK}
-                  target="_blank" rel="noreferrer" className="btn-primary text-sm py-2 px-4">
-                  Register a NEW account
-                </a>
-                <Link to={claimNotice?.pricingUrl?.replace('https://avalisabot.vercel.app', '') || '/pricing'} className="btn-outline text-sm py-2 px-4">Make Payment</Link>
-              </div>
-              <div>
-                <label className="text-sm text-gray-400 block mb-1">Your Pocket Option UID</label>
-                <input
-                  type="number"
-                  className="input w-full text-sm"
-                  placeholder="e.g. 128532137"
-                  value={claimPoUid}
-                  onChange={e => setClaimPoUid(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && submitClaim()}
-                />
-              </div>
-              <button
-                onClick={submitClaim}
-                disabled={claimLoading || !claimPoUid.trim()}
-                className="btn-primary w-full py-2.5"
-              >
-                {claimLoading ? 'Submitting...' : 'Submit Claim'}
-              </button>
-              {claimResult && (
-                <div className={`text-sm px-3 py-2 rounded-lg ${
-                  claimResult.success
-                    ? 'bg-green-900/30 border border-green-700/50 text-green-400'
-                    : 'bg-red-900/30 border border-red-700/50 text-red-400'
-                }`}>
-                  {claimResult.message}
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <div>
-                <label className="text-sm text-gray-400 block mb-1">Your Pocket Option UID</label>
-                <input
-                  type="number"
-                  className="input w-full text-sm"
-                  placeholder="e.g. 128532137"
-                  value={claimPoUid}
-                  onChange={e => setClaimPoUid(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && submitClaim()}
-                />
-              </div>
-              <button
-                onClick={submitClaim}
-                disabled={claimLoading || !claimPoUid.trim()}
-                className="btn-primary w-full py-2.5"
-              >
-                {claimLoading ? 'Submitting...' : 'Submit Claim'}
-              </button>
-              {claimResult && (
-                <div className={`text-sm px-3 py-2 rounded-lg ${
-                  claimResult.success
-                    ? 'bg-green-900/30 border border-green-700/50 text-green-400'
-                    : 'bg-red-900/30 border border-red-700/50 text-red-400'
-                }`}>
-                  {claimResult.message}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      )}
-
-      {activeTab === 'history' && (
-        <div className="card overflow-x-auto">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-white">Trade History</h2>
-            <div className="flex gap-1 bg-dark-900 border border-dark-600 rounded-lg p-1">
-              {['real', 'demo', 'all'].map(t => (
-                <button key={t} onClick={() => setHistoryType(t)}
-                  className={`px-3 py-1 rounded-md text-xs font-medium capitalize transition-colors ${historyType === t ? 'bg-brand-600 text-white' : 'text-gray-400 hover:text-white'}`}>
-                  {t}
-                </button>
-              ))}
-            </div>
-          </div>
-          {history.length === 0 ? (
-            <p className="text-gray-400 text-center py-8">No trades yet. Start the bot on Pocket Option.</p>
-          ) : (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-gray-400 border-b border-dark-600 text-left">
-                  <th className="py-2 pr-4">Date</th>
-                  <th className="py-2 pr-4">Pair</th>
-                  <th className="py-2 pr-4">Direction</th>
-                  <th className="py-2 pr-4">Mode</th>
-                  <th className="py-2 pr-4">TF</th>
-                  <th className="py-2 pr-4">Amount</th>
-                  <th className="py-2 pr-4">Result</th>
-                  <th className="py-2">Balance After</th>
-                </tr>
-              </thead>
-              <tbody>
-                {history.map(t => (
-                  <tr key={t.id} className="border-b border-dark-600/50 text-gray-300">
-                    <td className="py-2 pr-4 text-xs text-gray-500">{new Date(t.createdAt).toLocaleString()}</td>
-                    <td className="py-2 pr-4">{t.pair}</td>
-                    <td className="py-2 pr-4">
-                      <span className={`font-semibold ${t.direction === 'call' ? 'text-green-400' : 'text-red-400'}`}>
-                        {t.direction.toUpperCase()}
-                      </span>
-                    </td>
-                    <td className="py-2 pr-4">{strategyLabel(t.strategy)}</td>
-                    <td className="py-2 pr-4">{t.timeframe || '—'}</td>
-                    <td className="py-2 pr-4">${t.amount.toFixed(2)}</td>
-                    <td className="py-2 pr-4">
-                      <span className={`font-semibold ${t.result === 'win' ? 'text-green-400' : t.result === 'loss' ? 'text-red-400' : 'text-yellow-400'}`}>
-                        {t.result.toUpperCase()}
-                      </span>
-                    </td>
-                    <td className="py-2">{t.balanceAfter != null ? `$${t.balanceAfter.toFixed(2)}` : '—'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-      )}
-
-      {activeTab === 'bots' && (
-        <div className="space-y-4 max-w-xl">
-          <div className="card">
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="bg-brand-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-sm tracking-wider">AI</span>
-                  <h2 className="text-lg font-semibold text-white">Mean Reversion v1</h2>
-                </div>
-                <p className="text-xs text-gray-400 mt-1">
-                  Local rule engine — RSI + Bollinger Bands mean-reversion signals. Zero API calls.
-                </p>
-              </div>
-              <span className="text-xs font-semibold text-green-400 bg-green-900/30 border border-green-800 px-2 py-1 rounded-sm">
-                ● Active
-              </span>
-            </div>
-            <div className="mt-4 pt-4 border-t border-dark-600">
-              <p className="text-sm text-gray-400">
-                More bots coming in the marketplace.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'admin' && isAdmin && (
-        <div className="space-y-6">
-          {/* Pending Claims */}
-          <div className="card">
-            <h2 className="text-lg font-semibold text-white mb-4">Pending Claims</h2>
-            {claimsLoading ? (
-              <p className="text-gray-400 text-sm">Loading...</p>
-            ) : pendingClaims.length === 0 ? (
-              <p className="text-gray-400 text-sm">No pending claims. ✅</p>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-gray-400 border-b border-dark-600 text-left">
-                      <th className="py-2 pr-4">Email</th>
-                      <th className="py-2 pr-4">PO UID</th>
-                      <th className="py-2 pr-4">Submitted</th>
-                      <th className="py-2">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pendingClaims.map(c => (
-                      <tr key={c.userId} className="border-b border-dark-600/50 text-gray-300">
-                        <td className="py-3 pr-4 text-xs">{c.email}</td>
-                        <td className="py-3 pr-4 text-xs font-mono">{c.claimedPoUid}</td>
-                        <td className="py-3 pr-4 text-xs text-gray-500">
-                          {new Date(c.submittedAt).toLocaleDateString()}
-                        </td>
-                        <td className="py-3">
-                          {rejectingId === c.userId ? (
-                            <div className="flex items-center gap-2">
-                              <button onClick={() => rejectClaim(c.userId)}
-                                className="text-xs px-3 py-1 bg-red-700 hover:bg-red-600 text-white rounded-md">
-                                Confirm Reject
-                              </button>
-                              <button onClick={() => setRejectingId(null)}
-                                className="text-xs px-2 py-1 text-gray-400 hover:text-white">
-                                Cancel
-                              </button>
-                            </div>
-                          ) : (
-                            <div className="flex items-center gap-2">
-                              <button onClick={() => approveClaim(c.userId)}
-                                className="text-xs px-3 py-1 bg-green-700 hover:bg-green-600 text-white rounded-md">
-                                ✅ Approve
-                              </button>
-                              <button onClick={() => setRejectingId(c.userId)}
-                                className="text-xs px-3 py-1 bg-red-900 hover:bg-red-800 text-red-300 rounded-md">
-                                ❌ Reject
-                              </button>
-                            </div>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-
-          {/* Grant Access Card */}
-          <div className="card">
-            <h2 className="text-lg font-semibold text-white mb-1">Grant Bot Access</h2>
-            <p className="text-gray-400 text-sm mb-4">
-              Enter the user's email address or Pocket Option UID to grant them access.
-            </p>
-            <div className="space-y-3">
-              <div>
-                <label className="text-sm text-gray-400 block mb-1">Email or PO UID</label>
-                <input
-                  type="text"
-                  className="input w-full text-sm"
-                  placeholder="user@email.com or 128532137"
-                  value={adminIdentifier}
-                  onChange={e => setAdminIdentifier(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && grantAccess()}
-                />
-              </div>
-              <div>
-                <label className="text-sm text-gray-400 block mb-1">Plan</label>
-                <select
-                  className="select text-sm w-full"
-                  value={adminPlan}
-                  onChange={e => setAdminPlan(e.target.value)}
-                >
-                  <option value="lifetime">Pro ($119, unlimited)</option>
-                  <option value="basic">Basic ($69, Martingale + 10 AI)</option>
-                </select>
-              </div>
-              <button
-                onClick={grantAccess}
-                disabled={adminLoading || !adminIdentifier.trim()}
-                className="btn-primary w-full py-2.5"
-              >
-                {adminLoading ? 'Granting...' : '✓ Grant Access'}
-              </button>
-              {adminResult && (
-                <div className={`text-sm px-3 py-2 rounded-lg ${
-                  adminResult.success
-                    ? 'bg-green-900/30 border border-green-700/50 text-green-400'
-                    : 'bg-red-900/30 border border-red-700/50 text-red-400'
-                }`}>
-                  {adminResult.message}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Users List */}
-          <div className="card overflow-x-auto">
-            <h2 className="text-lg font-semibold text-white mb-4">
-              Recent Users ({adminUsers.length})
-            </h2>
-            {adminUsers.length === 0 ? (
-              <p className="text-gray-400 text-sm text-center py-4">No users yet.</p>
-            ) : (
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-gray-400 border-b border-dark-600 text-left">
-                    <th className="py-2 pr-4">Email</th>
-                    <th className="py-2 pr-4">UID</th>
-                    <th className="py-2 pr-4">Plan</th>
-                    <th className="py-2 pr-4">Trades</th>
-                    <th className="py-2 pr-4">AI Allowance</th>
-                    <th className="py-2 pr-4">Balance</th>
-                    <th className="py-2 pr-4">M / AI</th>
-                    <th className="py-2 pr-4">User AI</th>
-                    <th className="py-2 pr-4">Joined</th>
-                    <th className="py-2"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {adminUsers.map(u => (
-                    <tr key={u.id} className="border-b border-dark-600/50 text-gray-300">
-                      <td className="py-2 pr-4 text-xs">{u.email}</td>
-                      <td className="py-2 pr-4 text-xs font-mono">{u.poUserId || '—'}</td>
-                      <td className="py-2 pr-4">
-                        <span className={`badge-${u.license?.plan || 'free'}`}>
-                          {planDisplayName(u.license?.plan)}
-                        </span>
-                      </td>
-                      <td className="py-2 pr-4 text-xs">
-                        {['basic', 'lifetime'].includes(u.license?.plan)
-                          ? <span className="text-gray-500">{u.license?.tradesUsed ?? 0}/∞</span>
-                          : u.license?.tradesLimit != null
-                          ? <span className={u.license.tradesUsed >= u.license.tradesLimit ? 'text-red-400' : 'text-gray-300'}>
-                              {u.license.tradesUsed}/{u.license.tradesLimit}
-                            </span>
-                          : <span className="text-gray-500">{u.license?.tradesUsed ?? 0}/∞</span>}
-                      </td>
-                      <td className="py-2 pr-4 text-xs">
-                        {allowanceEdit[u.id] !== undefined ? (
-                          <div className="flex items-center gap-1">
-                            <input
-                              type="number"
-                              min="0"
-                              value={allowanceEdit[u.id]}
-                              onChange={e => setAllowanceEdit(prev => ({ ...prev, [u.id]: e.target.value }))}
-                              className="input w-16 text-xs py-0.5"
-                            />
-                            <button
-                              onClick={() => saveAiAllowance(u.id)}
-                              disabled={allowanceSavingId === u.id}
-                              className="text-xs text-green-400 hover:text-green-300"
-                            >
-                              {allowanceSavingId === u.id ? '…' : '✓'}
-                            </button>
-                            <button
-                              onClick={() => setAllowanceEdit(prev => { const n = { ...prev }; delete n[u.id]; return n; })}
-                              className="text-xs text-gray-500 hover:text-gray-300"
-                            >
-                              ✕
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            <span className={(u.license?.aiTradesUsed ?? 0) >= (u.license?.aiTradesAllowance ?? 0) ? 'text-red-400' : 'text-gray-300'}>
-                              {u.license?.aiTradesUsed ?? 0}/{u.license?.aiTradesAllowance ?? 0}
-                            </span>
-                            <button
-                              onClick={() => setAllowanceEdit(prev => ({ ...prev, [u.id]: String(u.license?.aiTradesAllowance ?? 100) }))}
-                              className="text-xs text-blue-400 hover:text-blue-300"
-                            >
-                              Edit
-                            </button>
-                          </div>
-                        )}
-                      </td>
-                      <td className="py-2 pr-4 text-xs">
-                        {u.latestBalance != null ? `$${parseFloat(u.latestBalance).toFixed(2)}` : '—'}
-                      </td>
-                      <td className="py-2 pr-4 text-xs">
-                        <div className="flex flex-col gap-0.5">
-                          <span className="text-gray-400">
-                            M: {u.winRateByMode?.martingaleTotal > 0 ? `${u.winRateByMode.martingale}% (${u.winRateByMode.martingaleTotal})` : '—'}
-                          </span>
-                          <span className="text-purple-400">
-                            AI: {u.winRateByMode?.aiSignalTotal > 0 ? `${u.winRateByMode.aiSignal}% (${u.winRateByMode.aiSignalTotal})` : '—'}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-2 pr-4 text-xs">
-                        {u.winRateByMode?.userAiTotal > 0 ? (
-                          <div className="flex flex-col gap-0.5">
-                            <span className="text-blue-400">
-                              All: {u.winRateByMode.userAi}% ({u.winRateByMode.userAiTotal})
-                            </span>
-                            {u.winRateByMode.uaiResetAt && (
-                              <span className="text-blue-300">
-                                Now: {u.winRateByMode.userAiCurrentTotal > 0
-                                  ? `${u.winRateByMode.userAiCurrent}% (${u.winRateByMode.userAiCurrentTotal})`
-                                  : '—'}
-                              </span>
-                            )}
-                          </div>
-                        ) : <span className="text-gray-600">—</span>}
-                      </td>
-                      <td className="py-2 pr-4 text-xs text-gray-500">
-                        {new Date(u.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="py-2">
-                        <div className="flex gap-2">
-                        <button
-                          onClick={() => loadUserTrades(u)}
-                          className="text-xs text-green-400 hover:text-green-300"
-                        >
-                          Trades
-                        </button>
-                        <button
-                          onClick={() => openEditModal(u)}
-                          className="text-xs text-blue-400 hover:text-blue-300"
-                        >
-                          Edit
-                        </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-
-          {/* AI Settings */}
-        <div className="card mt-6">
-          <h3 className="text-base font-semibold text-white mb-4">🤖 AI Settings</h3>
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-xs text-gray-400 mb-1">Monthly Token Budget per User</label>
-              <input
-                type="number"
-                value={aiTokenBudget}
-                onChange={e => setAiTokenBudget(e.target.value)}
-                className="input w-40"
-                min="0"
-              />
-            </div>
-
-            <button
-              onClick={saveAiSettings}
-              disabled={aiSettingsSaving}
-              className="btn-primary"
-            >
-              {aiSettingsSaving ? 'Saving…' : 'Save AI Settings'}
-            </button>
-          </div>
-        </div>
-
-        {/* Token Usage */}
-        <div className="card mt-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-base font-semibold text-white">
-              📊 Token Usage — {tokenUsage?.month || '…'}
-            </h3>
-            <button
-              onClick={resetTokens}
-              disabled={tokenResetting}
-              className="text-xs text-red-400 border border-red-800 rounded-sm px-3 py-1 hover:bg-red-900/30 transition"
-            >
-              {tokenResetting ? 'Resetting…' : 'Reset All Tokens'}
-            </button>
-          </div>
-          {tokenUsage && (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-gray-400 text-xs border-b border-dark-600">
-                  <th className="py-1 pr-4 text-left">Email</th>
-                  <th className="py-1 pr-4 text-left">Tokens Used</th>
-                  <th className="py-1 text-left">% of Budget</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(tokenUsage.users || []).map((u, i) => (
-                  <tr key={i} className="border-b border-dark-600/50 text-gray-300">
-                    <td className="py-1.5 pr-4 text-xs">{u.email}</td>
-                    <td className="py-1.5 pr-4 text-xs">{u.tokensUsed.toLocaleString()}</td>
-                    <td className="py-1.5 text-xs">
-                      {u.isAdmin ? (
-                        <span className="text-brand-400 font-medium">Unlimited</span>
-                      ) : (
-                        <span className={u.percentOfBudget >= 80 ? 'text-red-400' : 'text-gray-300'}>
-                          {u.percentOfBudget}%
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-                {(tokenUsage.users || []).length === 0 && (
-                  <tr><td colSpan={3} className="py-4 text-center text-gray-500 text-xs">No usage this month</td></tr>
+                    <p className="pzd-fine">Start on a demo account. Trading involves risk.</p>
+                  </section>
                 )}
-              </tbody>
-            </table>
-          )}
-        </div>
-        </div>
-      )}
-      {/* User Trade History Modal */}
-      {tradeHistoryUser && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-dark-800 border border-dark-600 rounded-xl w-full max-w-3xl mx-4 flex flex-col max-h-[80vh]">
-            <div className="flex items-center justify-between p-5 border-b border-dark-600">
-              <div>
-                <h3 className="text-base font-semibold text-white">Trade History</h3>
-                <p className="text-xs text-gray-400 mt-0.5">{tradeHistoryUser.email} — last 50 real trades</p>
-              </div>
-              <button onClick={() => setTradeHistoryUser(null)} className="text-gray-500 hover:text-white text-xl leading-none">✕</button>
-            </div>
-            <div className="overflow-auto flex-1">
-              {userTradesLoading ? (
-                <p className="text-gray-400 text-sm text-center py-8">Loading...</p>
-              ) : userTrades.length === 0 ? (
-                <p className="text-gray-400 text-sm text-center py-8">No real trades yet.</p>
-              ) : (
-                <table className="w-full text-xs">
-                  <thead className="sticky top-0 bg-dark-800">
-                    <tr className="text-gray-400 border-b border-dark-600">
-                      <th className="py-2 px-4 text-left">Time</th>
-                      <th className="py-2 px-4 text-left">Pair</th>
-                      <th className="py-2 px-4 text-left">Dir</th>
-                      <th className="py-2 px-4 text-left">Amount</th>
-                      <th className="py-2 px-4 text-left">Result</th>
-                      <th className="py-2 px-4 text-left">Balance</th>
-                      <th className="py-2 px-4 text-left">Mode</th>
-                      <th className="py-2 px-4 text-left">TF</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {userTrades.map(t => (
-                      <tr key={t.id} className="border-b border-dark-600/40 text-gray-300">
-                        <td className="py-2 px-4 text-gray-500 whitespace-nowrap">
-                          {new Date(t.createdAt).toLocaleString()}
-                        </td>
-                        <td className="py-2 px-4 font-mono">{t.pair}</td>
-                        <td className={`py-2 px-4 font-medium ${t.direction === 'call' ? 'text-green-400' : 'text-red-400'}`}>
-                          {t.direction.toUpperCase()}
-                        </td>
-                        <td className="py-2 px-4">${t.amount.toFixed(2)}</td>
-                        <td className={`py-2 px-4 font-medium ${t.result === 'win' ? 'text-green-400' : 'text-red-400'}`}>
-                          {t.result.toUpperCase()}
-                        </td>
-                        <td className="py-2 px-4 text-gray-400">
-                          {t.balanceAfter != null ? `$${parseFloat(t.balanceAfter).toFixed(2)}` : '—'}
-                        </td>
-                        <td className={`py-2 px-4 ${['ai-signal', 'ai', 'user-ai'].includes(t.strategy) ? 'text-purple-400' : 'text-gray-500'}`}>
-                          {strategyLabel(t.strategy)}
-                        </td>
-                        <td className="py-2 px-4 text-gray-500">{t.timeframe || '—'}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* Edit User Modal */}
-      {editingUser && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-dark-800 border border-dark-600 rounded-xl p-6 w-full max-w-md mx-4">
-            <h3 className="text-lg font-semibold text-white mb-4">Edit User</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs text-gray-400 mb-1">Email</label>
-                <input
-                  type="text"
-                  value={editingUser.email}
-                  readOnly
-                  className="input w-full opacity-50 cursor-not-allowed"
-                />
+                {shouldShowInstallStep && !phone && (
+                  <section className="pz-card pzd-card" aria-labelledby="install-step-heading" data-testid="install-step-card">
+                    <h3 id="install-step-heading" className="pz-card__title">Next step: install the Avalisa extension</h3>
+                    <p className="pz-card__sub">The bot runs inside Chrome on Pocket Option. Your account is ready — trades start once the extension is installed.</p>
+                    <ol className="pzd-steps">
+                      <li>Add Avalisa PO Bot from the Chrome Web Store.</li>
+                      <li>Open Pocket Option in Chrome and sign in to the bot panel with this email and your Avalisa password. Signed up with Google or Facebook? <Link to="/forgot-password" className="pz-link">Create a password first</Link>.</li>
+                      <li>Switch Pocket Option to a demo account and run a few test trades first.</li>
+                    </ol>
+                    <div className="pzd-actions">
+                      <a href={CHROME_WEB_STORE_URL} target="_blank" rel="noopener noreferrer" className="pz-btn">Add to Chrome</a>
+                      <Link to="/guide" className="pz-btn pz-btn--ghost">Setup guide</Link>
+                      <Link to="/webapp" className="pz-btn pz-btn--ghost">On a phone? Use the Webapp Bot</Link>
+                      <button type="button" onClick={dismissInstallStep} className="pz-btn pz-btn--quiet">I&apos;ve installed it</button>
+                    </div>
+                  </section>
+                )}
+
+                {showPoUidCard && (
+                  <section className="pz-card pzd-card" aria-labelledby="po-uid-heading" data-testid="po-uid-link-card">
+                    <h3 id="po-uid-heading" className="pz-card__title">Link your Pocket Option ID</h3>
+                    <p className="pz-card__sub">Link your Pocket Option ID so the bot recognises your plan even when you are not signed in to the panel.</p>
+                    <form onSubmit={linkPoUid} className="pzd-inline-form">
+                      <label className="pz-field">
+                        Pocket Option ID
+                        <input
+                          className="pz-input"
+                          inputMode="numeric"
+                          pattern="[0-9]{3,20}"
+                          value={poUid}
+                          onChange={event => setPoUid(event.target.value)}
+                          required
+                          aria-label="Pocket Option ID"
+                        />
+                      </label>
+                      <button type="submit" className="pz-btn" disabled={poUidSaving || !/^\d{3,20}$/.test(poUid.trim())}>
+                        {poUidSaving ? 'Linking...' : 'Link ID'}
+                      </button>
+                    </form>
+                    {poUidError && <p className="pz-note pz-note--bad pzd-gap" role="alert">{poUidError}</p>}
+                  </section>
+                )}
+
+                {showFreeProActive && (
+                  <section className="pz-card pzd-card" aria-labelledby="free-pro-active-heading">
+                    <h3 id="free-pro-active-heading" className="pz-card__title">Your free Pro plan is active.</h3>
+                    <p className="pz-card__sub">
+                      Keep testing on your demo account for as long as you like. When you feel ready to look at a real account, our <a href="/guide/pocket-option-demo-to-real-account.html" className="pz-link">demo-to-real guide</a> is here.
+                      {' '}
+                      {isBlack10PromoActive() && (
+                        <>
+                          {'Pocket Option\'s BLACK10 deposit bonus runs 12-30 November 2026. Read the terms first in our '}
+                          <a href="/guide/pocket-option-black10-deposit-bonus.html" className="pz-link">BLACK10 guide</a>
+                          {'. '}
+                        </>
+                      )}
+                      Never deposit money you can&apos;t afford to lose.
+                    </p>
+                  </section>
+                )}
+
+                {/* Instant approval: the claim card hides, so the server's message shows here until the next load */}
+                {showInstantApproval && (
+                  <div className="pz-note pz-note--good" role="status">{claimResult.message}</div>
+                )}
+
+                {showClaimCard && (
+                  <section id="free-pro" className="pz-card pzd-card" aria-labelledby="free-pro-heading">
+                    <h3 id="free-pro-heading" className="pz-card__title">Link your Pocket Option account</h3>
+                    <p className="pz-card__sub">
+                      Created a NEW Pocket Option account through our link? Enter its numeric ID (shown on your Pocket Option profile) to claim free Pro.
+                    </p>
+
+                    {claimStatus === 'pending' ? (
+                      <div className="pz-note pz-note--warn pzd-gap">
+                        Your ID is in. Pro turns on once Pocket Option confirms the account was registered through our link — sometimes that needs a manual check, so there is no fixed timeframe. We email you when it&apos;s done.
+                      </div>
+                    ) : claimStatus === 'rejected' ? (
+                      <div className="pzd-stack pzd-gap">
+                        <div className="pz-note pz-note--bad">
+                          {claimNotice?.message || 'We could not match that ID to a new registration through our link. Free Pro only covers accounts created through the link — if this account already existed, a paid plan unlocks it straight away.'}
+                        </div>
+                        <div className="pzd-actions">
+                          <a href={AFFILIATE_LINK} target="_blank" rel="noreferrer" className="pz-btn">Register a NEW account</a>
+                          <Link to={claimNotice?.pricingUrl?.replace('https://avalisabot.vercel.app', '') || '/pricing'} className="pz-btn pz-btn--ghost">Make payment</Link>
+                        </div>
+                        {claimForm}
+                      </div>
+                    ) : (
+                      <div className="pzd-gap">{claimForm}</div>
+                    )}
+                  </section>
+                )}
+              </section>
+            )}
+
+            <section className="pzd-trades" aria-labelledby="trades-heading">
+              <h2 id="trades-heading" className="pzd-h2">Your trades</h2>
+
+              {stats && (
+                <div className="pz-card pzd-stats">
+                  {[
+                    { label: 'Total trades', value: (stats.wins || 0) + (stats.losses || 0) },
+                    { label: 'Win rate', value: `${stats.winRate || 0}%` },
+                    { label: 'Wins', value: stats.wins || 0 },
+                    { label: 'Total P&L', value: `${parseFloat(stats.totalProfit) < 0 ? '-' : ''}$${String(stats.totalProfit || '0.00').replace('-', '')}`, tone: parseFloat(stats.totalProfit) >= 0 ? 'pzd-pos' : 'pzd-neg' },
+                  ].map(s => (
+                    <div key={s.label} className="pz-stat">
+                      <span className={`pz-stat__n ${s.tone || ''}`.trim()}>{s.value}</span>
+                      <span className="pz-stat__l">{s.label}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="pz-card pzd-history">
+                <div className="pzd-history__head">
+                  <h3 className="pz-card__title">Trade history</h3>
+                  <div className="pzd-seg" role="group" aria-label="Show trades from">
+                    {HISTORY_TYPES.map(t => (
+                      <button
+                        key={t.id}
+                        type="button"
+                        aria-pressed={historyType === t.id}
+                        onClick={() => setHistoryType(t.id)}
+                        className="pzd-seg__btn"
+                      >
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                {history.length === 0 ? (
+                  <div className="pz-empty pzd-empty">
+                    <MascotAvatar size={64} />
+                    <p>No trades yet. Start the bot on Pocket Option.</p>
+                  </div>
+                ) : (
+                  <div className="pz-tablewrap">
+                    <table className="pz-table pzd-table">
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Pair</th>
+                          <th>Direction</th>
+                          <th>Strategy</th>
+                          <th>Timeframe</th>
+                          <th className="num">Amount</th>
+                          <th>Result</th>
+                          <th className="num">Balance after</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {history.map(t => (
+                          <tr key={t.id}>
+                            <td className="pzd-date">{new Date(t.createdAt).toLocaleString()}</td>
+                            <td>{t.pair}</td>
+                            <td className={t.direction === 'call' ? 'pzd-pos' : 'pzd-neg'}>{sentenceCase(t.direction)}</td>
+                            <td>{strategyLabel(t.strategy)}</td>
+                            <td>{t.timeframe || '—'}</td>
+                            <td className="num">${Number(t.amount || 0).toFixed(2)}</td>
+                            <td><span className={`pz-chip ${resultChip(t.result)}`}>{sentenceCase(t.result)}</span></td>
+                            <td className="num">{t.balanceAfter != null ? `$${Number(t.balanceAfter).toFixed(2)}` : '—'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
-              <div>
-                <label className="block text-xs text-gray-400 mb-1">PO UID</label>
-                <input
-                  type="text"
-                  value={editPoUid}
-                  onChange={e => setEditPoUid(e.target.value)}
-                  className="input w-full"
-                  placeholder="PocketOption user ID"
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-gray-400 mb-1">Plan</label>
-                <select
-                  value={editPlan}
-                  onChange={e => setEditPlan(e.target.value)}
-                  className="input w-full"
-                >
-                  <option value="free">demo</option>
-                  <option value="basic">basic</option>
-                  <option value="lifetime">pro</option>
-                </select>
-              </div>
-            </div>
-            <div className="flex gap-3 mt-6">
-              <button
-                onClick={saveUser}
-                disabled={editSaving}
-                className="btn-primary flex-1"
-              >
-                {editSaving ? 'Saving…' : 'Save'}
-              </button>
-              <button
-                onClick={() => setEditingUser(null)}
-                className="btn-secondary flex-1"
-              >
-                Cancel
-              </button>
-            </div>
-            <button
-              onClick={deleteUser}
-              className="mt-3 w-full py-2 rounded-lg text-sm text-red-400 border border-red-800 hover:bg-red-900/30 transition"
-            >
-              Delete User
-            </button>
+            </section>
+
+            {shouldShowReviewAsk && (
+              <section className="pz-card pzd-card pzd-review" aria-labelledby="review-ask-heading" data-testid="review-ask-card">
+                <h2 id="review-ask-heading" className="pz-card__title">Share your experience with Avalisa</h2>
+                <p className="pz-card__sub">Reviews help other traders find the bot. If something is not working, our support team can help.</p>
+                <div className="pzd-actions">
+                  <a href={CHROME_WEB_STORE_REVIEW_URL} target="_blank" rel="noopener noreferrer" onClick={completeReviewAsk} className="pz-btn pz-btn--ghost">
+                    Rate Avalisa on the Chrome Web Store
+                  </a>
+                  <Link to="/support" onClick={completeReviewAsk} className="pz-btn pz-btn--ghost">Something is not working</Link>
+                  <button type="button" onClick={completeReviewAsk} className="pz-btn pz-btn--quiet pz-btn--sm">Dismiss</button>
+                </div>
+              </section>
+            )}
           </div>
+
+          <aside className="pzd-side" aria-label="Plan and bot">
+            <section className="pz-card pzd-card pzd-plan" aria-labelledby="plan-heading">
+              <div className="pzd-plan__head">
+                <h2 id="plan-heading" className="pz-card__title">Your plan</h2>
+                <span className={`pz-chip ${plan === 'lifetime' ? 'pz-chip--good' : 'pz-chip--plain'}`}>{planCopy.name} plan</span>
+              </div>
+              <p className="pz-card__sub">{planCopy.includes}</p>
+              {hasTradeCount && (
+                <p className="pzd-usage">
+                  <span className="pz-muted">Trades used</span>
+                  <strong>{tradesUsed} of {tradesLimit}</strong>
+                </p>
+              )}
+              {plan !== 'lifetime' && (
+                <div className="pzd-actions">
+                  <Link to="/pricing" className="pz-btn pz-btn--sm">Upgrade</Link>
+                  {showClaimCard && <a href="#free-pro" className="pz-link">Get Pro free</a>}
+                </div>
+              )}
+            </section>
+
+            <section className="pz-card pzd-card pzd-botset" aria-labelledby="bot-settings-heading">
+              <h2 id="bot-settings-heading" className="pz-card__title">Bot settings live in the bot</h2>
+              <p className="pz-card__sub">Stake, steps, minimum payout and strategy are set in the Avalisa panel on Pocket Option, so they stay with the bot wherever you run it.</p>
+              <div className="pzd-links">
+                <a href={CHROME_WEB_STORE_URL} target="_blank" rel="noopener noreferrer" className="pz-link">Chrome extension</a>
+                <Link to="/webapp" className="pz-link">Bot on this phone</Link>
+              </div>
+            </section>
+
+            {isAdmin && (
+              <section className="pz-card pzd-card pzd-admin" aria-labelledby="admin-heading">
+                <h2 id="admin-heading" className="pz-card__title">Admin console</h2>
+                <p className="pz-card__sub">Users, claims and bot configuration are managed on the admin page.</p>
+                <Link to="/admin" className="pz-btn pz-btn--ghost pz-btn--sm">Open admin console</Link>
+              </section>
+            )}
+          </aside>
         </div>
-      )}
+
+        <p className="pzd-support pz-muted">
+          Questions about your account? <Link to="/support" className="pz-link">Contact support</Link>.
+        </p>
+      </div>
     </div>
   );
 }

@@ -29,7 +29,7 @@ async function renderDashboard(user) {
     return Promise.resolve({ data: {} });
   });
   render(<Dashboard />);
-  await screen.findByText('Save Settings');
+  await screen.findByText('Total trades');
 }
 
 beforeEach(() => {

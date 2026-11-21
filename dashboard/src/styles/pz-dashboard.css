@@ -1,0 +1,79 @@
+/* Member home (/dashboard) in the Presenter look. Builds on the pz- primitives in presenter.css;
+   everything here is prefixed pzd-. Colours and fonts come only from the --pz-* tokens.
+   Phones: one column in reading order (next step, plan, bot, trades, review, admin).
+   From 960px: main column (next step + trades) beside a 320px side column (plan, bot, admin). */
+
+.pzd { background: var(--pz-bg); color: var(--pz-text); font-family: var(--pz-text-font); min-height: 100vh; }
+.pzd-body { padding-block: clamp(28px, 4vw, 48px) clamp(40px, 6vw, 72px); }
+.pzd-email { color: var(--pz-ivory); font-weight: 500; overflow-wrap: anywhere; }
+
+.pzd-grid { display: grid; gap: 28px; grid-template-columns: minmax(0, 1fr); }
+.pzd-main, .pzd-side { display: contents; }
+.pzd-next { order: 1; }
+.pzd-plan { order: 2; }
+.pzd-botset { order: 3; }
+.pzd-trades { order: 4; }
+.pzd-review { order: 5; }
+.pzd-admin { order: 6; }
+
+@media (min-width: 960px) {
+  .pzd-grid { grid-template-columns: minmax(0, 1fr) 320px; gap: 32px; align-items: start; }
+  .pzd-main, .pzd-side { display: grid; gap: 28px; min-width: 0; }
+  .pzd-side { position: sticky; top: 88px; }
+}
+
+.pzd-next, .pzd-trades { display: grid; gap: 16px; min-width: 0; }
+.pzd-h2 { font: 600 18px/1.3 var(--pz-text-font); color: var(--pz-ivory); margin: 0; }
+.pzd-card { display: grid; gap: 4px; min-width: 0; }
+.pzd-gap { margin-top: 14px; }
+.pzd-stack { display: grid; gap: 14px; }
+
+.pzd-steps { margin: 14px 0 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; line-height: 1.55; color: var(--pz-text); }
+.pzd-steps li::marker { color: var(--pz-champagne); }
+
+.pzd-actions { display: flex; flex-wrap: wrap; gap: 10px 12px; align-items: center; margin-top: 18px; }
+.pzd-actions--stack { flex-direction: column; align-items: stretch; }
+.pzd-stack .pzd-actions { margin-top: 0; }
+.pzd-fine { margin: 14px 0 0; font-size: 12px; color: var(--pz-muted); }
+.pzd-links { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 14px; font-size: 14px; }
+
+@media (max-width: 520px) {
+  .pzd-actions .pz-btn { flex: 1 1 100%; white-space: normal; text-align: center; }
+}
+
+.pzd-inline-form { display: grid; gap: 12px; margin-top: 14px; }
+@media (min-width: 560px) {
+  .pzd-inline-form { grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+}
+.pzd-claimform { display: grid; gap: 12px; }
+.pzd-claimform .pz-btn { justify-self: start; }
+
+/* stats */
+.pzd-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 20px; }
+@media (min-width: 640px) { .pzd-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.pzd-pos { color: var(--pz-good); }
+.pzd-neg { color: var(--pz-bad); }
+.pz-stat__n.pzd-pos { color: var(--pz-good); }
+.pz-stat__n.pzd-neg { color: var(--pz-bad); }
+
+/* history */
+.pzd-history { display: grid; gap: 16px; min-width: 0; }
+.pzd-history__head { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+.pzd-seg { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--pz-line-strong); border-radius: 7px; background: var(--pz-bg); }
+.pzd-seg__btn { appearance: none; border: 0; background: none; cursor: pointer; min-height: 32px; padding: 0 14px; border-radius: 5px; font: 500 13px/1 var(--pz-text-font); color: var(--pz-muted); }
+.pzd-seg__btn:hover { color: var(--pz-ivory); }
+.pzd-seg__btn[aria-pressed='true'] { background: var(--pz-raise); color: var(--pz-ivory); box-shadow: inset 0 0 0 1px var(--pz-line-strong); }
+.pzd-table { min-width: 760px; }
+.pzd-date { font-size: 13px; color: var(--pz-muted); white-space: nowrap; }
+.pzd-empty { display: grid; justify-items: center; gap: 12px; }
+.pzd-empty p { margin: 0; }
+
+/* plan */
+.pzd-plan__head { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.pzd-usage { display: flex; justify-content: space-between; gap: 12px; margin: 14px 0 0; padding-top: 12px; border-top: 1px solid var(--pz-line); font-size: 14px; }
+.pzd-usage strong { color: var(--pz-ivory); font-weight: 600; font-variant-numeric: tabular-nums; }
+.pzd-plan .pzd-actions { margin-top: 16px; }
+
+.pzd-admin .pz-btn { justify-self: start; margin-top: 14px; }
+
+.pzd-support { margin: 40px 0 0; font-size: 14px; }

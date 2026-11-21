@@ -1,5 +1,6 @@
 import { Mail, ShieldCheck } from 'lucide-react';
 import '../styles/luxury.css';
+import { MascotAvatar } from '../components/presenter/PageHero';
 
 export default function Privacy() {
   const sections = [
@@ -148,6 +149,7 @@ export default function Privacy() {
     <main className="lux-privacy-page">
       <section className="lux-privacy-hero lux-shell">
         <div>
+          <MascotAvatar size={72} />
           <p className="lux-kicker">Privacy</p>
           <h1>Privacy Policy</h1>
           <p className="lux-privacy-updated">Last updated: November 2026</p>

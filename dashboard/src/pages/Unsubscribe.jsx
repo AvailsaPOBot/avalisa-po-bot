@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { API_BASE } from '../lib/api';
 import '../styles/luxury.css';
+import { MascotAvatar } from '../components/presenter/PageHero';
 
 // Landing page for the unsubscribe link in marketing emails. Mail scanners
 // open links on page load, so nothing here opts anyone out until the visitor
@@ -31,6 +32,7 @@ export default function Unsubscribe() {
   return (
     <main className="lux-not-found">
       <section>
+        <MascotAvatar size={96} className="pz-avatar--center" />
         <p className="lux-kicker">Unsubscribe</p>
         {invalid && (
           <p>This link is not valid. Email avalisapobot@gmail.com and we will remove you.</p>

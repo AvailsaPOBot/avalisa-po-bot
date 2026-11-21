@@ -43,5 +43,5 @@ test('a signed-in visitor is sent to Dashboard settings, not the sign-up form', 
   mockUser = { email: 'a@b.c' };
   render(<FreePro />);
   expect(screen.queryByText('Create Avalisa account')).toBeNull();
-  expect(screen.getByText('Open Dashboard settings').closest('a')).toHaveAttribute('href', '/dashboard?tab=settings');
+  expect(screen.getByText('Open your Dashboard').closest('a')).toHaveAttribute('href', '/dashboard#free-pro');
 });

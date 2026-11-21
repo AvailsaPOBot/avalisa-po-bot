@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { ArrowRight, ArrowUpRight, BookOpen, Mail } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { API_BASE } from '../lib/api';
 import { isPhoneLike } from '../lib/device';
 import '../styles/luxury.css';
+import { MascotAvatar } from '../components/presenter/PageHero';
 import '../styles/landing-v3.css';
 import '../styles/pages-v3.css';
 import PageHead, { PageLabel } from '../components/v3/PageHead';
@@ -321,7 +322,7 @@ export default function Guide() {
         },
         {
           subtitle: 'How does free Pro through Pocket Option work?',
-          text: 'It is only for a new Pocket Option account registered through our link. Then submit that account’s numeric ID in Avalisa Dashboard → Settings. If Pocket Option’s partner system has confirmed the referral, Pro unlocks immediately; otherwise the request is queued for admin verification. This Pro grant does not expire.',
+          text: 'It is only for a new Pocket Option account registered through our link. Then submit that account’s numeric ID on your Avalisa Dashboard. If Pocket Option’s partner system has confirmed the referral, Pro unlocks immediately; otherwise the request is queued for admin verification. This Pro grant does not expire.',
         },
         {
           subtitle: 'Can I leave it running unattended?',
@@ -354,7 +355,7 @@ export default function Guide() {
         title={<>How to set up <em>Avalisa</em> PO Bot</>}
         aside={(
           <aside className="v3-glass v3p-callout">
-            <BookOpen size={26} aria-hidden="true" />
+            <MascotAvatar size={72} />
             <strong>Try it on demo money first.</strong>
             <span>
               Pocket Option&apos;s demo balance costs nothing and behaves the same. Watch a full

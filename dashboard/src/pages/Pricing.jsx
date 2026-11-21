@@ -62,7 +62,7 @@ export function trackPricingView() {
 const PRICING_FAQ = [
   {
     q: 'What happens after my 10 free demo trades?',
-    a: 'You have two options. Get Pro free: register a NEW Pocket Option account through our registration link, then link that Pocket Option ID in your Avalisa account (Dashboard → Settings); if Pocket Option confirms the registration came through our link, Pro is granted permanently, with no subscription. We may earn a commission from Pocket Option when you sign up through the link. Or buy a plan: Basic is $69 one-time only; Pro is $119 one-time or $29/month (a real recurring subscription that renews until you cancel), you choose at checkout. Trading carries risk; no result is guaranteed.',
+    a: 'You have two options. Get Pro free: register a NEW Pocket Option account through our registration link, then link that Pocket Option ID on your Avalisa Dashboard; if Pocket Option confirms the registration came through our link, Pro is granted permanently, with no subscription. We may earn a commission from Pocket Option when you sign up through the link. Or buy a plan: Basic is $69 one-time only; Pro is $119 one-time or $29/month (a real recurring subscription that renews until you cancel), you choose at checkout. Trading carries risk; no result is guaranteed.',
   },
   {
     q: 'What is the difference between Basic and Pro?',
@@ -286,7 +286,7 @@ export default function Pricing() {
         sub="Every Avalisa account starts with 10 free Demo trades. No card required."
         aside={(
           <figure className="v3p-portrait v3p-portrait--small">
-            <img src="/assets/v3/avalisa-final.webp" alt="Avalisa, the Avalisa PO Bot mascot" width="1122" height="1402" decoding="async" />
+            <img src="/assets/presenter/scene-desk-tall.webp" alt="Avalisa, the Avalisa PO Bot mascot" width="837" height="1500" decoding="async" />
             <figcaption className="v3-hud">Avalisa · your rule runner</figcaption>
           </figure>
         )}
@@ -386,7 +386,7 @@ export default function Pricing() {
           <div className="v3-glass v3p-partner__panel">
             <ol className="v3p-numbered">
               <li><span aria-hidden="true">01</span><p>Register a <strong>new</strong> Pocket Option account through our link.</p></li>
-              <li><span aria-hidden="true">02</span><p>Link its numeric Pocket Option ID in Avalisa Dashboard → Settings.</p></li>
+              <li><span aria-hidden="true">02</span><p>Link its numeric Pocket Option ID on your Avalisa Dashboard.</p></li>
               <li><span aria-hidden="true">03</span><p>If the partner system confirms the referral, Pro unlocks instantly; otherwise it is queued for admin verification.</p></li>
             </ol>
             <a className="v3-btn" href={AFFILIATE_LINK} target="_blank" rel="noreferrer">Open Pocket Option to register<span className="v3-btn__icon" aria-hidden="true"><ArrowUpRight size={17} /></span></a>

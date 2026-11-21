@@ -38,7 +38,7 @@ export default function ResetPassword() {
     <main className="lux-auth-page">
       <section className="lux-auth-shell">
         <form className="lux-auth-card" onSubmit={handleSubmit}>
-          <div className="lux-auth-brand"><img className="brand-signature brand-signature--auth" src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot" /></div>
+          <div className="lux-auth-brand"><img className="brand-signature brand-signature--auth" src="/assets/presenter/avalisa-logo.webp" alt="Avalisa PO Bot" /></div>
           <h1>Choose a new password</h1>
           {token ? (
             <>

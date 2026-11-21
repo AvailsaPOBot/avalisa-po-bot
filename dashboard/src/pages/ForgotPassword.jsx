@@ -29,7 +29,7 @@ export default function ForgotPassword() {
     <main className="lux-auth-page">
       <section className="lux-auth-shell">
         <form className="lux-auth-card" onSubmit={handleSubmit}>
-          <div className="lux-auth-brand"><img className="brand-signature brand-signature--auth" src="/images/brand/avalisa-signature-logo-gold.png" alt="Avalisa PO Bot" /></div>
+          <div className="lux-auth-brand"><img className="brand-signature brand-signature--auth" src="/assets/presenter/avalisa-logo.webp" alt="Avalisa PO Bot" /></div>
           <h1>Reset your password</h1>
           {sent ? (
             <p>If an account exists for <strong>{email}</strong>, we've sent a reset link. Check your inbox (and spam). The link expires in 1 hour.</p>

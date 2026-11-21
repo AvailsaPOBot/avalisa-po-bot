@@ -31,7 +31,7 @@ async function renderDashboard(demoStats = NONE) {
     return Promise.resolve({ data: {} });
   });
   render(<Dashboard />);
-  await screen.findByText('Save Settings');
+  await screen.findByText('Total trades');
 }
 
 beforeEach(() => {
@@ -49,7 +49,8 @@ test('phone user with 0 trades gets the "set up on this phone" card with a Phone
   expect(card).not.toHaveTextContent('install the Avalisa extension');
   const primary = screen.getByRole('link', { name: 'Phone setup' });
   expect(primary).toHaveAttribute('href', '/webapp');
-  expect(primary).toHaveClass('btn-primary');
+  expect(primary).toHaveClass('pz-btn');
+  expect(primary).not.toHaveClass('pz-btn--ghost');
   expect(screen.queryByRole('link', { name: 'Add to Chrome' })).toBeNull();
   expect(card).toHaveTextContent('Start on a demo account. Trading involves risk.');
   expect(card).not.toHaveTextContent(/profit|earn|income|guarantee|win rate/i);

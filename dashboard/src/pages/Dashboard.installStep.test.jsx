@@ -31,7 +31,7 @@ async function renderDashboard(realStats, demoStats) {
     return Promise.resolve({ data: {} });
   });
   render(<Dashboard />);
-  await screen.findByText('Save Settings');
+  await screen.findByText('Total trades');
 }
 
 beforeEach(() => {
