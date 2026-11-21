@@ -9,19 +9,29 @@ import '../styles/landing-v3.css';
 import '../styles/pages-v3.css';
 import '../styles/free-pro.css';
 
-// /free-pro — where clip descriptions and the extension point instead of the bare Pocket Option link.
-// Clips brought 72 clicks on 18-19 Nov and 0 registrations: nobody was told why to sign up through us.
-// Visual direction (Board): cinematic, Avalisa carries the page. Images generated 2026-11-21 in Gemini
-// from "Avalisa Character refer sheet.png" (AVALISA GIRL); composed, never smiling. Sources:
-// Promo Assets/Website Redesign/2026-11-21-free-pro/. No outcome claims (2113). Price matches the plan table.
+// /free-pro — where clip descriptions point instead of the bare Pocket Option link.
+// Board 21 Nov: a visitor must see what the product is: the real Pocket Option screen, the real
+// Avalisa panel working, the Pocket Option mark, and Avalisa herself. The hero video is a real
+// recording (take1.mov, 27 Oct 2026, Pocket Option DEMO, extension v2.4.23), cropped, email blurred,
+// sped up 2x. Beat captions follow what the panel status line actually shows at each moment.
+// No outcome claims (2113). Price matches the plan table.
+
+const DEMO_BEATS = [
+  { until: 3, title: 'Skips what misses your rules', body: 'Status: SKIP, 2 of 3 rules. It keeps scanning.' },
+  { until: 6, title: 'You change the settings', body: 'Intensity, start amount, steps, minimum payout.' },
+  { until: 10, title: 'Scans pairs paying 90% or more', body: 'Bitcoin OTC, Cardano OTC, CHF/JPY OTC at 92%.' },
+  { until: 13.1, title: 'Rules line up, it places the trade', body: 'Trade #1, PUT $1.00, on the demo balance.' },
+];
 
 const STEPS = [
   {
     key: 'po',
     title: 'Open a new Pocket Option account',
     body: 'Register a fresh account through the button on this page. If you use an ad blocker, pause it for this step so Pocket Option records where you came from.',
-    image: '/assets/free-pro/step-1.webp',
-    alt: 'Avalisa holding a phone that shows a Pocket Option chart',
+    image: '/assets/free-pro/step-po.webp',
+    width: 900, height: 924,
+    alt: 'The Pocket Option trading screen',
+    caption: 'Pocket Option, where you trade',
   },
   {
     key: 'account',
@@ -29,15 +39,19 @@ const STEPS = [
     titleSignedIn: 'You already have an Avalisa account',
     body: 'Email, Google or Facebook. You get 10 Demo trades right away, so you can try the controls while Pro is confirmed.',
     bodySignedIn: 'Signed in. Go straight to step 3.',
-    image: '/assets/free-pro/step-2.webp',
-    alt: 'Avalisa at a laptop, setting up her account',
+    image: '/assets/free-pro/step-register.webp',
+    width: 640, height: 867,
+    alt: 'The Avalisa sign-up form',
+    caption: 'Avalisa sign-up, never your Pocket Option password',
   },
   {
     key: 'id',
     title: 'Add your Pocket Option ID',
     body: 'Your ID is the number on your Pocket Option profile. Paste it in Avalisa under Dashboard, Settings, “Link Your Pocket Option Account”. Pro turns on at once when Pocket Option has confirmed the sign-up; otherwise it waits for a quick manual check.',
-    image: '/assets/free-pro/step-3.webp',
-    alt: 'Avalisa holding a glowing gold card',
+    image: '/assets/free-pro/step-panel.webp',
+    width: 600, height: 1520,
+    alt: 'The Avalisa panel with the PRO badge and unlimited trade allowance',
+    caption: 'The panel with Pro: trade allowance ∞',
   },
 ];
 
@@ -54,6 +68,7 @@ const DOES_NOT = [
 ];
 
 const FAQ = [
+  ['What exactly is Avalisa PO Bot?', 'A Chrome extension, plus a phone web app, that opens a small panel inside your own Pocket Option tab. You choose the strategy, start amount, Martingale steps and minimum payout; it places the trades and stops when you press Stop or hit your step limit.'],
   ['Is it really the same Pro as the paid plan?', 'Yes. Same features, same updates. It does not turn into a subscription later.'],
   ['How long does the confirmation take?', 'Usually it is there by the time you add your ID, and Pro turns on at once. If Pocket Option has not confirmed it yet, your claim waits for a manual check. If it has been several days, email us your Pocket Option ID.'],
   ['Do I have to deposit to get Pro?', 'No. Pro is granted for the registration. You can run Avalisa on your Pocket Option demo balance first.'],
@@ -77,6 +92,78 @@ function StepAction({ index, user, pocketOptionHref }) {
   );
 }
 
+function DemoStage() {
+  const videoRef = useRef(null);
+  const panelRef = useRef(null);
+  const [beat, setBeat] = useState(0);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    const panel = panelRef.current;
+    if (!video) return undefined;
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) {
+      [video, panel].forEach((v) => { if (v) { v.removeAttribute('autoplay'); try { v.pause(); } catch { /* jsdom */ } } });
+    }
+    const onTime = () => {
+      const t = video.currentTime;
+      const next = DEMO_BEATS.findIndex((b) => t < b.until);
+      setBeat(next === -1 ? DEMO_BEATS.length - 1 : next);
+      // the magnified panel is the same recording cropped: keep it on the same frame
+      if (panel && Math.abs(panel.currentTime - t) > 0.25) panel.currentTime = t;
+    };
+    video.addEventListener('timeupdate', onTime);
+    return () => video.removeEventListener('timeupdate', onTime);
+  }, []);
+
+  return (
+    <figure className="fp-demo">
+      <div className="fp-demo__stage">
+      <div className="fp-window">
+        <div className="fp-window__bar" aria-hidden="true">
+          <i /><i /><i />
+          <span>pocketoption.com</span>
+        </div>
+        <div className="fp-window__screen">
+          <video
+            ref={videoRef}
+            className="fp-window__video"
+            poster="/assets/free-pro/po-demo-poster.jpg"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-label="Recording: the Avalisa panel running inside a Pocket Option demo account and placing a trade"
+          >
+            <source src="/assets/free-pro/po-demo.webm" type="video/webm" />
+            <source src="/assets/free-pro/po-demo.mp4" type="video/mp4" />
+          </video>
+          <span className="fp-window__ring" aria-hidden="true" />
+        </div>
+      </div>
+      <div className="fp-zoom" aria-hidden="true">
+        <span className="fp-zoom__tag">Avalisa panel, enlarged</span>
+        <video ref={panelRef} className="fp-zoom__video" poster="/assets/free-pro/po-panel-poster.jpg" autoPlay muted loop playsInline preload="auto">
+          <source src="/assets/free-pro/po-panel.webm" type="video/webm" />
+          <source src="/assets/free-pro/po-panel.mp4" type="video/mp4" />
+        </video>
+      </div>
+      <img className="fp-demo__mascot" src="/assets/free-pro/avalisa-cutout.webp" alt="" width="316" height="1223" aria-hidden="true" />
+      </div>
+      <ol className="fp-beats" aria-label="What happens in the recording">
+        {DEMO_BEATS.map((b, i) => (
+          <li key={b.title} className={i === beat ? 'is-on' : i < beat ? 'is-done' : ''}>
+            <b>{b.title}</b>
+            <span>{b.body}</span>
+          </li>
+        ))}
+      </ol>
+      <figcaption className="fp-demo__note">Real recording on a Pocket Option demo account, 27 Oct 2026, shown at 2× speed.</figcaption>
+    </figure>
+  );
+}
+
 export default function FreePro() {
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
@@ -86,11 +173,10 @@ export default function FreePro() {
 
   useEffect(() => {
     const previous = document.title;
-    document.title = 'Free Pro with a new Pocket Option account | Avalisa PO Bot';
+    document.title = 'Free Pro: the auto-trading bot for Pocket Option | Avalisa PO Bot';
     return () => { document.title = previous; };
   }, []);
 
-  // The sticky frame on desktop shows the photo of whichever step is in the middle of the screen.
   useEffect(() => {
     if (typeof window === 'undefined' || !('IntersectionObserver' in window)) return undefined;
     const io = new IntersectionObserver((entries) => {
@@ -105,33 +191,34 @@ export default function FreePro() {
       <Navbar />
 
       <section className="fp-hero" aria-labelledby="fp-title">
-        <div className="fp-hero__media" aria-hidden="true">
-          <picture>
-            <source media="(max-width: 767px)" srcSet="/assets/free-pro/hero-phone.webp" width="860" height="1541" />
-            <img className="fp-hero__photo" src="/assets/free-pro/hero-2200.webp" srcSet="/assets/free-pro/hero-1280.webp 1280w, /assets/free-pro/hero-2200.webp 2200w" sizes="100vw" alt="" width="2200" height="1228" fetchPriority="high" decoding="async" />
-          </picture>
-          <div className="fp-hero__shade" />
-          <div className="v3-grain" />
-        </div>
-
-        <div className="fp-hero__copy">
-          <p className="v3-hud fp-hero__eyebrow"><i className="v3-dot" aria-hidden="true" />For new Pocket Option accounts</p>
-          <h1 className="fp-hero__title" id="fp-title">Avalisa Pro, <em>on the house.</em></h1>
-          <p className="fp-hero__price" aria-label="Price: 0 dollars instead of 119 dollars one-time">
-            <span className="fp-hero__now">$0</span>
-            <span className="fp-hero__was"><s>$119 one-time</s><br />with a new account</span>
-          </p>
-          <p className="fp-hero__sub">
-            Open a new Pocket Option account through our link, add its ID in Avalisa, and the full Pro plan is yours.
-          </p>
-          <div className="v3-hero__actions">
-            <a className="v3-btn" href={pocketOptionHref} target="_blank" rel="noreferrer">
-              Open a new Pocket Option account
-              <span className="v3-btn__icon" aria-hidden="true"><ArrowUpRight size={17} /></span>
-            </a>
-            <a className="v3-textlink" href="#fp-steps">See the 3 steps <ArrowRight size={15} aria-hidden="true" /></a>
+        <div className="fp-hero__glow" aria-hidden="true"><div className="v3-grain" /></div>
+        <div className="fp-hero__grid">
+          <div className="fp-hero__copy">
+            <p className="fp-works">
+              <span>Works with</span>
+              <img src="/assets/free-pro/po-logo.png" alt="Pocket Option" width="560" height="80" />
+            </p>
+            <h1 className="fp-hero__title" id="fp-title">The auto-trading bot for Pocket Option.</h1>
+            <p className="fp-hero__sub">
+              Avalisa runs inside your own Pocket Option tab, on Chrome or your phone. You set the rules;
+              it watches the pairs and places the trades.
+            </p>
           </div>
-          <p className="v3-risk">Opens Pocket Option in a new tab. Keep this page open for steps 2 and 3.</p>
+          <DemoStage />
+            <div className="fp-offer">
+              <p className="fp-offer__price" aria-label="Pro: 0 dollars instead of 119 dollars one-time">
+                <span className="fp-offer__now">$0</span>
+                <span className="fp-offer__was">Pro, normally <s>$119 one-time</s>,<br />free with a new Pocket Option account</span>
+              </p>
+              <div className="v3-hero__actions">
+                <a className="v3-btn" href={pocketOptionHref} target="_blank" rel="noreferrer">
+                  Open a new Pocket Option account
+                  <span className="v3-btn__icon" aria-hidden="true"><ArrowUpRight size={17} /></span>
+                </a>
+                <a className="v3-textlink" href="#fp-steps">See the 3 steps <ArrowRight size={15} aria-hidden="true" /></a>
+              </div>
+              <p className="v3-risk">Independent tool, not made by Pocket Option. Opens Pocket Option in a new tab.</p>
+            </div>
         </div>
       </section>
 
@@ -149,14 +236,16 @@ export default function FreePro() {
           <div className="fp-story__stage" aria-hidden="true">
             <div className="fp-frame">
               {STEPS.map((step, index) => (
-                <img key={step.key} className={`fp-frame__img${index === active ? ' is-on' : ''}`} src={step.image} alt="" width="900" height="1206" loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
+                <figure key={step.key} className={`fp-frame__shot${index === active ? ' is-on' : ''}`}>
+                  <img src={step.image} alt="" width={step.width} height={step.height} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
+                  <figcaption>{step.caption}</figcaption>
+                </figure>
               ))}
-              <span className="fp-frame__count"><b>{active + 1}</b> / {STEPS.length}</span>
             </div>
           </div>
 
           <div className="fp-story__steps">
-            <h2 className="fp-h2" id="fp-steps-title">Three steps, in this order.</h2>
+            <h2 className="fp-h2" id="fp-steps-title">Free Pro in three steps, in this order.</h2>
             <ol className="fp-steps">
               {STEPS.map((step, index) => (
                 <li
@@ -165,7 +254,7 @@ export default function FreePro() {
                   data-step={index}
                   ref={(node) => { stepRefs.current[index] = node; }}
                 >
-                  <img className="fp-step__img" src={step.image} alt={step.alt} width="900" height="1206" loading="lazy" decoding="async" />
+                  <img className="fp-step__img" src={step.image} alt={step.alt} width={step.width} height={step.height} loading="lazy" decoding="async" />
                   <span className="fp-step__n" aria-hidden="true">{index + 1}</span>
                   <h3>{user && step.titleSignedIn ? step.titleSignedIn : step.title}</h3>
                   <p>{user && step.bodySignedIn ? step.bodySignedIn : step.body}</p>
@@ -208,23 +297,22 @@ export default function FreePro() {
       </section>
 
       <section className="fp-close" aria-labelledby="fp-close-title">
-        <div className="fp-close__media" aria-hidden="true">
-          <img src="/assets/free-pro/close-2200.webp" srcSet="/assets/free-pro/close-1280.webp 1280w, /assets/free-pro/close-2200.webp 2200w" sizes="100vw" alt="" width="2200" height="1228" loading="lazy" decoding="async" />
-          <div className="fp-close__shade" />
-        </div>
-        <div className="fp-close__copy">
-          <h2 className="fp-h2" id="fp-close-title">Start with step 1.</h2>
-          <p className="fp-close__sub">It takes about two minutes. Your Pocket Option password stays with Pocket Option; Avalisa never asks for it.</p>
-          <div className="v3-hero__actions">
-            <a className="v3-btn" href={pocketOptionHref} target="_blank" rel="noreferrer">
-              Open a new Pocket Option account
-              <span className="v3-btn__icon" aria-hidden="true"><ArrowUpRight size={17} /></span>
-            </a>
+        <div className="v3-wrap fp-close__grid">
+          <img className="fp-close__portrait" src="/assets/v3/avalisa-final.webp" alt="Avalisa, the Avalisa PO Bot mascot" width="1122" height="1402" loading="lazy" decoding="async" />
+          <div className="fp-close__copy">
+            <h2 className="fp-h2" id="fp-close-title">Start with step 1.</h2>
+            <p className="fp-close__sub">It takes about two minutes. Your Pocket Option password stays with Pocket Option; Avalisa never asks for it.</p>
+            <div className="v3-hero__actions">
+              <a className="v3-btn" href={pocketOptionHref} target="_blank" rel="noreferrer">
+                Open a new Pocket Option account
+                <span className="v3-btn__icon" aria-hidden="true"><ArrowUpRight size={17} /></span>
+              </a>
+            </div>
+            <p className="v3-risk">
+              We earn a commission from Pocket Option when you open an account through our link. Trading involves risk:
+              you can lose money, and no setting guarantees profit. Start on a demo balance.
+            </p>
           </div>
-          <p className="v3-risk">
-            We earn a commission from Pocket Option when you open an account through our link. Trading involves risk:
-            you can lose money, and no setting guarantees profit. Start on a demo balance.
-          </p>
         </div>
       </section>
     </main>
