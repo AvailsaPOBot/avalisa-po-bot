@@ -481,7 +481,7 @@ export default function Dashboard() {
   // Every dollar so far came from people already using the bot, yet a Demo user who has
   // traded was shown nothing about what comes next. Only after the first trade (the install
   // step leads before it), and not while a free-Pro claim is pending or approved.
-  const shouldShowNextStep = plan === 'free' && claimStatus !== 'approved' && claimStatus !== 'pending'
+  const shouldShowNextStep = plan === 'free' && claimStatus !== null && claimStatus !== 'approved' && claimStatus !== 'pending'
     && completedTrades >= 1 && !nextStepDismissed;
 
   return (

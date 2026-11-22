@@ -25,7 +25,7 @@ async function renderDashboard({ plan = 'free', claimStatus = 'none', demoStats 
   auth.user = { email: 'demo user@example.com', license: { plan } };
   api.get.mockImplementation((url) => {
     if (url === '/api/settings') return Promise.resolve({ data: SETTINGS });
-    if (url === '/api/license/claim/status') return Promise.resolve({ data: { claimStatus } });
+    if (url === '/api/license/claim/status') return claimStatus === 'loading' ? new Promise(() => {}) : Promise.resolve({ data: { claimStatus } });
     if (url.startsWith('/api/trades/history?type=real&limit=500')) return Promise.resolve({ data: { stats: NONE } });
     if (url.startsWith('/api/trades/history?type=demo&limit=50')) return Promise.resolve({ data: { trades: [], stats: demoStats } });
     if (url.startsWith('/api/trades/history?')) return Promise.resolve({ data: { trades: [] } });
@@ -81,4 +81,11 @@ test('dismissing the next step persists', async () => {
 
   expect(card()).not.toBeInTheDocument();
   expect(window.localStorage.getItem('avalisa-next-step-dismissed')).toBe('true');
+});
+
+test('no next step while the claim status is still loading', async () => {
+  await renderDashboard({ claimStatus: 'loading' });
+  await screen.findByText('Save Settings');
+
+  expect(card()).not.toBeInTheDocument();
 });
