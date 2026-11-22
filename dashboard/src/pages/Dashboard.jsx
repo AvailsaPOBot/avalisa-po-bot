@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import api from '../lib/api';
 import { AFFILIATE_LINK } from '../lib/affiliate';
+import { appendCheckoutEmail, WHOP_PRO_MONTHLY_CHECKOUT_URL } from '../lib/checkout';
 import { useAuth } from '../hooks/useAuth';
 import { usePhoneLike } from '../lib/device';
 import toast from 'react-hot-toast';
@@ -11,6 +12,7 @@ const REVIEW_ASK_STORAGE_KEY = 'avalisa-review-ask-complete';
 const CHROME_WEB_STORE_URL = 'https://chromewebstore.google.com/detail/avalisa-po-bot/mkcpdbnlofljijfjiglkodddicpgdapa';
 const CHROME_WEB_STORE_REVIEW_URL = `${CHROME_WEB_STORE_URL}/reviews`;
 const INSTALL_STEP_STORAGE_KEY = 'avalisa-install-step-dismissed';
+const NEXT_STEP_STORAGE_KEY = 'avalisa-next-step-dismissed';
 
 const STRATEGIES = [
   { id: 'martingale', label: 'Martingale', plans: ['free', 'basic', 'lifetime'], desc: 'Double on loss to recover' },
@@ -54,6 +56,14 @@ function hasDismissedInstallStep() {
   }
 }
 
+function hasDismissedNextStep() {
+  try {
+    return window.localStorage.getItem(NEXT_STEP_STORAGE_KEY) === 'true';
+  } catch (err) {
+    return false;
+  }
+}
+
 function completedTradeCount(s) {
   return ['wins', 'losses', 'ties'].reduce((total, result) => total + (Number(s?.[result]) || 0), 0);
 }
@@ -78,6 +88,7 @@ export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [demoStats, setDemoStats] = useState(null);
   const [installStepDismissed, setInstallStepDismissed] = useState(hasDismissedInstallStep);
+  const [nextStepDismissed, setNextStepDismissed] = useState(hasDismissedNextStep);
   const [historyType, setHistoryType] = useState('real');
   const [saving, setSaving] = useState(false);
   const [poUid, setPoUid] = useState('');
@@ -432,6 +443,15 @@ export default function Dashboard() {
     }
   }
 
+  function dismissNextStep() {
+    setNextStepDismissed(true);
+    try {
+      window.localStorage.setItem(NEXT_STEP_STORAGE_KEY, 'true');
+    } catch (err) {
+      // Storage can be unavailable; dismissing for this session is enough.
+    }
+  }
+
   function completeReviewAsk() {
     setReviewAskCompleted(true);
     try {
@@ -457,6 +477,12 @@ export default function Dashboard() {
   // New accounts landed here with no pointer to the extension, so most never placed a
   // trade. Until the first trade (real or demo), lead with the install step.
   const shouldShowInstallStep = stats !== null && demoStats !== null && completedTrades === 0 && !installStepDismissed;
+
+  // Every dollar so far came from people already using the bot, yet a Demo user who has
+  // traded was shown nothing about what comes next. Only after the first trade (the install
+  // step leads before it), and not while a free-Pro claim is pending or approved.
+  const shouldShowNextStep = plan === 'free' && claimStatus !== 'approved' && claimStatus !== 'pending'
+    && completedTrades >= 1 && !nextStepDismissed;
 
   return (
     <div className="dashboard-page max-w-6xl mx-auto px-4 py-10">
@@ -757,6 +783,22 @@ export default function Dashboard() {
         <div className="card mt-6">
           <div className="text-sm px-3 py-2 rounded-lg bg-green-900/30 border border-green-700/50 text-green-400">
             {claimResult.message}
+          </div>
+        </div>
+      )}
+
+      {/* Next step for Demo users who have traded — settings tab */}
+      {activeTab === 'settings' && shouldShowNextStep && (
+        <div className="card mt-6" data-testid="next-step-card">
+          <h2 className="text-lg font-semibold text-white mb-1">After your 10 free Demo trades</h2>
+          <p className="text-gray-400 text-sm mb-4">
+            The Demo plan covers 10 trades. Pro removes the limit: $29/month (renews every month until you cancel) or $119 one-time. Thinking about a real account? Read our demo-to-real guide first. Trading is high risk; never deposit money you can't afford to lose.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <a href={appendCheckoutEmail(WHOP_PRO_MONTHLY_CHECKOUT_URL, user?.email)} target="_blank" rel="noreferrer" className="btn-primary text-sm py-2 px-4">Get Pro — $29/month</a>
+            <a href="/guide/pocket-option-demo-to-real-account.html" className="btn-outline text-sm py-2 px-4">Read the demo-to-real guide</a>
+            <Link to="/pricing" className="btn-outline text-sm py-2 px-4">See all plans</Link>
+            <button type="button" onClick={dismissNextStep} className="text-sm text-gray-400 underline">Not now</button>
           </div>
         </div>
       )}
