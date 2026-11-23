@@ -19,6 +19,23 @@
 Never leave it broken or mid-refactor. Smoke test (`node test/extension-settings-smoke.test.js`)
 must pass before any commit that touches it. The AGE dispatcher enforces this (fail-closed revert).
 
+## Backend + dashboard deps — 2026-11-24 — licence check spends fewer DB round trips
+
+No extension change, so no extension version. Backend `POST /api/license/check`, same
+responses, status codes and side effects (locked by `backend/test/licenseCheck.test.js`):
+- `optionalAuthMiddleware` now selects `poUserId` with the user it already loads, so the
+  PO UID auto-link no longer re-reads the same user row (signed-in + `poUid`: 3 → 2 queries).
+- The best-effort PO UID link runs alongside the licence read (`Promise.all`) instead of
+  before it. With `connection_limit=1` Prisma still queues them on one connection; the win
+  is fewer queries, not parallel ones.
+- Not changed: device-fingerprint find-then-create (an upsert needs a write on every check,
+  and Prisma 5.22 emulates an upsert with an empty `update` as read-then-create anyway);
+  `connection_limit=1` (documented in `lib/prisma.js` as a free-tier Supabase guard).
+
+Security: `npm audit fix` (no `--force`). Backend qs 6.16.0 → 6.16.2 (prod) and dev-only
+nodemon 3.1.14 → 3.1.11 (pulls minimatch 3.1.5, outside the advisory range). Dashboard
+follow-redirects 1.16.1 → 1.16.3, undici 8.11.2 → 8.13.1. `npm audit` is 0 in both.
+
 ## 2.4.23 — 2026-10-13 — Real account: bot no longer stuck scanning
 
 Customer (PO ID 141514294, Pro): "works in demo, on real it only scans, even at low

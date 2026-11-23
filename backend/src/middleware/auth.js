@@ -41,9 +41,11 @@ async function optionalAuthMiddleware(req, res, next) {
     const token = authHeader.split(' ')[1];
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      // poUserId rides along so POST /api/license/check can decide whether to auto-link
+      // a PO UID without a second lookup of the same user row (one round trip, not two).
       const user = await prisma.user.findUnique({
         where: { id: decoded.userId },
-        select: { id: true, email: true, isAdmin: true },
+        select: { id: true, email: true, isAdmin: true, poUserId: true },
       });
       if (user) {
         req.user = user;
