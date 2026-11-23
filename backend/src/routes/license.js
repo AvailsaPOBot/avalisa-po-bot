@@ -41,6 +41,27 @@ function withSessionHints(req, res) {
     : body);
 }
 
+// Best-effort PO UID auto-link for a signed-in /check. Resolves (never rejects): a
+// concurrent unique-key conflict or any database hiccup leaves licensing untouched.
+async function autolinkPoUid(userId, user, poUid) {
+  try {
+    if (user && user.poUserId == null) {
+      const owner = await prisma.user.findUnique({ where: { poUserId: poUid }, select: { id: true } });
+      if (!owner) {
+        const linked = await prisma.user.updateMany({
+          where: { id: userId, poUserId: null },
+          data: { poUserId: poUid },
+        });
+        if (linked.count === 1) {
+          recordFunnelEvent(prisma, 'po_uid_autolinked', { userId, meta: { userId } });
+        }
+      }
+    }
+  } catch (err) {
+    // Includes a concurrent unique-key conflict. Licensing remains available.
+  }
+}
+
 router.post('/check', optionalAuthMiddleware, async (req, res) => {
   withSessionHints(req, res);
   // userId comes from the verified JWT (optionalAuthMiddleware), NOT the body —
@@ -64,30 +85,18 @@ router.post('/check', optionalAuthMiddleware, async (req, res) => {
   const poUid = typeof req.body.poUid === 'string' && /^\d{3,20}$/.test(req.body.poUid)
     ? req.body.poUid
     : null;
-  if (userId && poUid) {
-    try {
-      const user = await prisma.user.findUnique({ where: { id: userId }, select: { poUserId: true } });
-      if (user && user.poUserId == null) {
-        const owner = await prisma.user.findUnique({ where: { poUserId: poUid }, select: { id: true } });
-        if (!owner) {
-          const linked = await prisma.user.updateMany({
-            where: { id: userId, poUserId: null },
-            data: { poUserId: poUid },
-          });
-          if (linked.count === 1) {
-            recordFunnelEvent(prisma, 'po_uid_autolinked', { userId, meta: { userId } });
-          }
-        }
-      }
-    } catch (err) {
-      // Includes a concurrent unique-key conflict. Licensing remains available.
-    }
-  }
+  // The link never rejects and never touches the License row, so it runs alongside the
+  // license read instead of before it. The user's current poUserId comes from the row
+  // optionalAuthMiddleware already loaded (req.user), not a second lookup.
+  const poUidLink = userId && poUid ? autolinkPoUid(userId, req.user, poUid) : null;
 
   try {
     // If user is authenticated, check their license
     if (userId) {
-      const license = await prisma.license.findUnique({ where: { userId } });
+      const [license] = await Promise.all([
+        prisma.license.findUnique({ where: { userId } }),
+        poUidLink,
+      ]);
       if (!license) {
         return res.json({ allowed: false, reason: 'No license found' });
       }
