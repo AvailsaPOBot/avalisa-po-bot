@@ -286,3 +286,22 @@ test('account mode: with nothing visible the body text is still the fallback', (
     assert.equal(win.AvalisaProof.debug.state.demoMode, 'confirmed');
   } finally { win.close(); }
 });
+
+// Canary 28 Nov 2026: PO shows the digit keys first and injects the backspace SVG ~170-300 ms
+// later; the first Start after the bookmark failed ("amount setter failed for $1").
+test('amount: async keypad waits for a late backspace icon before clearing', async () => {
+  const win = load(KEYPAD_PAGE);
+  try {
+    const pad = wireKeypad(win, '10');
+    const doc = win.document;
+    const backKey = Array.from(doc.querySelectorAll('.virtual-keyboard__input')).find(k => k.querySelector('svg'));
+    const svg = backKey.querySelector('svg');
+    svg.remove();
+    doc.querySelector('.block--bet-amount').addEventListener('click', () => {
+      if (!doc.querySelector('.modal').hasAttribute('hidden')) win.setTimeout(() => backKey.appendChild(svg), 300);
+    });
+    assert.equal(await win.AvalisaProof.debug.prepareAmountAsync(1), true);
+    assert.equal(pad.value, '1');
+    assert.equal(doc.querySelector('.amount-field').textContent, '$1');
+  } finally { win.close(); }
+});

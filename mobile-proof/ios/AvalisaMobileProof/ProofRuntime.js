@@ -1232,6 +1232,17 @@
 
   // PO applies each keypad press one tick later, so presses fired back-to-back overwrite each
   // other ("16" became "6", verified 7 Nov 2026). Wait between presses and re-read the display.
+  // PO renders the digit keys first and injects the backspace icon (an SVG) ~170-300 ms later
+  // (canary 28 Nov 2026: the first Start after the bookmark failed with "amount setter failed").
+  // Wait up to ~1 s for a key before giving up.
+  async function waitForKeypadKey(pick, timeoutMs = 1000) {
+    for (let waited = 0; ; waited += 50) {
+      const key = pick(amountKeypadKeys());
+      if (key || waited >= timeoutMs) return key || null;
+      await sleep(50);
+    }
+  }
+
   async function typeAmountOnKeypadAsync(safeAmount) {
     const typed = Number.isInteger(safeAmount)
       ? String(safeAmount)
@@ -1239,13 +1250,13 @@
     for (let presses = 0; presses < 12; presses += 1) {
       const shown = amountDisplayText().replace(/[^\d.]/g, '');
       if (!/\d/.test(shown) || Number(shown) === 0) break;
-      const { backspace } = amountKeypadKeys();
+      const backspace = await waitForKeypadKey(keys => keys.backspace);
       if (!backspace) return false;
       pressKeypadKey(backspace);
       await sleep(80);
     }
     for (const char of typed) {
-      const key = amountKeypadKeys().digits[char];
+      const key = await waitForKeypadKey(keys => keys.digits[char]);
       if (!key) return false;
       pressKeypadKey(key);
       await sleep(80);
